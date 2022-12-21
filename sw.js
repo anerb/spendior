@@ -1,3 +1,4 @@
+var version = '20221221.1023';
 var cacheName = 'hello-pwa';
 var filesToCache = [
   './index.html',
