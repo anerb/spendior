@@ -39,7 +39,7 @@ function ready() {
   
   var sendItem = document.querySelector("#send-email");
   
-  var finalValue = "mailto:anerbenartzi+spend@gmail.com?subject" + vendor + " " + amount + " " + currency + "&body=" + paymentMethod + ":" + notes;
+  var finalValue = "mailto:anerbenartzi+spend@gmail.com?subject=" + vendor + " " + amount + " " + currency + "&body=" + paymentMethod + ":" + notes;
   
   sendItem.href = finalValue;
   sendItem.style.display = "inline"
