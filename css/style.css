@@ -1,5 +1,7 @@
 body {
-  font-family: sans-serif;
+  font-family: cursive;
+  background: pink;
+  background-image: url('.images/pinkdior001.webp');
 }
 
 /* Make content area fill the entire browser window */
@@ -21,7 +23,29 @@ html,
 .title {
   font-size: 3rem;
 }
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
+
+.selected {
+  padding: 2px;
+  background: blue;
+}
+
+.payment-method {
+  width: 50px;
+  height: 30px;
+}
+
+.button {
+  display: inline; 
+}
+
+.currency {
+  display: inline;
+}
+
+.vendor {
+  display: inline;
+}
+
+#send-email {
+  display: none;
+}
