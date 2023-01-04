@@ -33,6 +33,8 @@ function ready() {
   if (vendorItem === null) {
     vendorItem = document.querySelector("#vendor-other");
     vendor = vendorItem.value;
+  } else {
+    vendor = vendorItem.id;
   }
   notesItem = document.querySelector("#notes");
   notes = notesItem.value;
