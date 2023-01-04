@@ -18,36 +18,26 @@
 <body class="fullscreen">
   <div class="container">
     <div id="summary">Select a payment method</div>
-  <img id="ubs-visa" class="payment-method" src="./images/ubs_visa.png" alt_text="UBS Visa" />
-  <img id="bofa-visa" class="payment-method" src="./images/bofa_visa.png" alt_text="Bank of America Visa" />
-  <img id="twint-ubs" class="payment-method" src="./images/twint_ubs.png" alt_text="UBS Twint" />
-  <img id="cash" class="payment-method" src="./images/cash.png" alt_text="cash" />
-
-  <div class="button">1</div>
-  <div class="button">2</div>
-  <div class="button">3</div>
-  <hr>
-  <div class="button">4</div>
-  <div class="button">5</div>
-  <div class="button">6</div>
-  <hr>
-  <div class="button">7</div>
-  <div class="button">8</div>
-  <div class="button">9</div>
-  <hr>
-  <div class="button">0</div>
-  <div class="button">.</div>
-  <hr>
-  <div class="button">USD</div>
-  <div class="button">CHF</div>
-  <div class="button">EUR</div>
-  <div class="button">GBP</div>
-  <hr>
-  <div class="button">Migros</div>
-  <div class="button">Coop</div>
-  <div class="button">Lidl</div>
-  <input type="text"/>
-    <hr>
+  <img onclick="selectItem(this)" id="ubs-visa" class="payment-method" src="./images/ubs_visa_debit.png" alt_text="UBS Visa" />
+  <img onclick="selectItem(this)" id="bofa-visa" class="payment-method" src="./images/bofa_visa.png" alt_text="Bank of America Visa" />
+  <img onclick="selectItem(this)" id="twint-ubs" class="payment-method" src="./images/twint_ubs.png" alt_text="UBS Twint" />
+  <img onclick="selectItem(this)" id="cash" class="payment-method" src="./images/cash.png" alt_text="cash" />
+<hr>
+amount: <input id="amount" type="number" />
+<hr>
+  <div class="currency">USD</div>
+  <div class="currency selected">CHF</div>
+  <div class="currency">EUR</div>
+  <div class="currency">GBP</div>
+<hr>
+  <div  onclick="selectItem(this)" class="vendor">Migros</div>
+  <div  onclick="selectItem(this)" class="vendor">Coop</div>
+  <div  onclick="selectItem(this)" class="vendor">Lidl</div>
+  <input id="vendor-other" type="text" size="8"/>
+<hr>
+notes: <input id="notes" type="text" />
+<hr>
+<div class="button" onclick="ready()">Ready</div>
     <a id="send-email" href="mailto:anerbenartzi+spend@gmail.com">Send</a>
   </div>
   <script src="js/main.js"></script>
