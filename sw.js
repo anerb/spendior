@@ -1,4 +1,4 @@
-var version = '20230105.1305';
+var version = '20230105.1327';
 var cacheName = 'spendior-cache';
 var filesToCache = [
   './index.html',
