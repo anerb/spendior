@@ -2,45 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Hello World</title>
+  <title>Spendior</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="./css/style.css">
-  <link rel="icon" href="favicon.ico" type="./image/x-icon" />
-  <link rel="apple-touch-icon" href="./images/hello-icon-152.png">
+  <link rel="icon" href="favicon.ico" type="./image/dior_icon_512.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="white"/>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Hello World">
-  <meta name="msapplication-TileImage" content="./images/hello-icon-144.png">
-  <meta name="msapplication-TileColor" content="#FFFFFF">
 </head>
 <body class="fullscreen">
   <div class="container">
-    <div id="summary">Select a payment method</div>
   <img onclick="selectItem(this)" id="ubs_visa" class="payment-method" src="./images/ubs_visa_debit.png" alt_text="UBS Visa" />
   <img onclick="selectItem(this)" id="bofa_visa" class="payment-method" src="./images/bofa_visa.png" alt_text="Bank of America Visa" />
   <img onclick="selectItem(this)" id="twint_ubs" class="payment-method" src="./images/twint_ubs.png" alt_text="UBS Twint" />
   <img onclick="selectItem(this)" id="cash" class="payment-method" src="./images/cash.png" alt_text="cash" />
   <img onclick="selectItem(this)" id="twint_ayelet" class="payment-method" src="./images/twint_ayelet.png" alt_text="Twint Ayelet" />
   <img onclick="selectItem(this)" id="twint_editte" class="payment-method" src="./images/twint_editte.png" alt_text="Twint Editte" />
-<hr>
-amount: <input id="amount" type="number" />
-<hr>
+  <hr>
+  amount: <input id="amount" type="number" />
+  <hr>
   <div class="currency">USD</div>
   <div class="currency selected">CHF</div>
   <div class="currency">EUR</div>
   <div class="currency">GBP</div>
-<hr>
-  <div  onclick="selectItem(this)" class="vendor" id="migros">Migros</div>
-  <div  onclick="selectItem(this)" class="vendor" id="coop">Coop</div>
-  <div  onclick="selectItem(this)" class="vendor" id="lidl" >Lidl</div>
+  <hr>
+  <div onclick="selectItem(this)" class="vendor" id="migros">Migros</div>
+  <div onclick="selectItem(this)" class="vendor" id="coop">Coop</div>
+  <div onclick="selectItem(this)" class="vendor" id="lidl" >Lidl</div>
   <input id="vendor-other" type="text" size="8"/>
-<hr>
-notes: <input id="notes" type="text" />
-<hr>
-<div class="button" onclick="ready()">Ready</div>
-    <a id="send-email" href="mailto:anerbenartzi+spend@gmail.com">Send</a>
+  <hr>
+  notes: <input id="notes" type="text" />
+  <hr>
+  <div class="button" onclick="ready()">Ready</div>
+  <a id="send-email" href="mailto:anerbenartzi+spend@gmail.com">Send</a>
   </div>
   <script src="js/main.js"></script>
 </body>
