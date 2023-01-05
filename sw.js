@@ -1,9 +1,10 @@
-var version = '20221221.1051';
-var cacheName = 'hello-pwa';
+var version = '20230105.1305';
+var cacheName = 'spendior-cache';
 var filesToCache = [
-//  './index.html',
-//  './css/style.css',
-//  './js/main.js'
+  './index.html',
+  './css/style.css',
+  './js/main.js',
+  './images/twint_ayelet.png',
 ];
 
 /* Start the service worker and cache all of the app's content */
