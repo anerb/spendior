@@ -31,7 +31,7 @@ function ready() {
   }
 
   body.currency = document.querySelector('input[name="currency"]:checked').value;
-  if (destination == "other") {
+  if (body.currency == "other") {
     body.currency = document.querySelector("#other_currency").value;
   }
 
