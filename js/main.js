@@ -39,13 +39,13 @@ function ready() {
   
   let body_json = JSON.stringify(body);
   var finalValues = [
-    'mailto:anerbenartzi+email2sheet@gmail.com?subject=' + encodeURIComponent('This is not a very good RTCSessionDescription.'),
+    'mailto:anerbenartzi+email2sheet@gmail.com?subject=' + encodeURIComponent('This is not a very good description.'),
     'cc=' + encodeURIComponent('"16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw" <anerbenartzi+email2sheet@gmail.com>'),
     'bcc=' + encodeURIComponent('"entries" <anerbenartzi+email2sheet@gmail.com>'),
-    'body=' + encodeURIComponent(body),
+    'body=' + encodeURIComponent(body_json),
   ];
 
   var sendItem = document.querySelector("#send-email");
-  sendItem.href = finalValues.join('?');  
+  sendItem.href = finalValues.join('&');  
   sendItem.style.display = "inline"
 }
