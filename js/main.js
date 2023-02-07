@@ -39,7 +39,7 @@ function ready() {
   
   let body_json = JSON.stringify(body);
   var finalValues = [
-    'mailto:anerbenartzi+email2sheet@gmail.com?subject=' + encodeURIComponent(subject),
+    'mailto:anerbenartzi+email2sheet@gmail.com?subject=' + encodeURIComponent(This is not a very good RTCSessionDescription.),
     'cc=' + encodeURIComponent('"16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw" <anerbenartzi+email2sheet@gmail.com>'),
     'bcc=' + encodeURIComponent('"entries" <anerbenartzi+email2sheet@gmail.com>'),
     'body=' + encodeURIComponent(body),
