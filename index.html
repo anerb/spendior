@@ -36,20 +36,19 @@
     <input type="radio" name="source" value="editte_twint"/>
     <input type="radio" name="destination" value="editte_twint"/>
   <br/>
-  <input type="text" id="other" size="8"/>
-    <input type="radio" name="source" value="other"/>
-    <input type="radio" name="destination" value="other"/>
+  <input type="text" id="other_endpoint" size="8"/>
+    <input type="radio" name="source" value="other_endpoint"/>
+    <input type="radio" name="destination" value="other_endpoint"/>
   <br/>
   <hr>
   amount: <input id="amount" type="number" />
   <hr>
-    <div>
-    <div class="currency"><div>USD</div><div><input type="radio" name="currency" value="USD"/></div></div>
-    <div class="currency"><div>USD</div><div><input type="radio" name="currency" value="USD"/></div></div>
-    <div class="currency"><div>USD</div><div><input type="radio" name="currency" value="USD"/></div></div>
-  <div class="currency selected">CHF</div>
-  <div class="currency">EUR</div>
-  <div class="currency">GBP</div>
+    <div class="currency_box">
+      <div class="currency"><div>CHF</div><div><input type="radio" name="currency" value="USD"/></div></div>
+      <div class="currency"><div>EUR</div><div><input type="radio" name="currency" value="USD"/></div></div>
+      <div class="currency"><div>USD</div><div><input type="radio" name="currency" value="USD"/></div></div>
+      <div class="currency"><div>GBP</div><div><input type="radio" name="currency" value="USD"/></div></div>
+      <div class="currency"><div><input type="text" id="other_currency" size="3"/></div><div><input type="radio" name="currency" value="other_currency"/></div></div>  
     </div>
   <hr>
   <div onclick="selectItem(this)" class="vendor" id="migros">Migros</div>
