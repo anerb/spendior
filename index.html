@@ -12,6 +12,10 @@
 <body class="fullscreen">
   <div class="endpoint-width"/> from: to:
   <div class="container">
+  <input type="text" id="other_endpoint" size="8"/>
+    <input type="radio" name="source" value="other"/>
+    <input type="radio" name="destination" value="other"/>
+  <br/>
   <img class="payment-method" src="./images/ubs_visa.png" alt_text="UBS Visa" />
     <input type="radio" name="source" value="ubs_visa"/>
     <input type="radio" name="destination" value="ubs_visa"/>
@@ -36,30 +40,33 @@
     <input type="radio" name="source" value="editte_twint"/>
     <input type="radio" name="destination" value="editte_twint"/>
   <br/>
-  <input type="text" id="other_endpoint" size="8"/>
-    <input type="radio" name="source" value="other_endpoint"/>
-    <input type="radio" name="destination" value="other_endpoint"/>
+  <img class="payment-method" src="./images/migros.png" alt_text="Migros" />
+    <input type="radio" name="source" value="migros"/>
+    <input type="radio" name="destination" value="migros"/>
+  <br/>
+  <img class="payment-method" src="./images/coop.png" alt_text="Coop" />
+    <input type="radio" name="source" value="coop"/>
+    <input type="radio" name="destination" value="coop"/>
+  <br/>
+  <img class="payment-method" src="./images/lidl.png" alt_text="Lidl" />
+    <input type="radio" name="source" value="lidl"/>
+    <input type="radio" name="destination" value="lidl"/>
   <br/>
   <hr>
   amount: <input id="amount" type="number" />
   <hr>
     <div class="currency_box">
-      <div class="currency"><div>CHF</div><div><input type="radio" name="currency" value="USD"/></div></div>
-      <div class="currency"><div>EUR</div><div><input type="radio" name="currency" value="USD"/></div></div>
+      <div class="currency"><div>CHF</div><div><input type="radio" name="currency" value="CHF" checked/></div></div>
+      <div class="currency"><div>EUR</div><div><input type="radio" name="currency" value="EUR"/></div></div>
       <div class="currency"><div>USD</div><div><input type="radio" name="currency" value="USD"/></div></div>
-      <div class="currency"><div>GBP</div><div><input type="radio" name="currency" value="USD"/></div></div>
-      <div class="currency"><div><input type="text" id="other_currency" size="3"/></div><div><input type="radio" name="currency" value="other_currency"/></div></div>  
+      <div class="currency"><div>GBP</div><div><input type="radio" name="currency" value="GBP"/></div></div>
+      <div class="currency"><div><input type="text" id="other_currency" size="3"/></div><div><input type="radio" name="currency" value="other"/></div></div>  
     </div>
-  <hr>
-  <div onclick="selectItem(this)" class="vendor" id="migros">Migros</div>
-  <div onclick="selectItem(this)" class="vendor" id="coop">Coop</div>
-  <div onclick="selectItem(this)" class="vendor" id="lidl" >Lidl</div>
-  <input id="vendor-other" type="text" size="8"/>
   <hr>
   notes: <input id="notes" type="text" />
   <hr>
   <div class="button" onclick="ready()">Ready</div>
-  <a id="send-email" href="mailto:anerbenartzi+spend@gmail.com">Send</a>
+  <a id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
   </div>
   <script src="js/main.js"></script>
 </body>

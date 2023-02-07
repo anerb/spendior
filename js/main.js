@@ -12,37 +12,43 @@ function selectItem(item) {
 }
 
 function ready() {
-  var paymentMethod = "NA";
-  var amount = 0;
-  var currency = "NA";
-  var vendor = "NA";
-  var notes = "NA";
-  
-  var paymentMethodItem = document.querySelector(".payment-method.selected");
-  if (paymentMethodItem !== null) {
-    paymentMethod = paymentMethodItem.id;
+  let body = {
+    source: "",
+    destination: "",
+    amount: "",
+    currency: "",
+    notes: "",
   }
   
-  var amountItem = document.querySelector("#amount");
-  amount = amountItem.value;
-  
-  var currencyItem = document.querySelector(".currency.selected");
-  currency = currencyItem.innerHTML;
-  
-  var vendorItem = document.querySelector(".vendor.selected");
-  if (vendorItem === null) {
-    vendorItem = document.querySelector("#vendor-other");
-    vendor = vendorItem.value;
-  } else {
-    vendor = vendorItem.id;
+  body.source = document.querySelector('input[name="source"]:checked').value;
+  if (body.souce == "other") {
+    body.source = document.querySelector("#other_endpoint").value;
   }
-  notesItem = document.querySelector("#notes");
-  notes = notesItem.value;
+  
+  body.destination = document.querySelector('input[name="destination"]:checked').value;
+  if (body.destination == "other") {
+    body.destination = document.querySelector("#other_endpoint").value;
+  }
+
+  body.currency = document.querySelector('input[name="currency"]:checked').value;
+  if (destination == "other") {
+    body.currency = document.querySelector("#other_currency").value;
+  }
+
+  body.amount = document.querySelector("#amount").value;
+
+  body.notes = document.querySelector("#notes").value;
   
   var sendItem = document.querySelector("#send-email");
   
-  var finalValue = "mailto:anerbenartzi+spend@gmail.com?subject=" + vendor + " " + amount + " " + currency + "&body=" + paymentMethod + ":" + notes;
-  
-  sendItem.href = finalValue;
+  let body_json = JSON.stringify(body);
+  var finalValues = [
+    'mailto:anerbenartzi+email2sheet@gmail.com?subject=' + encodeURIComponent(subject),
+    'cc=' + encodeURIComponent('"16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw" <anerbenartzi+email2sheet@gmail.com>'),
+    'bcc=' + encodeURIComponent('"entries" <anerbenartzi+email2sheet@gmail.com>'),
+    'body=' + encodeURIComponent(body),
+  ];
+
+  sendItem.href = finalValues.join('?');  
   sendItem.style.display = "inline"
 }

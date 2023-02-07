@@ -38,8 +38,13 @@ html,
   display: inline; 
 }
 
+.currency-box {
+  display: flex;
+}
+
 .currency {
   display: inline;
+  margin: 5px;
 }
 
 .vendor {
