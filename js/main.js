@@ -12,6 +12,7 @@ function selectItem(item) {
 }
 
 function ready() {
+  console.log("ready");
   let body = {
     source: "",
     destination: "",
@@ -24,22 +25,17 @@ function ready() {
   if (body.souce == "other") {
     body.source = document.querySelector("#other_endpoint").value;
   }
-  
+ 
   body.destination = document.querySelector('input[name="destination"]:checked').value;
   if (body.destination == "other") {
     body.destination = document.querySelector("#other_endpoint").value;
   }
-
   body.currency = document.querySelector('input[name="currency"]:checked').value;
   if (body.currency == "other") {
     body.currency = document.querySelector("#other_currency").value;
   }
-
   body.amount = document.querySelector("#amount").value;
-
   body.notes = document.querySelector("#notes").value;
-  
-  var sendItem = document.querySelector("#send-email");
   
   let body_json = JSON.stringify(body);
   var finalValues = [
@@ -49,6 +45,7 @@ function ready() {
     'body=' + encodeURIComponent(body),
   ];
 
+  var sendItem = document.querySelector("#send-email");
   sendItem.href = finalValues.join('?');  
   sendItem.style.display = "inline"
 }
