@@ -48,7 +48,7 @@ input {
   padding: 3px;
 }
 
-.currency-box {
+.currency_box {
   display: flex;
 }
 
@@ -73,7 +73,13 @@ input {
 }
 
 .other_text {
-  width: 150px;
+  width: 195px;
   margin: 25px 0px;
-  height: 121px;
+  padding-top: 100px;
+}
+
+.currency_text {
+  height: 16px;
+  width: 38px;
+  font-size: medium;
 }
