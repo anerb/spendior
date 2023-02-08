@@ -1,11 +1,4 @@
-window.onload = () => {
-  'use strict';
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-             .register('./sw.js');
-  }
-}
 
 function selectItem(item) {
   item.classList.add('selected');
@@ -54,4 +47,17 @@ function ready() {
   var sendItem = document.querySelector("#send-email");
   sendItem.href = finalValues.join('&');  
   sendItem.style.display = "inline"
+}
+
+
+window.onload = () => {
+  'use strict';
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+             .register('./sw.js');
+  }
+
+  document.querySelector('#amount').addEventListener('input', ready);
+  source.addEventListener('input', inputHandler);
 }
