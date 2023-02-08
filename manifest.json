@@ -3,10 +3,10 @@
     "background_color": "#ffffff",
     "display": "standalone",
     "scope": "https://anerb.github.io",
-    "start_url": "./hello-world-pwa/index.html",
+    "start_url": "/hello-world-pwa/index.html",
     "name": "Spendior",
     "short_name": "Spendior",
-    "ignorable_property": "202302081640",
+    "ignorable_property": "202302081718",
     "description": "Keep track of spendings.",
     "icons": [
         {
