@@ -114,3 +114,11 @@ input {
   display: inline;
   margin: 5px;
 }
+
+#amount {
+  width: 30%;
+}
+
+#what {
+  width: 80%;
+}
