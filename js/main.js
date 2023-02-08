@@ -149,7 +149,7 @@ window.onload = () => {
              .register('./sw.js');
   }
 
-  CustomElementRegistry.define("sd-endpoint", Endpoint);
+  customElements.define("sd-endpoint", Endpoint);
 
   generateEndpoints();
 
