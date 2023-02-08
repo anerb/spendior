@@ -100,7 +100,7 @@ input {
   position: fixed;
   top: 0px;
   z-index: 99999;
-  background-color: pink;
+  background-color: #ffc0cbdb;
   padding: 10px;
   width: calc(100% - 36px);
   border-style: solid;
