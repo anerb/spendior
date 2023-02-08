@@ -12,10 +12,10 @@
 </head>
 <body class="fullscreen">
   <div class="static_header" >
-    amount: <input id="amount" type="number" onchange="ready()" />
+    <div class="text_label">amount:</div><input id="amount" type="number" onchange="ready()" />
     <a class="button" id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
     <br/>
-    what: <input id="what" type="text" />
+    <div class="text_label">what:</div><input id="what" type="text" />
     <br/>
     <div class="helper_box">
       <div class="helper">
@@ -34,7 +34,7 @@
 
   <div style="height: 120px" ></div>
 
-  <input class="source_radio" type="radio" name="source" value="other1" checked style="transform: translate(-14px, 0px) scale(4)"/>
+  <input class="source_radio" type="radio" name="source" value="other1" checked style="transform: translate(14px, 0px) scale(4)"/>
   <input class="other_text" type="text" id="other_endpoint1"/>
   <input class="destination_radio" type="radio" name="destination" value="other1" checked style="transform: translate(-14px, 0px) scale(4)"/>
   <br/>
@@ -84,7 +84,7 @@
   <input class="destination_radio" type="radio" name="destination" value="lidl"/>
   <br/>
 
-  <input class="source_radio" type="radio" name="source" value="other2" style="transform: translate(-14px, 0px) scale(4)"/>
+  <input class="source_radio" type="radio" name="source" value="other2" style="transform: translate(14px, 0px) scale(4)"/>
   <input class="other_text" type="text" id="other_endpoint2"/>
   <input class="destination_radio" type="radio" name="destination" value="other2" style="transform: translate(-14px, 0px) scale(4)"/>
   <br/>
