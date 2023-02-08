@@ -83,3 +83,8 @@ input {
   width: 38px;
   font-size: medium;
 }
+
+.static_header {
+  position:absolute;
+  top: 0px;
+}
