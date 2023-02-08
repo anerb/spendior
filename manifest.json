@@ -6,7 +6,7 @@
     "start_url": "./index.html",
     "name": "Spendior",
     "short_name": "Spendior",
-    "orientation": "protrait-primary",
+    "ignorable_property": "202302081640",
     "description": "Keep track of spendings.",
     "icons": [
         {
