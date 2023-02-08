@@ -67,6 +67,85 @@ function ready() {
 }
 
 
+class Endpoint extends HTMLElement {
+  constructor() {
+    // Always call super first in constructor
+    super();
+
+    // Create a shadow root
+    const shadow = this.attachShadow({mode: 'open'});
+
+    // Create spans
+    const wrapper = document.createElement('div');
+    wrapper.setAttribute('class', 'wrapper');
+
+    const institution = this.getAttribute('institution');
+
+    const source_radio = document.createElement('input');
+    source_radio.setAttribute('class', 'source_radio2');
+    source_radio.setAttribute('type', 'radio');
+    source_radio.setAttribute('name', 'source');
+    source_radio.setAttribute('value', institution);
+
+    const img = document.createElement('img');
+    img.setAttribute('class', 'endpoint2');
+    img.src = './images/' + institution + ".png";
+    img.setAttribute('alt', institution.toUpperCase());
+
+    const destination_radio = document.createElement('input');
+    destination_radio.setAttribute('class', 'destination_radio2');
+    destination_radio.setAttribute('type', 'radio');
+    destination_radio.setAttribute('name', 'destination');
+    destination_radio.setAttribute('value', institution);
+
+
+    const img = document.createElement('img');
+    img.src = imgUrl;
+    icon.appendChild(img);
+
+    // Create some CSS to apply to the shadow dom
+    const style = document.createElement('style');
+
+    style.textContent = `
+    .endpoint2 {
+      width: 200px;
+      height: 120px;
+    }
+    .source_radio2 {
+      transform: translate(14px, -50px) scale(4);
+    }
+    .destination_radio2 {
+      transform: translate(-14px, -50px) scale(4);
+    }
+    .wrapper {
+      }
+    `;
+
+    // Attach the created elements to the shadow dom
+    shadow.appendChild(style);
+    shadow.appendChild(wrapper);
+    wrapper.appendChild(source_radio);
+    wrapper.appendChild(img);
+    wrapper.appendChild(destination_radio);
+  }
+}
+
+
+function generateEndpoints() {
+  let endpoint_map = {
+    ubs_visa_debit: "UBS Visa (debit)",
+    bofa_visa: "Bank of America Visa",
+    ubs_twint: "UBS Twint",
+    cash: "cash",
+    ayelet_twint: "Ayelet Twint",
+    editte_twint: "Editte Twint",
+    migros: "Migros",
+    coop: "Coop:",
+    lidl: "Lidl",
+  };
+
+}
+
 window.onload = () => {
   'use strict';
 
@@ -74,6 +153,10 @@ window.onload = () => {
     navigator.serviceWorker
              .register('./sw.js');
   }
+
+  CustomElementRegistry.define("sd-endpoint", Endpoint);
+
+  generateEndpoints();
 
   let input_elements = document.querySelectorAll('input')
   for (let input_element of input_elements) {

@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="white"/>
   <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+  <script src="./js/main.js"></script>
 </head>
 <body class="fullscreen">
   <div class="static_header" >
@@ -39,10 +40,7 @@
   <input class="destination_radio" type="radio" name="destination" value="other1" checked style="transform: translate(-14px, 0px) scale(4)"/>
   <br/>
 
-  <input class="source_radio" type="radio" name="source" value="ubs_visa_debit"/>
-  <img class="endpoint" src="./images/ubs_visa_debit.png" alt="UBS Visa Debit" />
-  <input class="destination_radio" type="radio" name="destination" value="ubs_visa_debit"/>
-  <br/>
+  <sd-endpoint institution="ubs_visa_debit" />
 
   <input class="source_radio" type="radio" name="source" value="bofa_visa"/>
   <img class="endpoint" src="./images/bofa_visa.png" alt="Bank of America Visa" />
@@ -101,6 +99,5 @@
   notes: <input id="notes" type="text" />
   <hr>
   </div> 
-  <script src="js/main.js"></script>
 </body>
 </html>
