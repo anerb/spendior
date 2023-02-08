@@ -17,7 +17,7 @@ function ready() {
   
   // TODO: surround each endpoint with some data for the human-friendly version.
   source_element = document.querySelector('input[name="source"]:checked');
-  if (source_elment.value == "other1") {
+  if (source_element.value == "other1") {
     source_element = document.querySelector("#other_endpoint1").value;
   }
   if (source_element.value == "other2") {
@@ -27,7 +27,7 @@ function ready() {
   document.querySelector('#from_helper').innerHTML = body.source;
 
   destination_element = document.querySelector('input[name="destination"]:checked');
-  if (destination_elment.value == "other1") {
+  if (destination_element.value == "other1") {
     destination_element = document.querySelector("#other_endpoint1").value;
   }
   if (destination_element.value == "other2") {
