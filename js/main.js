@@ -82,18 +82,18 @@ class Endpoint extends HTMLElement {
     const institution = this.getAttribute('institution');
 
     const source_radio = document.createElement('input');
-    source_radio.setAttribute('class', 'source_radio2');
+    source_radio.setAttribute('class', 'source_radio');
     source_radio.setAttribute('type', 'radio');
     source_radio.setAttribute('name', 'source');
     source_radio.setAttribute('value', institution);
 
     const img = document.createElement('img');
-    img.setAttribute('class', 'endpoint2');
+    img.setAttribute('class', 'endpoint');
     img.src = './images/' + institution + ".png";
     img.setAttribute('alt', institution.toUpperCase());
 
     const destination_radio = document.createElement('input');
-    destination_radio.setAttribute('class', 'destination_radio2');
+    destination_radio.setAttribute('class', 'destination_radio');
     destination_radio.setAttribute('type', 'radio');
     destination_radio.setAttribute('name', 'destination');
     destination_radio.setAttribute('value', institution);
