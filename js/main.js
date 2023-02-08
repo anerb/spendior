@@ -22,13 +22,19 @@ function ready() {
   }
   
   body.source = document.querySelector('input[name="source"]:checked').value;
-  if (body.souce == "other") {
-    body.source = document.querySelector("#other_endpoint").value;
+  if (body.souce == "other1") {
+    body.source = document.querySelector("#other_endpoint1").value;
+  }
+  if (body.souce == "other2") {
+    body.source = document.querySelector("#other_endpoint2").value;
   }
  
   body.destination = document.querySelector('input[name="destination"]:checked').value;
-  if (body.destination == "other") {
-    body.destination = document.querySelector("#other_endpoint").value;
+  if (body.destination == "other1") {
+    body.destination = document.querySelector("#other_endpoint1").value;
+  }
+  if (body.destination == "other2") {
+    body.destination = document.querySelector("#other_endpoint2").value;
   }
   body.currency = document.querySelector('input[name="currency"]:checked').value;
   if (body.currency == "other") {
