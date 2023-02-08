@@ -85,6 +85,10 @@ input {
 }
 
 .static_header {
-  position:absolute;
+  position: fixed;
   top: 0px;
+  z-index: 99999;
+  background-color: pink;
+  padding: 10px;
+  width: 100%;
 }
