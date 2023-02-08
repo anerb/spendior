@@ -56,7 +56,7 @@ function ready() {
 
   var sendItem = document.querySelector("#send-email");
   sendItem.href = finalValues.join('&');  
-  sendItem.style.display = "inline"
+  sendItem.style.color = "black";
 }
 
 
