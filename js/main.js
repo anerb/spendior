@@ -98,11 +98,6 @@ class Endpoint extends HTMLElement {
     destination_radio.setAttribute('name', 'destination');
     destination_radio.setAttribute('value', institution);
 
-
-    const img = document.createElement('img');
-    img.src = imgUrl;
-    icon.appendChild(img);
-
     // Create some CSS to apply to the shadow dom
     const style = document.createElement('style');
 
