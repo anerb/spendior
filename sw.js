@@ -1,5 +1,5 @@
-var version = '20230208.1223';
-var cacheName = 'spendior-cache-20230208.1346';
+var version = '20230208.1353';
+var cacheName = 'spendior-cache-20230208.1353';
 var filesToCache = [
   './index.html',
   './css/style.css',
