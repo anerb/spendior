@@ -80,6 +80,7 @@ class Endpoint extends HTMLElement {
     wrapper.setAttribute('class', 'wrapper');
 
     const institution = this.getAttribute('institution');
+    const description = this.getAttribute('description');
 
     const source_radio = document.createElement('input');
     source_radio.setAttribute('class', 'source_radio');
@@ -90,7 +91,11 @@ class Endpoint extends HTMLElement {
     const img = document.createElement('img');
     img.setAttribute('class', 'endpoint');
     img.src = './images/' + institution + ".png";
-    img.setAttribute('alt', institution.toUpperCase());
+    img.setAttribute('alt', description);
+
+    const label = document.createElement('div');
+    label.innerHTML = description;
+    label.setAttribute('class', 'endpoint_label');
 
     const destination_radio = document.createElement('input');
     destination_radio.setAttribute('class', 'destination_radio');
@@ -122,6 +127,7 @@ class Endpoint extends HTMLElement {
     this.appendChild(wrapper);
     wrapper.appendChild(source_radio);
     wrapper.appendChild(img);
+    wrapper.appendChild(label);
     wrapper.appendChild(destination_radio);
   }
 }
