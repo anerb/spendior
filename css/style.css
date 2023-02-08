@@ -55,6 +55,15 @@ html,
   display: none;
 }
 
-.endpoint_radio {
+.source_radio {
+  transform: translate(14px, -50px) scale(4);
+}
+.destination_radio {
   transform: translate(-14px, -50px) scale(4);
+}
+
+.other_text {
+  width: 150px;
+  margin: 25px 0px;
+  height: 121px;
 }
