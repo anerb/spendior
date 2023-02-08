@@ -29,9 +29,9 @@ html,
   background: blue;
 }
 
-.payment-method {
-  width: 50px;
-  height: 30px;
+.endpoint {
+  width: 200px;
+  height: 120px;
 }
 
 .button {
