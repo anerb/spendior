@@ -3,9 +3,10 @@
     "background_color": "#ffffff",
     "display": "standalone",
     "scope": "https://anerb.github.io/hello-world-pwa",
-    "start_url": "/index.html",
+    "start_url": "./index.html",
     "name": "Spendior",
     "short_name": "Spendior",
+    "orientation": "protrait-primary",
     "description": "Keep track of spendings.",
     "icons": [
         {
