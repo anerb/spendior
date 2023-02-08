@@ -1,5 +1,5 @@
 var version = '20230208.1223';
-var cacheName = 'spendior-cache';
+var cacheName = 'spendior-cache-20230208.1346';
 var filesToCache = [
   './index.html',
   './css/style.css',
@@ -22,6 +22,20 @@ self.addEventListener('fetch', function(e) {
   e.respondWith(
     caches.match(e.request).then(function(response) {
       return response || fetch(e.request);
+    })
+  );
+});
+
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.filter(function(oldName) {
+          return (oldName != cacheName)
+        }).map(function(oldName) {
+          return caches.delete(oldName);
+        })
+      );
     })
   );
 });
