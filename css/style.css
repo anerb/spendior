@@ -99,3 +99,18 @@ input {
   padding: 10px;
   width: 100%;
 }
+
+.helper_box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.helper {
+  width: 50%;
+  text-align: center;
+  display: inline;
+  margin: 5px;
+}
