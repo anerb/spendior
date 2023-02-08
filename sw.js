@@ -1,11 +1,13 @@
-var version = '20230208.1353';
-var cacheName = 'spendior-cache-20230208.1353';
-var filesToCache = [
+var version = '20230208.1356';
+var cacheName = 'spendior-cache-20230208.1356';
+var filesToCache = [];
+/*
   './index.html',
   './css/style.css',
   './js/main.js',
   './images/ayelet_twint.png',
 ];
+*/
 
 /* Start the service worker and cache all of the app's content */
 self.addEventListener('install', function(e) {
@@ -18,6 +20,7 @@ self.addEventListener('install', function(e) {
 });
 
 /* Serve cached content when offline */
+/*
 self.addEventListener('fetch', function(e) {
   e.respondWith(
     caches.match(e.request).then(function(response) {
@@ -25,6 +28,7 @@ self.addEventListener('fetch', function(e) {
     })
   );
 });
+*/
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(
