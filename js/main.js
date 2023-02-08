@@ -73,7 +73,7 @@ class Endpoint extends HTMLElement {
     super();
 
     // Create a shadow root
-    const shadow = this.attachShadow({mode: 'open'});
+//    const shadow = this.attachShadow({mode: 'open'});
 
     // Create spans
     const wrapper = document.createElement('div');
@@ -117,8 +117,9 @@ class Endpoint extends HTMLElement {
     `;
 
     // Attach the created elements to the shadow dom
-    shadow.appendChild(style);
-    shadow.appendChild(wrapper);
+//    shadow.appendChild(style);
+//    shadow.appendChild(wrapper);
+    this.appendChild(wrapper);
     wrapper.appendChild(source_radio);
     wrapper.appendChild(img);
     wrapper.appendChild(destination_radio);
