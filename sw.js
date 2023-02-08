@@ -1,10 +1,10 @@
-var version = '20230105.1327';
+var version = '20230208.1223';
 var cacheName = 'spendior-cache';
 var filesToCache = [
   './index.html',
   './css/style.css',
   './js/main.js',
-  './images/twint_ayelet.png',
+  './images/ayelet_twint.png',
 ];
 
 /* Start the service worker and cache all of the app's content */
