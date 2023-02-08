@@ -58,6 +58,8 @@ window.onload = () => {
              .register('./sw.js');
   }
 
-  document.querySelector('#amount').addEventListener('input', ready);
-  source.addEventListener('input', inputHandler);
+  let input_elements = document.querySelector('input')
+  for (let input_element of input_elements) {
+    input_element.addEventListener('input', ready);
+  }
 }
