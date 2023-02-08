@@ -45,12 +45,16 @@ input {
 }
 
 .button {
-  display: inline; 
-  border: red;
   border-width: 3px;
   border-style: solid;
   border-radius: 11px;
   padding: 3px;
+  display: inline-block;
+  background-color: beige;
+  border-color: cadetblue;
+  margin: 2px 2px 2px 40px;
+  text-decoration: none;
+  color: black;
 }
 
 .currency_box {
@@ -125,11 +129,11 @@ input {
 }
 
 #what {
-  width: 80%;
+  width: 70%;
 }
 
 .text_label {
-  display: inline;
-  width: 10%;
+  display: inline-block;
+  width: 20%;
   text-align: right;
 }
