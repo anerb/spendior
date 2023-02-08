@@ -11,30 +11,38 @@ function ready() {
     destination: "",
     amount: "",
     currency: "",
+    what: "",
     notes: "",
   }
   
-  body.source = document.querySelector('input[name="source"]:checked').value;
-  if (body.souce == "other1") {
-    body.source = document.querySelector("#other_endpoint1").value;
+  // TODO: surround each endpoint with some data for the human-friendly version.
+  source_element = document.querySelector('input[name="source"]:checked');
+  if (source_elment.value == "other1") {
+    source_element = document.querySelector("#other_endpoint1").value;
   }
-  if (body.souce == "other2") {
-    body.source = document.querySelector("#other_endpoint2").value;
+  if (source_element.value == "other2") {
+    source_element = document.querySelector("#other_endpoint2").value;
   }
- 
-  body.destination = document.querySelector('input[name="destination"]:checked').value;
-  if (body.destination == "other1") {
-    body.destination = document.querySelector("#other_endpoint1").value;
+  body.source = source_element.value;
+  document.querySelector('#from_helper').innerHTML = body.source;
+
+  destination_element = document.querySelector('input[name="destination"]:checked');
+  if (destination_elment.value == "other1") {
+    destination_element = document.querySelector("#other_endpoint1").value;
   }
-  if (body.destination == "other2") {
-    body.destination = document.querySelector("#other_endpoint2").value;
+  if (destination_element.value == "other2") {
+    destination_element = document.querySelector("#other_endpoint2").value;
   }
+  body.destination = destination_element.value;
+  document.querySelector('#to_helper').innerHTML = body.destination;
+
   body.currency = document.querySelector('input[name="currency"]:checked').value;
   if (body.currency == "other") {
     body.currency = document.querySelector("#other_currency").value;
   }
   body.amount = document.querySelector("#amount").value;
   body.notes = document.querySelector("#notes").value;
+  body.what = document.querySelector("#what").value;
   
   let body_json = JSON.stringify(body);
   var finalValues = [
