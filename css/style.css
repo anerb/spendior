@@ -82,7 +82,8 @@ input {
 .other_text {
   width: 195px;
   margin: 25px 0px;
-  padding-top: 100px;
+  text-align: center;
+  line-height: 3;
 }
 
 .currency_text {
