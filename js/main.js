@@ -4,6 +4,13 @@ function selectItem(item) {
   item.classList.add('selected');
 }
 
+function postSend() {
+  document.querySelector("#amount").value = "";
+  document.querySelector("#notes").value = "";
+  document.querySelector("#what").value = "";
+  return true;
+}
+
 function ready() {
   console.log("ready");
   let body = {
