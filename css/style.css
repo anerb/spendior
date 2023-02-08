@@ -54,3 +54,7 @@ html,
 #send-email {
   display: none;
 }
+
+.endpoint_radio {
+  transform: translate(-14px, -50px) scale(4);
+}
