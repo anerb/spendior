@@ -13,8 +13,7 @@
 <body class="fullscreen">
   <div class="static_header" >
     amount: <input id="amount" type="number" onchange="ready()" />
-    <div class="button" onclick="ready()">Ready</div>
-    <a id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
+    <a class="button" id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
     <br/>
     what: <input id="what" type="text" />
     <br/>
@@ -32,7 +31,9 @@
   <div class="contents">
   <div class="endpoint-width"/>
   <div class="container">
-  
+
+  <div style="height: 100px"/>
+
   <input class="source_radio" type="radio" name="source" value="other1" checked/>
   <input class="other_text" type="text" id="other_endpoint1"/>
   <input class="destination_radio" type="radio" name="destination" value="other1" checked/>

@@ -44,9 +44,11 @@ function ready() {
   body.notes = document.querySelector("#notes").value;
   body.what = document.querySelector("#what").value;
   
+  subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
+
   let body_json = JSON.stringify(body);
   var finalValues = [
-    'mailto:anerbenartzi+email2sheet@gmail.com?subject=' + encodeURIComponent('This is not a very good description.'),
+    'mailto:anerbenartzi+email2sheet@gmail.com?subject=' + encodeURIComponent(subject),
     'cc=' + encodeURIComponent('"16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw" <anerbenartzi+email2sheet@gmail.com>'),
     'bcc=' + encodeURIComponent('"entries" <anerbenartzi+email2sheet@gmail.com>'),
     'body=' + encodeURIComponent(body_json),
