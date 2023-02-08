@@ -18,20 +18,20 @@ function ready() {
   // TODO: surround each endpoint with some data for the human-friendly version.
   source_element = document.querySelector('input[name="source"]:checked');
   if (source_element.value == "other1") {
-    source_element = document.querySelector("#other_endpoint1").value;
+    source_element = document.querySelector("#other_endpoint1");
   }
   if (source_element.value == "other2") {
-    source_element = document.querySelector("#other_endpoint2").value;
+    source_element = document.querySelector("#other_endpoint2");
   }
   body.source = source_element.value;
   document.querySelector('#from_helper').innerHTML = body.source;
 
   destination_element = document.querySelector('input[name="destination"]:checked');
   if (destination_element.value == "other1") {
-    destination_element = document.querySelector("#other_endpoint1").value;
+    destination_element = document.querySelector("#other_endpoint1");
   }
   if (destination_element.value == "other2") {
-    destination_element = document.querySelector("#other_endpoint2").value;
+    destination_element = document.querySelector("#other_endpoint2");
   }
   body.destination = destination_element.value;
   document.querySelector('#to_helper').innerHTML = body.destination;
