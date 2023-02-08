@@ -66,7 +66,7 @@ window.onload = () => {
              .register('./sw.js');
   }
 
-  let input_elements = document.querySelector('input')
+  let input_elements = document.querySelectorAll('input')
   for (let input_element of input_elements) {
     input_element.addEventListener('input', ready);
   }
