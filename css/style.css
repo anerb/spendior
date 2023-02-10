@@ -85,10 +85,8 @@ input {
 }
 
 .other_text {
-  width: 195px;
-  margin: 25px 0px;
+  width: 100%;
   text-align: center;
-  line-height: 3;
 }
 
 .currency_text {
@@ -119,7 +117,7 @@ input {
 }
 
 .helper {
-  width: 40%;
+  width: 45%;
   text-align: center;
   display: inline;
   margin: 5px;

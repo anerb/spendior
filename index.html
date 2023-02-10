@@ -20,11 +20,12 @@
     <br/>
     <div class="helper_box">
       <div class="helper">
-        <div>FROM:</div>
         <input class="other_text" type="text" id="source_text" value=""/>
       </div>
       <div class="helper">
-        <div>TO:</div>
+        >
+      </div>
+      <div class="helper">
         <input class="other_text" type="text" id="destination_text" value=""/>
       </div>
   </div>  
@@ -37,33 +38,13 @@
 
   <sd-endpoint institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
   <sd-endpoint institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
-  <sd-endpoint institution="ubs_twint" description="Bank of America Visa"></sd-endpoint>
-  <sd-endpoint institution="cash" description="Bank of America Visa"></sd-endpoint>
-
-  <input class="source_radio" type="radio" name="source" value="ayelet_twint"/>
-  <img class="endpoint" src="./images/ayelet_twint.png" alt="Ayelet Twint" />
-  <input class="destination_radio" type="radio" name="destination" value="ayelet_twint"/>
-  <br/>
-
-  <input class="source_radio" type="radio" name="source" value="editte_twint"/>
-  <img class="endpoint" src="./images/editte_twint.png" alt="Editte Twint" />
-  <input class="destination_radio" type="radio" name="destination" value="editte_twint"/>
-  <br/>
-
-  <input class="source_radio" type="radio" name="source" value="migros"/>
-  <img class="endpoint" src="./images/migros.png" alt="Migros" />
-  <input class="destination_radio" type="radio" name="destination" value="migros"/>
-  <br/>
-
-  <input class="source_radio" type="radio" name="source" value="coop"/>
-  <img class="endpoint" src="./images/coop.png" alt="Coop" />
-  <input class="destination_radio" type="radio" name="destination" value="coop"/>
-  <br/>
-
-  <input class="source_radio" type="radio" name="source" value="lidl"/>
-  <img class="endpoint" src="./images/lidl.png" alt="Lidl" />
-  <input class="destination_radio" type="radio" name="destination" value="lidl"/>
-  <br/>
+  <sd-endpoint institution="ubs_twint" description="UBS Twint"></sd-endpoint>
+  <sd-endpoint institution="cash" description="cash"></sd-endpoint>
+  <sd-endpoint institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
+  <sd-endpoint institution="editte_twint" description="Editte Twint"></sd-endpoint>
+  <sd-endpoint institution="migros" description="Migros"></sd-endpoint>
+  <sd-endpoint institution="coop" description="Coop"></sd-endpoint>
+  <sd-endpoint institution="lidl" description="Lidl"></sd-endpoint>
 
   <hr>
     <div class="currency_box">
