@@ -22,26 +22,8 @@ function ready() {
     notes: "",
   }
   
-  // TODO: surround each endpoint with some data for the human-friendly version.
-  source_element = document.querySelector('input[name="source"]:checked');
-  if (source_element.value == "other1") {
-    source_element = document.querySelector("#other_endpoint1");
-  }
-  if (source_element.value == "other2") {
-    source_element = document.querySelector("#other_endpoint2");
-  }
-  body.source = source_element.value;
-  document.querySelector('#from_helper').innerHTML = body.source;
-
-  destination_element = document.querySelector('input[name="destination"]:checked');
-  if (destination_element.value == "other1") {
-    destination_element = document.querySelector("#other_endpoint1");
-  }
-  if (destination_element.value == "other2") {
-    destination_element = document.querySelector("#other_endpoint2");
-  }
-  body.destination = destination_element.value;
-  document.querySelector('#to_helper').innerHTML = body.destination;
+  body.source = document.querySelector("#source_text").value;
+  body.destination = document.querySelector("#destination_text").value;
 
   body.currency = document.querySelector('input[name="currency"]:checked').value;
   if (body.currency == "other") {
@@ -66,6 +48,16 @@ function ready() {
   sendItem.style.color = "black";
 }
 
+function updateSource() {
+  source_value = document.querySelector('input[name="source"]:checked').value;
+  document.querySelector("#source_text").value = source_value;
+}
+
+
+function updateDestination() {
+  destination_value = document.querySelector('input[name="destination"]:checked').value;
+  document.querySelector("#destination_text").value = destination_value;
+}
 
 class Endpoint extends HTMLElement {
   constructor() {
@@ -87,7 +79,8 @@ class Endpoint extends HTMLElement {
     source_radio.setAttribute('type', 'radio');
     source_radio.setAttribute('name', 'source');
     source_radio.setAttribute('value', institution);
-
+    source_radio.addEventListener('input', updateSource);
+  
     const img = document.createElement('img');
     img.setAttribute('class', 'endpoint');
     img.src = './images/' + institution + ".png";
@@ -102,6 +95,7 @@ class Endpoint extends HTMLElement {
     destination_radio.setAttribute('type', 'radio');
     destination_radio.setAttribute('name', 'destination');
     destination_radio.setAttribute('value', institution);
+    destination_radio.addEventListener('input', updateDestination);
 
     // Create some CSS to apply to the shadow dom
     const style = document.createElement('style');

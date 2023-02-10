@@ -21,11 +21,11 @@
     <div class="helper_box">
       <div class="helper">
         <div>FROM:</div>
-        <div id="from_helper"></div>
+        <input class="other_text" type="text" id="source_text" value=""/>
       </div>
       <div class="helper">
         <div>TO:</div>
-        <div id="to_helper"></div>
+        <input class="other_text" type="text" id="destination_text" value=""/>
       </div>
   </div>  
 </div>
@@ -35,23 +35,10 @@
 
   <div style="height: 140px" ></div>
 
-  <input class="source_radio" type="radio" name="source" value="other1" checked style="transform: translate(14px, 0px) scale(4)"/>
-  <input class="other_text" type="text" id="other_endpoint1"/>
-  <input class="destination_radio" type="radio" name="destination" value="other1" checked style="transform: translate(-14px, 0px) scale(4)"/>
-  <br/>
-
   <sd-endpoint institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
-  <sd-endpoint size="small" institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
-
-  <input class="source_radio" type="radio" name="source" value="ubs_twint"/>
-  <img class="endpoint" src="./images/ubs_twint.png" alt="UBS Twint" />
-  <input class="destination_radio" type="radio" name="destination" value="ubs_twint"/>
-  <br/>
-
-  <input class="source_radio" type="radio" name="source" value="cash"/>
-  <img class="endpoint" src="./images/cash.png" alt="cash" />
-  <input class="destination_radio" type="radio" name="destination" value="cash"/>
-  <br/>
+  <sd-endpoint institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
+  <sd-endpoint institution="ubs_twint" description="Bank of America Visa"></sd-endpoint>
+  <sd-endpoint institution="cash" description="Bank of America Visa"></sd-endpoint>
 
   <input class="source_radio" type="radio" name="source" value="ayelet_twint"/>
   <img class="endpoint" src="./images/ayelet_twint.png" alt="Ayelet Twint" />
@@ -76,11 +63,6 @@
   <input class="source_radio" type="radio" name="source" value="lidl"/>
   <img class="endpoint" src="./images/lidl.png" alt="Lidl" />
   <input class="destination_radio" type="radio" name="destination" value="lidl"/>
-  <br/>
-
-  <input class="source_radio" type="radio" name="source" value="other2" style="transform: translate(14px, 0px) scale(4)"/>
-  <input class="other_text" type="text" id="other_endpoint2"/>
-  <input class="destination_radio" type="radio" name="destination" value="other2" style="transform: translate(-14px, 0px) scale(4)"/>
   <br/>
 
   <hr>
