@@ -108,6 +108,19 @@ input {
     margin: 5px;
 }
 
+.static_button {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 999999;
+  background-color: #ffc0cbdb;
+  padding: 10px;
+  border-style: solid;
+  border-width: 3px;
+  border-color: white;
+  margin: 5px;
+}
+
 .helper_box {
   display: flex;
   flex-direction: row;

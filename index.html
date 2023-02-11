@@ -14,7 +14,6 @@
 <body class="fullscreen">
   <div class="static_header" >
     <div class="text_label">amount:</div><input id="amount" type="number" onchange="ready()" />
-    <a class="button" onclick="postSend()" id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
     <br/>
     <div class="text_label">what:</div><input id="what" type="text" />
     <br/>
@@ -28,8 +27,11 @@
       <div class="helper">
         <input class="other_text" type="text" id="destination_text" value=""/>
       </div>
-  </div>  
-</div>
+    </div>  
+  </div>
+  <div class="static_button">
+    <a class="button" onclick="postSend()" id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
+  </div>
   <div class="contents">
   <div class="endpoint-width"/>
   <div class="container">
