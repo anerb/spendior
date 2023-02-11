@@ -13,7 +13,14 @@
 </head>
 <body class="fullscreen">
   <div class="static_header" >
-    <div class="text_label">amount:</div><input id="amount" type="number" onchange="ready()" />
+    <div class="text_label">amount:</div>
+    <input id="amount" type="number" onchange="ready()" />
+    <datalist id="currency_list">
+      <option value="CHF">
+      <option value="USD">
+      <option value="EUR">
+    </datalist>
+    <input type="search" list="currency_list">
     <br/>
     <div class="text_label">what:</div><input id="what" type="text" />
     <br/>
@@ -48,14 +55,6 @@
   <sd-endpoint institution="coop" description="Coop"></sd-endpoint>
   <sd-endpoint institution="lidl" description="Lidl"></sd-endpoint>
 
-  <hr>
-    <div class="currency_box">
-      <div class="currency"><div>CHF</div><div><input type="radio" name="currency" value="CHF" checked/></div></div>
-      <div class="currency"><div>EUR</div><div><input type="radio" name="currency" value="EUR"/></div></div>
-      <div class="currency"><div>USD</div><div><input type="radio" name="currency" value="USD"/></div></div>
-      <div class="currency"><div>GBP</div><div><input type="radio" name="currency" value="GBP"/></div></div>
-      <div class="currency"><div><input class="currency_text" type="text" id="other_currency" size="1"/></div><div><input type="radio" name="currency" value="other"/></div></div>  
-    </div>
   <hr>
   notes: <input id="notes" type="text" />
   <hr>
