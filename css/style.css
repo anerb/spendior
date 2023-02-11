@@ -163,3 +163,7 @@ sd-endpoint[size="small"] .endpoint {
   width: 100px;
   height: 60px;
 }
+
+#currency {
+  width: 80px;
+}

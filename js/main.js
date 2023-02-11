@@ -24,11 +24,7 @@ function ready() {
   
   body.source = document.querySelector("#source_text").value;
   body.destination = document.querySelector("#destination_text").value;
-
-  body.currency = document.querySelector('input[name="currency"]:checked').value;
-  if (body.currency == "other") {
-    body.currency = document.querySelector("#other_currency").value;
-  }
+  body.currency = document.querySelector('#currency').value;
   body.amount = document.querySelector("#amount").value;
   body.notes = document.querySelector("#notes").value;
   body.what = document.querySelector("#what").value;

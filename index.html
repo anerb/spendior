@@ -13,16 +13,15 @@
 </head>
 <body class="fullscreen">
   <div class="static_header" >
-    <div class="text_label">amount:</div>
-    <input id="amount" type="number" onchange="ready()" />
+    <input id="amount" type="number" onchange="ready()" placeholder="0.00" />
     <datalist id="currency_list">
       <option value="CHF">
       <option value="USD">
       <option value="EUR">
     </datalist>
-    <input type="search" list="currency_list">
+    <input type="search" list="currency_list" id="currency" value="CHF">
     <br/>
-    <div class="text_label">what:</div><input id="what" type="text" />
+    <div class="text_label">what:</div><input id="what" type="text" placeholder="description"/>
     <br/>
     <div class="helper_box">
       <div class="helper">
