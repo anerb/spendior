@@ -145,6 +145,16 @@ function gotoPage1() {
   document.querySelector(".page1").style.display = "block";
 }
 
+function gotoPage2() {
+  document.querySelector(".page1").style.display = "none";
+  document.querySelector(".page2").style.display = "block";
+}
+
+function gotoPage3() {
+  document.querySelector(".page2").style.display = "none";
+  document.querySelector(".page3").style.display = "block";
+}
+
 window.onload = () => {
   'use strict';
 

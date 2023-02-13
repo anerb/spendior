@@ -12,7 +12,7 @@
   <script src="./js/main.js"></script>
 </head>
 <body class="fullscreen">
-  <div class="static_header" >
+  <div class="static_header">
     <a class="button" onclick="postSend()" id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
   </div>
   <div class="contents">
@@ -29,7 +29,7 @@
     <div class="page1">
       from:
       <sd-endpoint institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
-      <sd-endpoint institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
+      <sd-endpoint institution="bofa_visa" description="Bank of America Visa" onselect="gotoPage2()"></sd-endpoint>
       <sd-endpoint institution="ubs_twint" description="UBS Twint"></sd-endpoint>
       <sd-endpoint institution="cash" description="cash"></sd-endpoint>
       <sd-endpoint institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
@@ -46,7 +46,7 @@
       <sd-endpoint institution="cash" description="cash"></sd-endpoint>
       <sd-endpoint institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
       <sd-endpoint institution="editte_twint" description="Editte Twint"></sd-endpoint>
-      <sd-endpoint institution="migros" description="Migros"></sd-endpoint>
+      <sd-endpoint institution="migros" description="Migros"  onselect="gotoPage3()"></sd-endpoint>
       <sd-endpoint institution="coop" description="Coop"></sd-endpoint>
       <sd-endpoint institution="lidl" description="Lidl"></sd-endpoint>    </div>
     <div class="page3">
