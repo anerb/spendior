@@ -1,4 +1,5 @@
-@import url("./common.js");
+// import { helperFunction } from './helper.js';
+
 
 function selectItem(item) {
   item.classList.add('selected');
