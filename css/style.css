@@ -137,6 +137,11 @@ input {
   width: 30%;
 }
 
+#dummypage0 {
+  width: 1px;
+  height: 1px;
+}
+
 #what {
   width: 70%;
   margin-top: 10px;
