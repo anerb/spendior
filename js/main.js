@@ -22,12 +22,12 @@ function ready() {
     notes: "",
   }
   
-  body.source = document.querySelector("#source_text").value;
-  body.destination = document.querySelector("#destination_text").value;
+//  body.source = document.querySelector("#source_text").value;
+//  body.destination = document.querySelector("#destination_text").value;
   body.currency = document.querySelector('#currency').value;
   body.amount = document.querySelector("#amount").value;
-  body.notes = document.querySelector("#notes").value;
-  body.what = document.querySelector("#what").value;
+//  body.notes = document.querySelector("#notes").value;
+//  body.what = document.querySelector("#what").value;
   
   subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
 
