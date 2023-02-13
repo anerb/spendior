@@ -13,30 +13,9 @@
 </head>
 <body class="fullscreen">
   <div class="static_header" >
-    <input id="amount" type="number" onchange="ready()" placeholder="0.00" />
-    <datalist id="currency_list">
-      <option value="CHF">
-      <option value="USD">
-      <option value="EUR">
-    </datalist>
-    <input type="search" list="currency_list" id="currency" value="CHF" placeholder="ABC">
-    <br/>
-    <div class="text_label">what:</div><input id="what" type="text" value="" placeholder="description"/>
-    <br/>
-    <div class="helper_box">
-      <div class="helper">
-        <input class="other_text" type="text" id="source_text" value="" placeholder="source"/>
-      </div>
-      <div class="helper" style="width:5%">
-        >
-      </div>
-      <div class="helper">
-        <input class="other_text" type="text" id="destination_text" value="" placeholder="store or destination"/>
-      </div>
-    </div>  
+    <a class="button" onclick="postSend()" id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
   </div>
   <div class="static_button">
-    <a class="button" onclick="postSend()" id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
   </div>
   <div class="contents">
   <div class="endpoint-width"/>

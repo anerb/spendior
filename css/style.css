@@ -97,7 +97,7 @@ input {
 
 .static_header {
   position: fixed;
-  bottom: 0px;
+  top: 0;
   z-index: 99999;
   background-color: #ffc0cbdb;
   padding: 10px;
