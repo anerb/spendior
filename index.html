@@ -15,28 +15,43 @@
   <div class="static_header" >
     <a class="button" onclick="postSend()" id="send-email" href="mailto:anerbenartzi+email2sheet@gmail.com">Send</a>
   </div>
-  <div class="static_button">
-  </div>
   <div class="contents">
-  <div class="endpoint-width"/>
-  <div class="container">
-
-  <div style="height: 140px" ></div>
-
-  <sd-endpoint institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
-  <sd-endpoint institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
-  <sd-endpoint institution="ubs_twint" description="UBS Twint"></sd-endpoint>
-  <sd-endpoint institution="cash" description="cash"></sd-endpoint>
-  <sd-endpoint institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
-  <sd-endpoint institution="editte_twint" description="Editte Twint"></sd-endpoint>
-  <sd-endpoint institution="migros" description="Migros"></sd-endpoint>
-  <sd-endpoint institution="coop" description="Coop"></sd-endpoint>
-  <sd-endpoint institution="lidl" description="Lidl"></sd-endpoint>
-
-  <hr>
-  notes: <input id="notes" type="text" />
-  <hr>
-  </div> 
-  <div id="log">nothing yet.</div>
+    <div class="page0">
+    <input id="amount" type="number" onchange="ready()" placeholder="0.00" autofocus onblur="gotoPage1()"/>
+    <datalist id="currency_list">
+      <option value="CHF">
+      <option value="USD">
+      <option value="EUR">
+    </datalist>
+    <input type="search" list="currency_list" id="currency" value="CHF" placeholder="ABC">
+    </div>
+    <div class="page1">
+      from:
+      <sd-endpoint institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
+      <sd-endpoint institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
+      <sd-endpoint institution="ubs_twint" description="UBS Twint"></sd-endpoint>
+      <sd-endpoint institution="cash" description="cash"></sd-endpoint>
+      <sd-endpoint institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
+      <sd-endpoint institution="editte_twint" description="Editte Twint"></sd-endpoint>
+      <sd-endpoint institution="migros" description="Migros"></sd-endpoint>
+      <sd-endpoint institution="coop" description="Coop"></sd-endpoint>
+      <sd-endpoint institution="lidl" description="Lidl"></sd-endpoint>
+    </div>
+    <div class="page2">
+      to:
+      <sd-endpoint institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
+      <sd-endpoint institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
+      <sd-endpoint institution="ubs_twint" description="UBS Twint"></sd-endpoint>
+      <sd-endpoint institution="cash" description="cash"></sd-endpoint>
+      <sd-endpoint institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
+      <sd-endpoint institution="editte_twint" description="Editte Twint"></sd-endpoint>
+      <sd-endpoint institution="migros" description="Migros"></sd-endpoint>
+      <sd-endpoint institution="coop" description="Coop"></sd-endpoint>
+      <sd-endpoint institution="lidl" description="Lidl"></sd-endpoint>    </div>
+    <div class="page3">
+      what:
+      <div class="text_label">what:</div><input id="what" type="text" value="" placeholder="description"/>
+    </div>
+    </div> 
 </body>
 </html>
