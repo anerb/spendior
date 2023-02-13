@@ -139,6 +139,12 @@ function generateEndpoints() {
 
 }
 
+
+function gotoPage1() {
+  document.querySelector(".page0").style.display = "none";
+  document.querySelector(".page1").style.display = "block";
+}
+
 window.onload = () => {
   'use strict';
 
