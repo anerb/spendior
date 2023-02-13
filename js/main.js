@@ -1,4 +1,4 @@
-
+@import url("./common.js");
 
 function selectItem(item) {
   item.classList.add('selected');
