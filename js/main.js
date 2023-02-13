@@ -23,6 +23,17 @@ function ready() {
     notes: "",
   }
   
+  try {
+    body.source = document.querySelector('.page1 .selected').alt;
+  } catch(e) {
+    // pass
+  }
+  try {
+    body.destination = document.querySelector('.page2 .selected').alt;
+  } catch(e) {
+    // pass
+  }
+  
 //  body.source = document.querySelector("#source_text").value;
 //  body.destination = document.querySelector("#destination_text").value;
   body.currency = document.querySelector('#currency').value;
@@ -56,6 +67,19 @@ function updateDestination() {
   document.querySelector("#destination_text").value = destination_value;
 }
 
+class setSelected(event) {
+  event.target.classList.add('selected');
+  // HACK
+  let page1 = document.querySelector('.page1 .selected');
+  let page2 = document.querySelector('.page2 .selected');
+  if (event.target == page1) {
+    gotoPage2();
+  }
+  if (event.target == page2) {
+    gotoPage3();
+  }
+}
+
 class Endpoint extends HTMLElement {
   constructor() {
     // Always call super first in constructor
@@ -82,6 +106,7 @@ class Endpoint extends HTMLElement {
     img.setAttribute('class', 'endpoint');
     img.src = './images/' + institution + ".png";
     img.setAttribute('alt', description);
+    img.addEventListener('click', setSelected);
 
     const label = document.createElement('div');
     label.innerHTML = description;
