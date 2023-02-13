@@ -67,7 +67,7 @@ function updateDestination() {
   document.querySelector("#destination_text").value = destination_value;
 }
 
-class setSelected(event) {
+function setSelected(event) {
   event.target.classList.add('selected');
   // HACK
   let page1 = document.querySelector('.page1 .selected');
