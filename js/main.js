@@ -196,4 +196,7 @@ window.onload = () => {
   for (let input_element of input_elements) {
     input_element.addEventListener('input', ready);
   }
+
+  document.querySelector('#amount').focus();
+  document.querySelector('#amount').click();
 }
