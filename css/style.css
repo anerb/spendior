@@ -1,187 +1,187 @@
 body {
-/*  font-family: cursive;*/
-  font-size:larger;
-  background: pink;
-  background-image: url('../images/pinkdior.jpg');
-}
-
-/* Make content area fill the entire browser window */
-html,
-.fullscreen {
-  display: flex;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
-.contents {
-  width: 100%;
-  text-align: center;
-  margin: 100px 0 0 0;
-}
-
-input {
-  font-family: cursive;
-  font-size: larger;
-}
-
-/* Center the content in the browser window */
-.container {
-  margin: auto;
-  text-align: center;
-}
-
-.title {
-  font-size: 3rem;
-}
-
-.selected {
-  padding: 2px;
-  background: blue;
-}
-
-.endpoint {
-  width: 200px;
-  height: 120px;
-}
-
-.button {
-  border-width: 3px;
-  border-style: solid;
-  border-radius: 11px;
-  padding: 3px;
-  display: inline-block;
-  background-color: beige;
-  border-color: cadetblue;
-  margin: 2px 2px 2px 40px;
-  text-decoration: none;
-  color: black;
-}
-
-.currency_box {
-  display: flex;
-  margin: auto;
-  width: 50%;
-}
-
-.currency {
-  display: inline;
-  margin: 5px;
-}
-
-.vendor {
-  display: inline;
-}
-
-#send-email {
-  color: white;
-}
-
-.source_radio {
-  transform: translate(14px, -50px) scale(4);
-}
-.destination_radio {
-  transform: translate(-14px, -50px) scale(4);
-}
-
-.other_text {
-  width: 100%;
-  text-align: center;
-}
-
-.currency_text {
-  height: 16px;
-  width: 38px;
-  font-size: medium;
-}
-
-.static_header {
-  position: fixed;
-  top: 0;
-  z-index: 99999;
-  background-color: #ffc0cbdb;
-  padding: 10px;
-  width: calc(100% - 36px);
-  border-style: solid;
+  /*  font-family: cursive;*/
+    font-size:larger;
+    background: pink;
+    background-image: url('../images/pinkdior.jpg');
+  }
+  
+  /* Make content area fill the entire browser window */
+  html,
+  .fullscreen {
+    display: flex;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .contents {
+    width: 100%;
+    text-align: center;
+  }
+  
+  input {
+    font-family: cursive;
+    font-size: larger;
+  }
+  
+  /* Center the content in the browser window */
+  .container {
+    margin: auto;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 3rem;
+  }
+  
+  .selected {
+    padding: 2px;
+    background: blue;
+  }
+  
+  .endpoint {
+    width: 200px;
+    height: 120px;
+  }
+  
+  .button {
     border-width: 3px;
-    border-color: white;
+    border-style: solid;
+    border-radius: 11px;
+    padding: 3px;
+    display: inline-block;
+    background-color: beige;
+    border-color: cadetblue;
+    margin: 2px 2px 2px 40px;
+    text-decoration: none;
+    color: black;
+  }
+  
+  .currency_box {
+    display: flex;
+    margin: auto;
+    width: 50%;
+  }
+  
+  .currency {
+    display: inline;
     margin: 5px;
-}
-
-.static_button {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  z-index: 999999;
-  background-color: #00000000;
-  padding: 10px;
-}
-
-.helper_box {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.helper {
-  width: 40%;
-  text-align: center;
-  display: inline;
-  margin: 5px;
-}
-
-#amount {
-  width: 30%;
-}
-
-#dummypage0 {
-  width: 1px;
-  height: 1px;
-}
-
-#what {
-  width: 70%;
-  margin-top: 10px;
-}
-
-.text_label {
-  display: inline-block;
-  width: 20%;
-  text-align: right;
-}
-
-.endpoint_label {
-  display: none;
-}
-
-sd-endpoint[size="small"] .endpoint_label {
-  display: inline-block;
-}
-
-sd-endpoint[size="small"] .endpoint {
-  width: 100px;
-  height: 60px;
-}
-
-#currency {
-  width: 120px;
-}
-
-.page0 {
-  display: block
-}
-
-.page1 {
-  display: none
-}
-
-.page2 {
-  display: none
-}
-
-.page3 {
-  display: none
-}
+  }
+  
+  .vendor {
+    display: inline;
+  }
+  
+  #send-email {
+    color: white;
+  }
+  
+  .source_radio {
+    transform: translate(14px, -50px) scale(4);
+  }
+  .destination_radio {
+    transform: translate(-14px, -50px) scale(4);
+  }
+  
+  .other_text {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .currency_text {
+    height: 16px;
+    width: 38px;
+    font-size: medium;
+  }
+  
+  .static_header {
+    position: fixed;
+    top: ;
+    z-index: 99999;
+    background-color: #ffc0cbdb;
+    padding: 10px;
+    width: calc(100% - 36px);
+    border-style: solid;
+      border-width: 3px;
+      border-color: white;
+      margin: 5px;
+  }
+  
+  .static_button {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 999999;
+    background-color: #00000000;
+    padding: 10px;
+  }
+  
+  .helper_box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .helper {
+    width: 40%;
+    text-align: center;
+    display: inline;
+    margin: 5px;
+  }
+  
+  #amount {
+    width: 30%;
+  }
+  
+  #what {
+    width: 70%;
+    margin-top: 10px;
+  }
+  
+  .text_label {
+    display: inline-block;
+    width: 20%;
+    text-align: right;
+  }
+  
+  .endpoint_label {
+    display: none;
+  }
+  
+  sd-endpoint[size="small"] .endpoint_label {
+    display: inline-block;
+  }
+  
+  sd-endpoint[size="small"] .endpoint {
+    width: 100px;
+    height: 60px;
+  }
+  
+  #currency {
+    width: 120px;
+  }
+  
+  .keypad {
+    height: 184px;
+  }
+  
+  .keyrow {
+    height: 22%;
+    margin: 8px;
+  }
+  
+  .key {
+    border-radius: 8px;
+    display: inline-grid;
+    border: black;
+    border-style: solid;
+    width: 30%;
+    height: 100%;
+    text-align: center;
+    align-content: center;
+    margin: 2px;
+    font-size: xx-large;
+    background: white;}

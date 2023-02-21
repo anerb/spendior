@@ -1,4 +1,13 @@
-// import { helperFunction } from './helper.js';
+// @import url("./currency.js");
+
+
+function reclick(e) {
+  e.click()
+};
+
+function refocus(e) {
+  e.focus()
+};
 
 
 function selectItem(item) {
@@ -23,23 +32,12 @@ function ready() {
     notes: "",
   }
   
-  try {
-    body.source = document.querySelector('.page1 .selected').alt;
-  } catch(e) {
-    // pass
-  }
-  try {
-    body.destination = document.querySelector('.page2 .selected').alt;
-  } catch(e) {
-    // pass
-  }
-  
-//  body.source = document.querySelector("#source_text").value;
-//  body.destination = document.querySelector("#destination_text").value;
+  body.source = document.querySelector("#source_text").value;
+  body.destination = document.querySelector("#destination_text").value;
   body.currency = document.querySelector('#currency').value;
   body.amount = document.querySelector("#amount").value;
-//  body.notes = document.querySelector("#notes").value;
-//  body.what = document.querySelector("#what").value;
+  body.notes = document.querySelector("#notes").value;
+  body.what = document.querySelector("#what").value;
   
   subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
 
@@ -67,18 +65,6 @@ function updateDestination() {
   document.querySelector("#destination_text").value = destination_value;
 }
 
-function setSelected(event) {
-  event.target.classList.add('selected');
-  // HACK
-  let page1 = document.querySelector('.page1 .selected');
-  let page2 = document.querySelector('.page2 .selected');
-  if (event.target == page1) {
-    gotoPage2();
-  }
-  if (event.target == page2) {
-    gotoPage3();
-  }
-}
 
 class Endpoint extends HTMLElement {
   constructor() {
@@ -106,7 +92,6 @@ class Endpoint extends HTMLElement {
     img.setAttribute('class', 'endpoint');
     img.src = './images/' + institution + ".png";
     img.setAttribute('alt', description);
-    img.addEventListener('click', setSelected);
 
     const label = document.createElement('div');
     label.innerHTML = description;
@@ -164,20 +149,18 @@ function generateEndpoints() {
 
 }
 
-
-function gotoPage1() {
-  document.querySelector(".page0").style.display = "none";
-  document.querySelector(".page1").style.display = "block";
-}
-
-function gotoPage2() {
-  document.querySelector(".page1").style.display = "none";
-  document.querySelector(".page2").style.display = "block";
-}
-
-function gotoPage3() {
-  document.querySelector(".page2").style.display = "none";
-  document.querySelector(".page3").style.display = "block";
+function keyclick(e) {
+  let amount = document.querySelector("#amount");
+  let click_value = e.target.innerHTML;
+  if (click_value == "X") {
+    amount.innerHTML = "0.00";
+  } else {
+    if (amount.innerHTML == "0.00") {
+      amount.innerHTML = "";
+    }
+    amount.innerHTML += click_value;
+  }
+  ready();
 }
 
 window.onload = () => {
@@ -196,7 +179,8 @@ window.onload = () => {
   for (let input_element of input_elements) {
     input_element.addEventListener('input', ready);
   }
-
-  document.querySelector('#amount').focus();
-  document.querySelector('#amount').click();
+  let key_elements = document.querySelectorAll('.key')
+  for (let key_element of key_elements) {
+    key_element.addEventListener('click', keyclick);
+  }
 }
