@@ -34,7 +34,7 @@ function ready() {
   
   body.source = document.querySelector("#source_text").value;
   body.destination = document.querySelector("#destination_text").value;
-  body.currency = document.querySelector('#currency').value;
+  body.currency = document.querySelector('.currency_key.selected').innerHTML;
   body.amount = document.querySelector("#amount").value;
   body.notes = document.querySelector("#notes").value;
   body.what = document.querySelector("#what").value;
@@ -163,6 +163,15 @@ function keyclick(e) {
   ready();
 }
 
+function currencykeyclick(e) {
+  let currency_key_elements = document.querySelectorAll('.currency_key')
+  for (let currency_key_element of currency_key_elements) {
+    currency_key_element.classList.remove('selected');
+  }
+  e.target.classList.add('selected');
+  ready();
+}
+
 window.onload = () => {
   'use strict';
 
@@ -182,5 +191,10 @@ window.onload = () => {
   let key_elements = document.querySelectorAll('.key')
   for (let key_element of key_elements) {
     key_element.addEventListener('click', keyclick);
+  }
+
+  let currency_key_elements = document.querySelectorAll('.currency_key')
+  for (let currency_key_element of currency_key_elements) {
+    currency_key_element.addEventListener('click', currencykeyclick);
   }
 }

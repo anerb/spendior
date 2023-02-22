@@ -13,15 +13,10 @@
 </head>
 <body class="fullscreen">
   <div class="static_header" >
+    <div class="currency_key selected">Fr.</div><div class="currency_key">$</div><div class="currency_key">€</div><div class="currency_key">£</div><div class="currency_key">?</div>
     <span id="amount">0.00</span>
-    <datalist id="currency_list">
-      <option value="CHF">
-      <option value="USD">
-      <option value="EUR">
-    </datalist>
-    <input type="search" list="currency_list" id="currency" placeholder="CHF">
     <br/>
-    <div class="text_label">what:</div><input id="what" type="text" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
+    <input id="what" type="search" enterkeyhint="send" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
     <br/>
     <div class="helper_box">
       <div class="helper">
