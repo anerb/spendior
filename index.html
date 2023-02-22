@@ -13,10 +13,18 @@
 </head>
 <body class="fullscreen">
   <div class="static_header" >
-    <div class="currency_key selected">Fr.</div><div class="currency_key">$</div><div class="currency_key">€</div><div class="currency_key">£</div><div class="currency_key">?</div>
+    <select id="currency" name="currency">
+      <option value="CHF" selected>🇨🇭 Fr.</option>
+      <option value="USD">🇺🇸 $</option>
+      <option value="EUR">🇪🇺 €</option>
+      <option value="GBP">🇬🇧 £</option>
+      <option value="OTH">🏴‍☠️ ?</option>
+    </select>
     <span id="amount">0.00</span>
     <br/>
+    <form action="mailto:foo@example.com"  method="get" enctype="text/plain">
     <input id="what" type="search" enterkeyhint="send" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
+    </form>
     <br/>
     <div class="helper_box">
       <div class="helper">
@@ -60,5 +68,6 @@
   <hr>
   </div> 
   <div id="log">nothing yet.</div>
+  <pre id="console-log"></pre>
 </body>
 </html>

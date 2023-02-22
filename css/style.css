@@ -164,7 +164,11 @@ body {
   }
   
   #currency {
-    width: 120px;
+    font-size: 6dvw;
+    width: 3em;
+    appearance: none;
+    border: none;
+    outline: none;
   }
   
   .keypad {
@@ -195,7 +199,7 @@ body {
     display: inline-grid;
     border: gray;
     border-style: solid;
-    width: 2em;
+    width: 1em;
     height: 2em;
     text-align: center;
     align-content: center;
