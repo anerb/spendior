@@ -182,28 +182,11 @@ body {
   }
   
   .keypad {
-    height: 184px;
   }
   
   .keyrow {
-    height: 22%;
-    margin: 8px;
   }
   
-  .key {
-    border-radius: 8px;
-    display: inline-grid;
-    border: black;
-    border-style: solid;
-    width: 30%;
-    height: 100%;
-    text-align: center;
-    align-content: center;
-    margin: 2px;
-    font-size: xx-large;
-    background: white;
-  }
-
   .currency_key {
     border-radius: 8px;
     display: inline-grid;
@@ -223,8 +206,116 @@ body {
     border-style: solid;
   }
 
+.clock {
+  width: 10dvw;
+  height: 10dvw;
+  position: relative;
+  background-color: blue;
+}
+
+.clock .hour{
+  position: absolute;
+}
+
+:root {
+  --cos_0: 1;
+  --cos_1: 0.866025;
+  --cos_2: 0.5;
+  --cos_3: 0;
+  --cos_4: -0.5;
+  --cos_5: -0.866025;
+  --cos_6: -1;
+  --cos_7: -0.866025;
+  --cos_8: -0.5;
+  --cos_9: 0;
+  --cos_10: 0.5;
+  --cos_11: 0.866025;
+  --sin_0: 0;
+  --sin_1: 0.5;
+  --sin_2: 0.866025;
+  --sin_3: 1;
+  --sin_4: 0.866025;
+  --sin_5: 0.5;
+  --sin_6: 0;
+  --sin_7: -0.5;
+  --sin_8: -0.866025;
+  --sin_9: -1;
+  --sin_10: -0.866025;
+  --sin_11: -0.5;
+  --radius: 24;
+  --outer_radius: 24;
+  --offset: 1;
+}
+
+.key {
+  border-radius: 50%;
+  display: inline-grid;
+  border: black;
+  border-style: solid;
+  width: calc(1dvw * (var(--radius) * 0.5 + var(--offset)));
+  height: calc(1dvw * (var(--radius) * 0.5 + var(--offset)));
+  text-align: center;
+  align-content: center;
+  margin: 2px;
+  font-size: calc(1dvw * var(--radius) * 0.25);
+  background: white;
+}
 
 
+
+._center {
+  left: 5em;
+  top: 5em;
+}
+
+._0 {
+  left: calc((1dvw * var(--cos_0) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_0) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._1 {
+  left: calc((1dvw * var(--cos_1) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_1) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._2 {
+  left: calc((1dvw * var(--cos_2) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_2) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._3 {
+  left: calc((1dvw * var(--cos_3) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_3) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._4 {
+  left: calc((1dvw * var(--cos_4) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_4) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._5 {
+  left: calc((1dvw * var(--cos_5) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_5) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._6 {
+  left: calc((1dvw * var(--cos_6) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_6) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._7 {
+  left: calc((1dvw * var(--cos_7) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_7) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._8 {
+  left: calc((1dvw * var(--cos_8) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_8) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._9 {
+  left: calc((1dvw * var(--cos_9) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_9) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._10 {
+  left: calc((1dvw * var(--cos_10) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_10) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
+._11 {
+  left: calc((1dvw * var(--cos_11) * var(--radius)) + (1dvw * var(--outer_radius)));
+  top: calc((1dvw * var(--sin_11) * var(--radius)) + (1dvw * var(--outer_radius)));
+}
 
 
 
