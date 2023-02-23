@@ -50,8 +50,8 @@ body {
   }
   
   .endpoint {
-    width: 200px;
-    height: 120px;
+    width: 40dvw;
+    height: 24dvw;
   }
   
   .button {
@@ -347,14 +347,8 @@ body,
 .container {
   display: flex;
   overflow: auto;
-  outline: 1px dashed lightgray;
   flex: none;
-}
-
-
-.container.y {
-  width: 256px;
-  height: 256px;
+  height: 40dvw;
   flex-flow: column nowrap;
 }
 /* scroll-snap */
@@ -367,17 +361,6 @@ body,
   text-align: center;
   scroll-snap-align: center;
   flex: none;
-}
-/*
-.y.container > .slot {
-  line-height: 256px;
-  font-size: 128px;
-  width: 256px;
-  height: 100%;
-}
-*/
-.y.container > .slot {
-  line-height: 50dvw;
 }
 
 form {
