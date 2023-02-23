@@ -207,6 +207,7 @@ body {
   }
 
 .clock {
+  display: none;
   width: 10dvw;
   height: 10dvw;
   position: relative;
@@ -242,9 +243,9 @@ body {
   --sin_9: -1;
   --sin_10: -0.866025;
   --sin_11: -0.5;
-  --radius: 24;
-  --outer_radius: 24;
-  --offset: 1;
+  --radius: 41;
+  --outer_radius: 37;
+  --offset: -5.5;
 }
 
 .key {
@@ -259,8 +260,14 @@ body {
   margin: 2px;
   font-size: calc(1dvw * var(--radius) * 0.25);
   background: white;
+  vertical-align: bottom;
 }
 
+.keypad_clear {
+  font-size: calc(1dvw * var(--radius) * 0.01 * 18);
+  -webkit-text-stroke: 1px;
+  -webkit-text-fill-color: transparent;
+}
 
 
 ._center {
@@ -361,10 +368,20 @@ body,
   scroll-snap-align: center;
   flex: none;
 }
-
+/*
 .y.container > .slot {
   line-height: 256px;
   font-size: 128px;
   width: 256px;
   height: 100%;
+}
+*/
+.y.container > .slot {
+  line-height: 50dvw;
+}
+
+form {
+  margin: 0px;
+  padding: 0px;
+  display: inline;
 }

@@ -154,7 +154,7 @@ function generateEndpoints() {
 function keyclick(e) {
   let amount = document.querySelector("#amount");
   let click_value = e.target.innerHTML;
-  if (click_value == "X") {
+  if (click_value == "0.00") {
     amount.innerHTML = "0.00";
   } else {
     if (amount.innerHTML == "0.00") {
