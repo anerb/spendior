@@ -1,70 +1,34 @@
+:root {
+  --radius: 30;
+  --offset: 0;
+}
 
 
-
-
+html {
+  height: 50dvh;
+}
 
 body {
-  /*  font-family: cursive;*/
-    font-size:larger;
+    font-size:12dvw;
     background: pink;
     background-image: url('../images/pinkdior.jpg');
-    width: 90dvw;
-    height: 90dvh;
   }
   
-  /* Make content area fill the entire browser window */
-  html,
   .fullscreen {
-    display: flex;
-    height: 100%;
+    display: block;
+    height: 50dvh;
     margin: 0;
     padding: 0;
-    width: 100%;
-  }
-  
-  .contents {
-    width: 100%;
-    text-align: center;
+    width: 100dvw;
   }
   
   input {
-    font-family: cursive;
-    font-size: larger;
-  }
-  
-  /* Center the content in the browser window */
-  /*
-  .container {
-    margin: auto;
-    text-align: center;
-  }
-  */
-
-  .title {
-    font-size: 3rem;
-  }
-  
-  .selected {
-    padding: 2px;
-    background: blue;
+    font-size: 6dvw;
   }
   
   .endpoint {
     width: 40dvw;
     height: 24dvw;
-  }
-  
-  .button {
-    border-width: 3px;
-    border-style: solid;
-    border-radius: 11px;
-    padding: 3px;
-    display: inline-block;
-    background-color: beige;
-    border-color: cadetblue;
-    margin: 2px 2px 2px 40px;
-    text-decoration: none;
-    color: black;
   }
   
   .currency_box {
@@ -73,30 +37,6 @@ body {
     width: 50%;
   }
   
-  .currency {
-    display: inline;
-    margin: 5px;
-  }
-  
-  .vendor {
-    display: inline;
-  }
-  
-  #send-email {
-    color: white;
-  }
-  
-  .source_radio {
-    transform: translate(14px, -50px) scale(4);
-  }
-  .destination_radio {
-    transform: translate(-14px, -50px) scale(4);
-  }
-  
-  .other_text {
-    width: 100%;
-    text-align: center;
-  }
   
   .currency_text {
     height: 16px;
@@ -106,74 +46,54 @@ body {
   
   .static_header {
     position: fixed;
-    top: ;
+    bottom: 0dvw;
     z-index: 99999;
     background-color: #ffc0cbdb;
     padding: 10px;
-    width: calc(100% - 36px);
+    width: 90dvw;
+    height: 90dvw;
     border-style: solid;
       border-width: 3px;
       border-color: white;
       margin: 5px;
   }
   
-  .static_button {
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 999999;
-    background-color: #00000000;
-    padding: 10px;
+
+  #source {
+    position: absolute;
+    bottom: 30dvw;
+    left: 0dvw;
   }
-  
-  .helper_box {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    width: 100%;
+
+  #destination{
+    position: absolute;
+    bottom: 0dvw;
+    left: 0dvw;
   }
-  
-  /*
-  .helper {
-    width: 40%;
-    height: 5em;
-    text-align: center;
-    display: inline-block;
-    margin: 5px;
-  }
-  */
 
   #amount {
-    width: 30%;
-    font-size: x-large;
+    position: absolute;
+    top: 25dvw;
+    left: 19dvw;
+    width: 20dvw;
+    font-size: 12dvw;
   }
   
   #what {
-    width: 70%;
-    margin-top: 10px;
-  }
-  
-  .text_label {
-    display: inline-block;
-    width: 20%;
-    text-align: right;
+    position: absolute;
+    bottom: 0dvw;
+    left: 2dvw;
+    width: 90dvw;
   }
   
   .endpoint_label {
     display: none;
   }
   
-  sd-endpoint[size="small"] .endpoint_label {
-    display: inline-block;
-  }
-  
-  sd-endpoint[size="small"] .endpoint {
-    width: 100px;
-    height: 60px;
-  }
-  
   #currency {
+    position: absolute;
+    top: 30dvw;
+    left: 0dvw;
     font-size: 6dvw;
     width: 3em;
     appearance: none;
@@ -181,73 +101,12 @@ body {
     outline: none;
   }
   
-  .keypad {
+  #amount_keypad {
+    position: absolute;
+    bottom: 0dvw;
+    right: 0dvw;
   }
   
-  .keyrow {
-  }
-  
-  .currency_key {
-    border-radius: 8px;
-    display: inline-grid;
-    border: gray;
-    border-style: solid;
-    width: 1em;
-    height: 2em;
-    text-align: center;
-    align-content: center;
-    margin: 2px;
-    font-size: large;
-    background: white;
-  }
-
-  .selected {
-    border: black;
-    border-style: solid;
-  }
-
-.clock {
-  display: none;
-  width: 10dvw;
-  height: 10dvw;
-  position: relative;
-  background-color: blue;
-}
-
-.clock .hour{
-  position: absolute;
-}
-
-:root {
-  --cos_0: 1;
-  --cos_1: 0.866025;
-  --cos_2: 0.5;
-  --cos_3: 0;
-  --cos_4: -0.5;
-  --cos_5: -0.866025;
-  --cos_6: -1;
-  --cos_7: -0.866025;
-  --cos_8: -0.5;
-  --cos_9: 0;
-  --cos_10: 0.5;
-  --cos_11: 0.866025;
-  --sin_0: 0;
-  --sin_1: 0.5;
-  --sin_2: 0.866025;
-  --sin_3: 1;
-  --sin_4: 0.866025;
-  --sin_5: 0.5;
-  --sin_6: 0;
-  --sin_7: -0.5;
-  --sin_8: -0.866025;
-  --sin_9: -1;
-  --sin_10: -0.866025;
-  --sin_11: -0.5;
-  --radius: 41;
-  --outer_radius: 37;
-  --offset: -5.5;
-}
-
 .key {
   border-radius: 50%;
   display: inline-grid;
@@ -267,97 +126,19 @@ body {
   font-size: calc(1dvw * var(--radius) * 0.01 * 18);
   -webkit-text-stroke: 1px;
   -webkit-text-fill-color: transparent;
+  border-radius: 30%;
 }
 
-
-._center {
-  left: 5em;
-  top: 5em;
-}
-
-._0 {
-  left: calc((1dvw * var(--cos_0) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_0) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._1 {
-  left: calc((1dvw * var(--cos_1) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_1) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._2 {
-  left: calc((1dvw * var(--cos_2) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_2) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._3 {
-  left: calc((1dvw * var(--cos_3) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_3) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._4 {
-  left: calc((1dvw * var(--cos_4) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_4) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._5 {
-  left: calc((1dvw * var(--cos_5) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_5) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._6 {
-  left: calc((1dvw * var(--cos_6) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_6) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._7 {
-  left: calc((1dvw * var(--cos_7) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_7) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._8 {
-  left: calc((1dvw * var(--cos_8) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_8) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._9 {
-  left: calc((1dvw * var(--cos_9) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_9) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._10 {
-  left: calc((1dvw * var(--cos_10) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_10) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-._11 {
-  left: calc((1dvw * var(--cos_11) * var(--radius)) + (1dvw * var(--outer_radius)));
-  top: calc((1dvw * var(--sin_11) * var(--radius)) + (1dvw * var(--outer_radius)));
-}
-
-
-
-
-
-
-  /* setup */
-
-html,
-body,
-.holster {
-  height: 100%;
-}
-.holster {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-flow: column nowrap;
-  font-family: monospace;
-}
-
-.container {
+.y-scroller {
   display: flex;
   overflow: auto;
   flex: none;
-  height: 40dvw;
+  height: 26dvw;
   flex-flow: column nowrap;
-}
-/* scroll-snap */
-
-.y.mandatory-scroll-snapping {
   scroll-snap-type: y mandatory;
 }
 
-.container > .slot {
+.y-scroller > .slot {
   text-align: center;
   scroll-snap-align: center;
   flex: none;

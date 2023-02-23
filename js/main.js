@@ -205,5 +205,21 @@ window.onload = () => {
     currency_key_element.addEventListener('click', currencykeyclick);
   }
   document.querySelector("#what").addEventListener('keydown', keydown);
-  
+  document.querySelector("#what").click();
+
+/*
+  const height = window.visualViewport.height;
+const viewport = window.visualViewport;
+
+window.addEventListener("scroll", () => input.blur());
+window.visualViewport.addEventListener("resize", resizeHandler);
+
+function resizeHandler() {
+//    if (!/iPhone|iPad|iPod/.test(window.navigator.userAgent)) {
+//      height = viewport.height;
+//    }
+    button.style.bottom = `${height - viewport.height + 10}px`;
+  }
+
+*/
 }

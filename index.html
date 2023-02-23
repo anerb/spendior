@@ -13,6 +13,34 @@
 </head>
 <body class="fullscreen">
   <div class="static_header" >
+      <div class="y-scroller" id="source" dir="rtl">
+
+        <sd-endpoint class="slot" institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
+        <sd-endpoint class="slot" institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
+        <sd-endpoint class="slot" institution="ubs_twint" description="UBS Twint"></sd-endpoint>
+        <sd-endpoint class="slot" institution="cash" description="cash"></sd-endpoint>
+        <sd-endpoint class="slot" institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
+        <sd-endpoint class="slot" institution="editte_twint" description="Editte Twint"></sd-endpoint>
+        <sd-endpoint class="slot" institution="migros" description="Migros"></sd-endpoint>
+        <sd-endpoint class="slot" institution="coop" description="Coop"></sd-endpoint>
+        <sd-endpoint class="slot" institution="lidl" description="Lidl"></sd-endpoint>
+      
+
+      </div>
+
+      <div class="y-scroller" id="destination" dir="rtl">
+
+        <sd-endpoint class="slot" institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
+        <sd-endpoint class="slot" institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
+        <sd-endpoint class="slot" institution="ubs_twint" description="UBS Twint"></sd-endpoint>
+        <sd-endpoint class="slot" institution="cash" description="cash"></sd-endpoint>
+        <sd-endpoint class="slot" institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
+        <sd-endpoint class="slot" institution="editte_twint" description="Editte Twint"></sd-endpoint>
+        <sd-endpoint class="slot" institution="migros" description="Migros"></sd-endpoint>
+        <sd-endpoint class="slot" institution="coop" description="Coop"></sd-endpoint>
+        <sd-endpoint class="slot" institution="lidl" description="Lidl"></sd-endpoint>
+      </div>
+
     <select id="currency" name="currency">
       <option value="CHF" selected>🇨🇭 Fr.</option>
       <option value="USD">🇺🇸 $</option>
@@ -24,58 +52,12 @@
     <form action="mailto:foo@example.com"  method="get" enctype="text/plain">
     <input id="what" type="search" enterkeyhint="send" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
     </form>
-    <div class="keypad">
+    <div class="keypad" id="amount_keypad">
       <div class="keyrow"><div class="key">1</div><div class="key">2</div><div class="key">3</div></div>
       <div class="keyrow"><div class="key">4</div><div class="key">5</div><div class="key">6</div></div>
       <div class="keyrow"><div class="key">7</div><div class="key">8</div><div class="key">9</div></div>
       <div class="keyrow"><div class="key keypad_clear">0.00</div><div class="key">0</div><div class="key">.</div></div>
     </div>
-    <div class="clock">
-      <div class="hour _0 key">3</div>
-      <div class="hour _1 key">4</div>
-      <div class="hour _2 key">5</div>
-      <div class="hour _3 key">6</div>
-      <div class="hour _4 key">7</div>
-      <div class="hour _5 key">8</div>
-      <div class="hour _6 key">9</div>
-      <div class="hour _7 key">.</div>
-      <div class="hour _8 key">X</div>
-      <div class="hour _9 key">0</div>
-      <div class="hour _10 key">1</div>
-      <div class="hour _11 key">2</div>
-    </div>
-    <div class="helper_box">
-      <div class="helper container y mandatory-scroll-snapping" dir="rtl">
-
-        <sd-endpoint class="slot" institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
-        <sd-endpoint class="slot" institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
-        <sd-endpoint class="slot" institution="ubs_twint" description="UBS Twint"></sd-endpoint>
-        <sd-endpoint class="slot" institution="cash" description="cash"></sd-endpoint>
-        <sd-endpoint class="slot" institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
-        <sd-endpoint class="slot" institution="editte_twint" description="Editte Twint"></sd-endpoint>
-        <sd-endpoint class="slot" institution="migros" description="Migros"></sd-endpoint>
-        <sd-endpoint class="slot" institution="coop" description="Coop"></sd-endpoint>
-        <sd-endpoint class="slot" institution="lidl" description="Lidl"></sd-endpoint>
-      
-
-      </div>
-
-      <div class="helper" style="width:5%">⇨</div>
-
-      <div class="helper container y mandatory-scroll-snapping" dir="rtl">
-
-        <sd-endpoint class="slot" institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
-        <sd-endpoint class="slot" institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
-        <sd-endpoint class="slot" institution="ubs_twint" description="UBS Twint"></sd-endpoint>
-        <sd-endpoint class="slot" institution="cash" description="cash"></sd-endpoint>
-        <sd-endpoint class="slot" institution="ayelet_twint" description="Ayelet Twint"></sd-endpoint>
-        <sd-endpoint class="slot" institution="editte_twint" description="Editte Twint"></sd-endpoint>
-        <sd-endpoint class="slot" institution="migros" description="Migros"></sd-endpoint>
-        <sd-endpoint class="slot" institution="coop" description="Coop"></sd-endpoint>
-        <sd-endpoint class="slot" institution="lidl" description="Lidl"></sd-endpoint>
-      
-
-      </div>
   </div>
 
 </body>
