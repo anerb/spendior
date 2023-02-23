@@ -1,3 +1,8 @@
+
+
+
+
+
 body {
   /*  font-family: cursive;*/
     font-size:larger;
@@ -28,11 +33,13 @@ body {
   }
   
   /* Center the content in the browser window */
+  /*
   .container {
     margin: auto;
     text-align: center;
   }
-  
+  */
+
   .title {
     font-size: 3rem;
   }
@@ -127,13 +134,16 @@ body {
     width: 100%;
   }
   
+  /*
   .helper {
     width: 40%;
+    height: 5em;
     text-align: center;
-    display: inline;
+    display: inline-block;
     margin: 5px;
   }
-  
+  */
+
   #amount {
     width: 30%;
     font-size: x-large;
@@ -212,3 +222,58 @@ body {
     border: black;
     border-style: solid;
   }
+
+
+
+
+
+
+
+
+
+  /* setup */
+
+html,
+body,
+.holster {
+  height: 100%;
+}
+.holster {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-flow: column nowrap;
+  font-family: monospace;
+}
+
+.container {
+  display: flex;
+  overflow: auto;
+  outline: 1px dashed lightgray;
+  flex: none;
+}
+
+
+.container.y {
+  width: 256px;
+  height: 256px;
+  flex-flow: column nowrap;
+}
+/* scroll-snap */
+
+.y.mandatory-scroll-snapping {
+  scroll-snap-type: y mandatory;
+}
+
+.container > .slot {
+  text-align: center;
+  scroll-snap-align: center;
+  flex: none;
+}
+
+.y.container > .slot {
+  line-height: 256px;
+  font-size: 128px;
+  width: 256px;
+  height: 100%;
+}

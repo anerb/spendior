@@ -81,13 +81,15 @@ class Endpoint extends HTMLElement {
     const institution = this.getAttribute('institution');
     const description = this.getAttribute('description');
 
+    /*
     const source_radio = document.createElement('input');
     source_radio.setAttribute('class', 'source_radio');
     source_radio.setAttribute('type', 'radio');
     source_radio.setAttribute('name', 'source');
     source_radio.setAttribute('value', institution);
     source_radio.addEventListener('input', updateSource);
-  
+  */
+
     const img = document.createElement('img');
     img.setAttribute('class', 'endpoint');
     img.src = './images/' + institution + ".png";
@@ -96,14 +98,14 @@ class Endpoint extends HTMLElement {
     const label = document.createElement('div');
     label.innerHTML = description;
     label.setAttribute('class', 'endpoint_label');
-
+/*
     const destination_radio = document.createElement('input');
     destination_radio.setAttribute('class', 'destination_radio');
     destination_radio.setAttribute('type', 'radio');
     destination_radio.setAttribute('name', 'destination');
     destination_radio.setAttribute('value', institution);
     destination_radio.addEventListener('input', updateDestination);
-
+*/
     // Create some CSS to apply to the shadow dom
     const style = document.createElement('style');
 
@@ -126,10 +128,10 @@ class Endpoint extends HTMLElement {
 //    shadow.appendChild(style);
 //    shadow.appendChild(wrapper);
     this.appendChild(wrapper);
-    wrapper.appendChild(source_radio);
+////    wrapper.appendChild(source_radio);
     wrapper.appendChild(img);
     wrapper.appendChild(label);
-    wrapper.appendChild(destination_radio);
+//    wrapper.appendChild(destination_radio);
   }
 }
 
