@@ -32,11 +32,10 @@ function ready() {
     notes: "",
   }
   
-  body.source = document.querySelector("#source_text").value;
-  body.destination = document.querySelector("#destination_text").value;
+//  body.source = document.querySelector("#source_text").value;
+//  body.destination = document.querySelector("#destination_text").value;
  // body.currency = document.querySelector('#currency.selected').value;
   body.amount = document.querySelector("#amount").value;
-  body.notes = document.querySelector("#notes").value;
   body.what = document.querySelector("#what").value;
   
   subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
@@ -49,9 +48,11 @@ function ready() {
     'body=' + encodeURIComponent(body_json),
   ];
 
+  /* temporary comment
   var sendItem = document.querySelector("#send-email");
   sendItem.href = finalValues.join('&');  
   sendItem.style.color = "black";
+  */
 }
 
 function updateSource() {
@@ -151,14 +152,33 @@ function generateEndpoints() {
 
 }
 
+/**
+ * A keypad for entering in a currency amount.
+ * Some unusual behavior for which I ask forgiveness:
+ *   - The decimal can only be pressed once.  After that it becomes a "clear" button.
+ *   - There is no indication of how to clear until pressing the decimal.
+ * A visual hint is attempted where the "cleared" state uses an outline font.
+ */
 function keyclick(e) {
   let amount = document.querySelector("#amount");
   let click_value = e.target.innerHTML;
+  let decimal_clear = document.querySelector("#decimal_clear");
   if (click_value == "0.00") {
     amount.innerHTML = "0.00";
+    amount.classList.add("amount_clear");
+    // When clearing, convert the key back to a decimal point.
+    decimal_clear.classList.remove("keypad_clear");
+    decimal_clear.innerHTML = ".";
   } else {
-    if (amount.innerHTML == "0.00") {
-      amount.innerHTML = "";
+    // Special handling of the decimal/clear key and when typing begins
+    if (amount.innerHTML == "0.00") {  // first real key for the amount
+        amount.innerHTML = "";
+        amount.classList.remove("amount_clear");
+    }
+    // Special handling of the decimal key
+    if (click_value == ".") {
+      decimal_clear.classList.add("keypad_clear");
+      decimal_clear.innerHTML = "0.00";
     }
     amount.innerHTML += click_value;
   }
@@ -205,7 +225,6 @@ window.onload = () => {
     currency_key_element.addEventListener('click', currencykeyclick);
   }
   document.querySelector("#what").addEventListener('keydown', keydown);
-  document.querySelector("#what").click();
 
 /*
   const height = window.visualViewport.height;

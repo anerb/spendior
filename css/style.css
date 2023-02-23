@@ -61,19 +61,20 @@ body {
 
   #source {
     position: absolute;
-    bottom: 30dvw;
-    left: 0dvw;
+    bottom: 73dvw;
+    left: 4dvw;
+    transform: scale3d(2.0 2.0 1.0);
   }
 
   #destination{
     position: absolute;
-    bottom: 0dvw;
-    left: 0dvw;
+    bottom: 73dvw;
+    left: 50dvw;
   }
 
   #amount {
     position: absolute;
-    top: 25dvw;
+    bottom: 48dvw;
     left: 19dvw;
     width: 20dvw;
     font-size: 12dvw;
@@ -92,18 +93,19 @@ body {
   
   #currency {
     position: absolute;
-    top: 30dvw;
-    left: 0dvw;
+    bottom: 5dvw;
+    left: 1dvw;
     font-size: 6dvw;
-    width: 3em;
+    width: calc(0.01em * 240);
     appearance: none;
     border: none;
     outline: none;
+    background-color: transparent;
   }
   
   #amount_keypad {
     position: absolute;
-    bottom: 0dvw;
+    bottom: 8dvw;
     right: 0dvw;
   }
   
@@ -120,6 +122,11 @@ body {
   font-size: calc(1dvw * var(--radius) * 0.25);
   background: white;
   vertical-align: bottom;
+}
+
+.amount_clear {
+  -webkit-text-stroke: 1px;
+  -webkit-text-fill-color: transparent;
 }
 
 .keypad_clear {
