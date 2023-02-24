@@ -1,5 +1,8 @@
 // @import url("./currency.js");
 
+function scrollerMoved(e) {
+  console.log([e, e.scrollLeft, e.scrollTop]);
+}
 
 function reclick(e) {
   e.click()
@@ -76,8 +79,8 @@ class Endpoint extends HTMLElement {
 //    const shadow = this.attachShadow({mode: 'open'});
 
     // Create spans
-    const wrapper = document.createElement('div');
-    wrapper.setAttribute('class', 'wrapper');
+  //  const wrapper = document.createElement('div');
+  //  wrapper.setAttribute('class', 'wrapper');
 
     const institution = this.getAttribute('institution');
     const description = this.getAttribute('description');
@@ -121,17 +124,18 @@ class Endpoint extends HTMLElement {
     .destination_radio2 {
       transform: translate(-14px, -50px) scale(4);
     }
-    .wrapper {
-      }
+  //  .wrapper {
+  //    }
     `;
 
     // Attach the created elements to the shadow dom
 //    shadow.appendChild(style);
 //    shadow.appendChild(wrapper);
-    this.appendChild(wrapper);
+this.appendChild(img);
+this.appendChild(label);
 ////    wrapper.appendChild(source_radio);
-    wrapper.appendChild(img);
-    wrapper.appendChild(label);
+//    wrapper.appendChild(img);
+//    wrapper.appendChild(label);
 //    wrapper.appendChild(destination_radio);
   }
 }
@@ -199,6 +203,10 @@ function keydown(e) {
   document.getElementById('console-log').innerHTML += `${e.key}<br>`;
 }
 
+function noScroll() {
+  window.scrollTo(0, 0);
+}
+
 window.onload = () => {
   'use strict';
 
@@ -208,6 +216,8 @@ window.onload = () => {
   }
 
   customElements.define("sd-endpoint", Endpoint);
+
+  window.onscroll = noScroll;
 
   generateEndpoints();
 

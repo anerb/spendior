@@ -13,8 +13,11 @@
 </head>
 <body class="fullscreen">
   <div class="static_header" >
-      <div class="y-scroller" id="source" dir="rtl">
-
+      <div class="y-scroller" id="source" dir="rtl" onscroll="scrollerMoved(this)">
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
         <sd-endpoint class="slot" institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
         <sd-endpoint class="slot" institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
         <sd-endpoint class="slot" institution="ubs_twint" description="UBS Twint"></sd-endpoint>
@@ -28,8 +31,11 @@
 
       </div>
 
-      <div class="y-scroller" id="destination" dir="rtl">
-
+      <div class="y-scroller" id="destination" dir="ltr" onscroll="scrollerMoved(this)">
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
         <sd-endpoint class="slot" institution="ubs_visa_debit" description="UBS Visa (debit)"></sd-endpoint>
         <sd-endpoint class="slot" institution="bofa_visa" description="Bank of America Visa"></sd-endpoint>
         <sd-endpoint class="slot" institution="ubs_twint" description="UBS Twint"></sd-endpoint>
@@ -49,7 +55,7 @@
       <div class="keyrow"><div class="key">1</div><div class="key">2</div><div class="key">3</div></div>
       <div class="keyrow"><div class="key">4</div><div class="key">5</div><div class="key">6</div></div>
       <div class="keyrow"><div class="key">7</div><div class="key">8</div><div class="key">9</div></div>
-      <div class="keyrow"><div class="key"></div><div class="key">0</div><div class="key" id="decimal_clear">.</div></div>
+      <div class="keyrow"><div class="key currency_key"></div><div class="key">0</div><div class="key" id="decimal_clear">.</div></div>
       <select id="currency" name="currency">
         <option value="CHF" selected>🇨🇭Fr.</option>
         <option value="USD">🇺🇸$</option>

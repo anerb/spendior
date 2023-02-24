@@ -27,10 +27,15 @@ body {
   }
   
   .endpoint {
-    width: 40dvw;
-    height: 24dvw;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
   }
   
+  .currency_key {
+    opacity: 0.0;
+  }
+
   .currency_box {
     display: flex;
     margin: auto;
@@ -45,13 +50,14 @@ body {
   }
   
   .static_header {
+    display: flex;
     position: fixed;
     bottom: 0dvw;
     z-index: 99999;
     background-color: #ffc0cbdb;
     padding: 10px;
     width: 90dvw;
-    height: 90dvw;
+    height: 99dvw;
     border-style: solid;
       border-width: 3px;
       border-color: white;
@@ -61,23 +67,24 @@ body {
 
   #source {
     position: absolute;
-    bottom: 73dvw;
+    bottom: 77dvw;
     left: 4dvw;
     transform: scale3d(2.0 2.0 1.0);
   }
 
   #destination{
     position: absolute;
-    bottom: 73dvw;
+    bottom: 77dvw;
     left: 50dvw;
   }
 
   #amount {
     position: absolute;
-    bottom: 48dvw;
-    left: 19dvw;
-    width: 20dvw;
+    bottom: 10dvw;
+    right: 51dvw;
+    width: 43dvw;
     font-size: 12dvw;
+    text-align: end;
   }
   
   #what {
@@ -140,19 +147,28 @@ body {
   display: flex;
   overflow: auto;
   flex: none;
-  height: 26dvw;
+  height: calc(24dvw * 5);  /*has to be odd for some reason*/
   flex-flow: column nowrap;
   scroll-snap-type: y mandatory;
 }
 
-.y-scroller > .slot {
-  text-align: center;
+.slot {
   scroll-snap-align: center;
   flex: none;
+  width: 44dvw;
+  height: 24dvw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 }
 
 form {
   margin: 0px;
   padding: 0px;
   display: inline;
+}
+
+.filler {
+  opacity: 0.0;
 }
