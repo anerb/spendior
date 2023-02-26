@@ -35,6 +35,7 @@ function getScrollerValue(id) {
     let diff = Math.abs(parent_bottom - child_bottom);
     if (diff < min_diff && diff < 100) {  // ARBITRARY
       value = c.getAttribute("institution");
+      navigator.vibrate([64]);
     }
   }
   return value;
