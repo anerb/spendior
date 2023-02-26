@@ -19,9 +19,25 @@ function selectItem(item) {
 
 function postSend() {
   document.querySelector("#amount").value = "";
-  document.querySelector("#notes").value = "";
   document.querySelector("#what").value = "";
   return true;
+}
+
+function getScrollerValue(id) {
+  let id_selector = "#" + id;
+  let scroller = document.querySelector(id_selector);
+  let parent_bottom = source.getBoundingClientRect().bottom;
+  let source_endpoints = document.querySelectorAll(id_selector + " sd-endpoint");
+  let min_diff = 999999999;  // ARBITRARY
+  let value = undefined;
+  for (let c of source_endpoints) {
+    let child_bottom = c.getBoundingClientRect().bottom;
+    let diff = Math.abs(parent_bottom - child_bottom);
+    if (diff < min_diff && diff < 100) {  // ARBITRARY
+      value = c.getAttribute("institution");
+    }
+  }
+  return value;
 }
 
 function ready() {
@@ -32,30 +48,25 @@ function ready() {
     amount: "",
     currency: "",
     what: "",
-    notes: "",
   }
-  
-//  body.source = document.querySelector("#source_text").value;
-//  body.destination = document.querySelector("#destination_text").value;
- // body.currency = document.querySelector('#currency.selected').value;
-  body.amount = document.querySelector("#amount").value;
+  body.source = getScrollerValue("source");
+  body.destination = getScrollerValue("destination");
+  body.currency = document.querySelector("#currency").value;
+  body.amount = document.querySelector("#amount").innerHTML;
   body.what = document.querySelector("#what").value;
   
   subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
 
   let body_json = JSON.stringify(body);
-  var finalValues = [
+  let finalValues = [
     'mailto:anerbenartzi+email2sheet@gmail.com?subject=' + encodeURIComponent(subject),
     'cc=' + encodeURIComponent('"16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw" <anerbenartzi+email2sheet@gmail.com>'),
     'bcc=' + encodeURIComponent('"entries" <anerbenartzi+email2sheet@gmail.com>'),
     'body=' + encodeURIComponent(body_json),
   ];
 
-  /* temporary comment
-  var sendItem = document.querySelector("#send-email");
-  sendItem.href = finalValues.join('&');  
-  sendItem.style.color = "black";
-  */
+  let sendItem = document.querySelector("#send-email");
+  sendItem.action = finalValues.join('&'); 
 }
 
 function updateSource() {
