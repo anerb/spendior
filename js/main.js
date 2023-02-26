@@ -80,6 +80,14 @@ function updateDestination() {
   document.querySelector("#destination_text").value = destination_value;
 }
 
+function selectEndpoint(e) {
+  let initial_bottom = e.target.getBoundingClientRect().bottom;
+  let parentElement = e.target.closest(".y-scroller");
+  let parent_bottom = parentElement.getBoundingClientRect().bottom;
+  let scroll_needed = initial_bottom - parent_bottom;
+  let initial_scroll = parentElement.scrollTop;
+  parentElement.scrollTo({ top: initial_scroll + scroll_needed, behavior: 'smooth' });
+}
 
 class Endpoint extends HTMLElement {
   constructor() {
@@ -142,6 +150,7 @@ class Endpoint extends HTMLElement {
     // Attach the created elements to the shadow dom
 //    shadow.appendChild(style);
 //    shadow.appendChild(wrapper);
+this.addEventListener('click', selectEndpoint);
 this.appendChild(img);
 this.appendChild(label);
 ////    wrapper.appendChild(source_radio);

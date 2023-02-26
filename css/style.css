@@ -59,11 +59,18 @@ body {
     width: 90dvw;
     height: 99dvw;
     border-style: solid;
-      border-width: 3px;
-      border-color: white;
-      margin: 5px;
+    border-width: 3px;
+    border-color: white;
+    margin: 5px;
+    border-top-color: transparent;
   }
   
+  .top_only {
+    height: 0.2dvw;
+    bottom: 104dvw;
+    border-bottom-color: transparent;
+    border-top-color: white;
+  }
 
   #source {
     position: absolute;
@@ -171,4 +178,31 @@ form {
 
 .filler {
   opacity: 0.0;
+}
+
+.frame {
+  width: 37dvw;
+  height: 22dvw;
+  border: 6px solid grey;
+  position: absolute;
+  z-index: 22222222;
+}
+
+#source_frame {
+  left: 6dvw;
+  bottom: 76.5dvw;
+}
+
+#destination_frame {
+  right: 3dvw;
+  bottom: 76.5
+  dvw;
+}
+
+.top_only {
+  height: 0.2dvw;
+  bottom: 102dvw;
+  left: 0dvw;
+  border-bottom-width: 0px;
+  border-top-color: white;
 }
