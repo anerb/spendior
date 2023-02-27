@@ -175,8 +175,111 @@ this.appendChild(label);
   }
 }
 
+function csv2array(csv) {
+  let lines = csv.split("\n");
+  let arr = [];
+  for (let line of lines) {
+    let row = line.split(",");  // This is where the hard stuff with quoting happens
+    arr.push(row);
+  }
+  return arr;
+}
+
+function getEndpointsForEmail(arr, email) {
+  // This will hold the index of the column for a header value.
+  // E.G. header[source] is 0 or 1 ... header[anerbenartzi@outlook.com] is 4 or something like it.
+  let sources = {};
+  let destinations = {};
+  let header = {};
+  let header_found = false;
+  for (let row of arr) {
+    if ((row[0] == "source" && row[1] == "destination") ||
+        (row[0] == "destination" && row[1] == "source")) {
+      // Handle header row
+      for (let c = 0; c < row.length; c++) {
+        header[row[c]] = c;
+      }
+      header_found = true;
+      continue;
+    }
+    if (!header_found) {
+      // ignore any rows before the official header row
+      // E.G. The pseudo-header row ("COUNT A of source .. from.. <empty>").
+      continue;
+    }
+    let source = row[header[source]];
+    let destination = row[header[destination]];
+    try {
+      let count = parseInt(row[header[email]]);
+    } catch (e) {
+      // ignore this row, and move on.
+      continue;
+    }
+    // For now, I'm keeping it simple so the source-destination linkage is ignored.
+    if (!(source in sources)) {
+      sources[source] = 0;
+    }
+    sources[source]++;
+    if (!(destination in destinations)) {
+      destinations[destination] = 0;
+    }
+    destinations[destination]++;
+  }
+  // Now we sort them in reverse HACKY
+  let max_count = 0;
+  for (let count of sources) {
+    max_count = Math.max(count, max_count);
+  }
+  let sources_sorted = [];
+  for (let count = max_count; count > 0; count--) {
+    if ()
+
+  }
+
+  max_count = 0;
+  for (let count of destinations) {
+    max_count = Math.max(count, max_count);
+  }
+
+}
 
 function generateEndpoints() {
+  let endpoints_text = window.localStorage.getItem("endpoints");
+  if (!endpoints_text) {
+    endpoints_text = 
+    ["COUNTA of source,,from,,,,,",
+    "source,destination,,anerbenartzi@gmail.com,anerbenartzi@outlook.com,ayeletbenartzi@gmail.com,edittebenartzi@gmail.com,nicolebenartzi@gmail.com",
+    "ubs_visa_debit,coop,,1,,,,1",
+    ",lidl,,1,,,,",
+    ",migros,,1,,,,1",
+    ",store,,,,,,1",
+    "ubs_visa,bofa_visa,,1,,,,",
+    "ubs_twint,migros,,,,,,1",
+    ",person,,,,,,1",
+    ",store,,,,,,1",
+    ",tchibo,,,,,,1",
+    "other,ayelet_twint,,1,,,,",
+    "editte_twint,kkiosk,,,,,1,",
+    ",migros,,,,,1,",
+    ",person,,,,,1,",
+    ",starbucks,,,,,1,",
+    ",store,,,,,1,",
+    "credit_suisse_twint,ayelet_twint,,,1,,,",
+    ",editte_twint,,,1,,,",
+    ",person,,,1,,,",
+    ",store,,,1,,,",
+    "credit_suisse_mc,store,,,1,,,",
+    "bofa_visa,store,,1,,,,",
+    "bofa_mc,store,,,1,,,",
+    "ayelet_twint,kkiosk,,,,1,,",
+    ",migros,,,,1,,",
+    ",person,,,,1,,",
+    ",starbucks,,,,1,,",
+    ",store,,,,1,,",
+    ",,0,0,,,,",
+  ].join("\n");
+  }
+  let endpoints_array = csv2array(endpoints_text);
   let endpoint_map = {
     ubs_visa_debit: "UBS Visa (debit)",
     bofa_visa: "Bank of America Visa",
@@ -247,17 +350,17 @@ function noScroll() {
   window.scrollTo(0, 0);
 }
 
-function fetchCurrencies() {
-  fetch("https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF")
+function updateLocalStorageFromUrl(key, url) {
+  fetch(url)
     .then((response) => {
       if (response.ok) {
-        return response.json();
+        return response.text();  // A promise that provides the response as text.
       } else {
         console.error("NETWORK RESPONSE ERROR");  // is there a response.errorcode?
       }
     })
-    .then((data) => {
-      window.localStorage.setItem("CHF", JSON.stringify(data));
+    .then((data_text) => {
+      window.localStorage.setItem(key, data_text);
     })
     .catch((error) => console.error("FETCH ERROR:", error));
 }
@@ -274,9 +377,10 @@ window.onload = () => {
 
   window.onscroll = noScroll;
 
-  generateEndpoints();
+  updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
+  updateLocalStorageFromUrl("endpoints", "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ52nlttYPwbVkhwFXeMAz-zz0XJBmmJxi5Aa17zPrKpRXoGGWDDqbvRzvaYQ8F-eiofW_g8grnpHuz/pub?gid=1276802080&single=true&output=csv");
 
-  fetchCurrencies();
+  generateEndpoints();
 
   let input_elements = document.querySelectorAll('input')
   for (let input_element of input_elements) {
