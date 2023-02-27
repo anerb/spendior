@@ -55,7 +55,7 @@ body {
     display: flex;
     position: fixed;
     bottom: 0dvw;
-    z-index: 99999;
+    z-index: 999;
     background-color: #ffc0cbdb;
     padding: 10px;
     width: 90dvw;
@@ -113,7 +113,7 @@ body {
     height: 22dvw;
     border: 6px solid grey;
     position: absolute;
-    z-index: 22222222;
+    z-index: 9999;
     pointer-events: none;
     border-radius: 3dvw;
   }
@@ -257,10 +257,22 @@ a {
 }
 
 /* A Hack where I reuse the human values of left and right directly from the input */
-#amount_keypad .left {
+#amount_keypad.left {
   left: 0dvw;
 }
 
-#amount_keypad .right {
+#amount_keypad.right {
   right: 0dvw;
+}
+
+.settings {
+  background: white;
+  font-size: 4dvw;
+  width: 100dvw;
+  height: 100dvw;
+  z-index: 99999;
+}
+
+#settings input {
+  font-size: 4dvw;
 }

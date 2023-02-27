@@ -2,16 +2,16 @@
 
 // Using a global object, but others shouldn't use it.
 var settings = {};
+const defaults = 
+{
+  "processing_email_address": "anerbenartzi+email2sheet@gmail.com",
+  "spreadsheet_id": "16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw",
+  "sheet_name": "entries",
+  "published_endpoints_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ52nlttYPwbVkhwFXeMAz-zz0XJBmmJxi5Aa17zPrKpRXoGGWDDqbvRzvaYQ8F-eiofW_g8grnpHuz/pub?gid=1276802080&single=true&output=csv",
+  "email_re": ".*",
+  "keypad_location": "right",
+}
 function getSetting(key) {
-  const defaults = 
-    {
-      "processing_email_address": "anerbenartzi+email2sheet@gmail.com",
-      "spreadsheet_id": "16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw",
-      "sheet_name": "entries",
-      "published_endpoints_url", "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ52nlttYPwbVkhwFXeMAz-zz0XJBmmJxi5Aa17zPrKpRXoGGWDDqbvRzvaYQ8F-eiofW_g8grnpHuz/pub?gid=1276802080&single=true&output=csv",
-      "email_re": ".*",
-      "keypad_location": "right",
-    }
   if (!(key in defaults)) {
     return undefined;  // This is an error.  Every setting must have a default.
   }
@@ -20,13 +20,21 @@ function getSetting(key) {
   }
   return settings[key];
 }
-
+function fillSettings() {
+  for (let d in defaults) {
+    let input = document.querySelector("#" + d);
+    input.value = getSetting(d);
+  }
+}
 function updateSettings() {
   let inputs = document.querySelectorAll("#settings input");
   for (let input of inputs) {
     window.localStorage.setItem(input.id, input.value);
   }
   settings = {};  // A priveledged access to settings variable
+}
+function showSettings() {
+  document.querySelector("#settings").classList.remove("display_none");
 }
 
 function reclick(e) {
@@ -97,7 +105,7 @@ function ready() {
   let finalValues = [
     'mailto:' + getSetting("processing_email_address") + '?subject=' + encodeURIComponent(subject),
     'cc=' + encodeURIComponent('"' + getSetting("spreadsheet_id") + '" <' + getSetting("processing_email_address") + '>'),
-    'bcc=' + encodeURIComponent(('"' + getSetting("sheet_name") + '" <' + getSetting("processing_email_address") + '>'),
+    'bcc=' + encodeURIComponent('"' + getSetting("sheet_name") + '" <' + getSetting("processing_email_address") + '>'),
     'body=' + encodeURIComponent(body_json),
   ];
 
@@ -455,7 +463,7 @@ function updateLocalStorageFromUrl(key, url) {
       if (response.ok) {
         return response.text();  // A promise that provides the response as text.
       } else {
-        console.error("NETWORK RESPONSE ERROR");  // is there a response.errorcode?
+        console.error(["NETWORK RESPONSE ERROR", key, url]);  // is there a response.errorcode?
       }
     })
     .then((data_text) => {
@@ -478,8 +486,11 @@ window.onload = () => {
 
   window.onscroll = noScroll;
 
+  fillSettings();
+
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
-  updateLocalStorageFromUrl("published_endpoints_csv", settings["publish_endpoints_url"]);
+  updateLocalStorageFromUrl("published_endpoints_csv", getSetting("published_endpoints_url"));
+
 
   generateEndpoints();
 
@@ -513,6 +524,6 @@ function resizeHandler() {
   }
 
 */
-  document.querySelector("#amount_keypad").classList(getSetting("keypad_location"));
+  document.querySelector("#amount_keypad").classList.add(getSetting("keypad_location"));
   window.setTimeout(scrollEndpointsToBottom, 300);
 }
