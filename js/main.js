@@ -19,6 +19,15 @@ function postSend() {
   return true;
 }
 
+function snake_case2PascalCase(snake_case, delimiter = "") {
+  let PascalCaseTokens = [];
+  for (token of snake_case.split("_")) {
+    token[0] = token[0].toLocaleUpperCase();
+    PascalCaseTokens.push(token);
+  }
+  return PascalCaseTokens.join(delimiter);
+}
+
 function getScrollerValue(id) {
   let id_selector = "#" + id;
   let scroller = document.querySelector(id_selector);
@@ -104,10 +113,26 @@ function selectEndpoint(e) {
   parentElement.scrollTo({ top: initial_scroll + scroll_needed, behavior: 'smooth' });
 }
 
+function scrollEndpointsToBottom() {
+  let source = document.querySelector("#source");
+  source.scrollTo({top: source.scrollHeight, behavior: 'smooth' });
+  let destination = document.querySelector("#destination");
+  destination.scrollTo({top: destination.scrollHeight, behavior: 'smooth' });
+}
+
 class Endpoint extends HTMLElement {
   constructor() {
+
     // Always call super first in constructor
     super();
+
+
+    // HACK to stop multiple constructor calls
+    this.addEventListener('click', selectEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
+    if (this.children.length > 0) {
+      return;
+    }
+
 
     // Create a shadow root
 //    const shadow = this.attachShadow({mode: 'open'});
@@ -165,9 +190,8 @@ class Endpoint extends HTMLElement {
     // Attach the created elements to the shadow dom
 //    shadow.appendChild(style);
 //    shadow.appendChild(wrapper);
-this.addEventListener('click', selectEndpoint);
-this.appendChild(img);
-this.appendChild(label);
+      this.appendChild(img);
+      this.appendChild(label);
 ////    wrapper.appendChild(source_radio);
 //    wrapper.appendChild(img);
 //    wrapper.appendChild(label);
@@ -267,7 +291,7 @@ function getEndpointsForEmail(arr, email_re) {
   for (let destination of destinations_sorted) {
     destination_names.push(destination.name);
   }
-  return {sources: sources_sorted, destinations: destinations_sorted}
+  return {sources: source_names, destinations: destination_names}
 
 }
 
@@ -313,26 +337,28 @@ function getSortedEndpoints(email_re) {
   return endpoints;
 }
 
+
+function appendEndpoint(parent, name) {
+  // TODO: check agains a less permissive regexp
+  if (name == "") {
+    return;
+  }
+  let html = `<sd-endpoint class="slot" institution="${name}" description="${snake_case2PascalCase(name, " ")}"></sd-endpoint>`;
+  parent.innerHTML += html;
+}
+
 function generateEndpoints() {
   let email = window.localStorage.getItem("email") || /.*/;
   let endpoints = getSortedEndpoints(email);
 
-  let source_scorller = document.querySelector("#source");
+  let source_scroller = document.querySelector("#source");
   for (let source of endpoints.sources) {
-    const endpoint = document.createElement('sd-endpoint');
-    endpoint.classList.add("slot");
-    endpoint.institution = source;
-    endpoint.description = snake_case2PascalCase(source);
-    source_scorller.appendChild(endpoint);
+    appendEndpoint(source_scroller, source);
   }
 
-  let destination_scorller = document.querySelector("#destination");
+  let destination_scroller = document.querySelector("#destination");
   for (let destination of endpoints.destinations) {
-    const endpoint = document.createElement('sd-endpoint');
-    endpoint.classList.add("slot");
-    endpoint.institution = destination;
-    endpoint.description = snake_case2PascalCase(destination);
-    destination_scorller.appendChild(endpoint);
+    appendEndpoint(destination_scroller, destination);
   }
 }
 
@@ -456,4 +482,5 @@ function resizeHandler() {
   }
 
 */
+  window.setTimeout(scrollEndpointsToBottom, 300);
 }
