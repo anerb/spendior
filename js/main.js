@@ -225,21 +225,35 @@ function getEndpointsForEmail(arr, email) {
     }
     destinations[destination]++;
   }
-  // Now we sort them in reverse HACKY
-  let max_count = 0;
-  for (let count of sources) {
-    max_count = Math.max(count, max_count);
-  }
+  let less_than = function(a, b) {
+    if (a.count == b.count) {
+      if (a.name == b.name) {
+        return 0;
+      }
+      return a.name < b.name ? -1 : 1;
+    }
+    return a.count < b.count ? -1 : 1;
+  };
+
   let sources_sorted = [];
-  for (let count = max_count; count > 0; count--) {
-    if ()
-
+  for (let source in sources) {
+    sources_sorted.push({name: source, count: sources[source]});
   }
-
-  max_count = 0;
-  for (let count of destinations) {
-    max_count = Math.max(count, max_count);
+  sources_sorted.sort(less_than);
+  let source_names = [];
+  for (let source of sources_sorted) {
+    source_names.push(source.name);
   }
+  let destinations_sorted = [];
+  for (let destination in destinations) {
+    destinations_sorted.push({name: destination, count: destinations[destination]});
+  }
+  destinations_sorted.sort(less_than);
+  let destination_names = [];
+  for (let destination of destinations_sorted) {
+    destination_names.push(destination.name);
+  }
+  return {sources: sources_sorted, destinations: destinations_sorted}
 
 }
 
