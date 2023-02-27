@@ -185,19 +185,28 @@ function csv2array(csv) {
   return arr;
 }
 
-function getEndpointsForEmail(arr, email) {
+function getEndpointsForEmail(arr, email_re) {
   // This will hold the index of the column for a header value.
   // E.G. header[source] is 0 or 1 ... header[anerbenartzi@outlook.com] is 4 or something like it.
   let sources = {};
   let destinations = {};
   let header = {};
   let header_found = false;
+  let emails = [];
   for (let row of arr) {
     if ((row[0] == "source" && row[1] == "destination") ||
         (row[0] == "destination" && row[1] == "source")) {
       // Handle header row
-      for (let c = 0; c < row.length; c++) {
-        header[row[c]] = c;
+      for (let c in row) {
+        let value = row[c];
+        header[value] = c;
+        // Every value in the header row that matches email_re is a good email.
+        if (["source", "destination"].includes(value)) {
+          continue;
+        }
+        if (value.match(email_re)) {  // can be empty-string
+          emails.push(value);
+        }
       }
       header_found = true;
       continue;
@@ -207,10 +216,14 @@ function getEndpointsForEmail(arr, email) {
       // E.G. The pseudo-header row ("COUNT A of source .. from.. <empty>").
       continue;
     }
-    let source = row[header[source]];
-    let destination = row[header[destination]];
+    let source = row[header["source"]];
+    let destination = row[header["destination"]];
     try {
-      let count = parseInt(row[header[email]]);
+      // Add up the counts for all the emails we care about (that match email_re).
+      let count = 0;
+      for (let email of emails) {
+        count += parseInt(row[header[email]] || "0");
+      }
     } catch (e) {
       // ignore this row, and move on.
       continue;
@@ -225,6 +238,7 @@ function getEndpointsForEmail(arr, email) {
     }
     destinations[destination]++;
   }
+
   let less_than = function(a, b) {
     if (a.count == b.count) {
       if (a.name == b.name) {
@@ -257,7 +271,8 @@ function getEndpointsForEmail(arr, email) {
 
 }
 
-function generateEndpoints() {
+
+function getSortedEndpoints(email_re) {
   let endpoints_text = window.localStorage.getItem("endpoints");
   if (!endpoints_text) {
     endpoints_text = 
@@ -294,18 +309,31 @@ function generateEndpoints() {
   ].join("\n");
   }
   let endpoints_array = csv2array(endpoints_text);
-  let endpoint_map = {
-    ubs_visa_debit: "UBS Visa (debit)",
-    bofa_visa: "Bank of America Visa",
-    ubs_twint: "UBS Twint",
-    cash: "cash",
-    ayelet_twint: "Ayelet Twint",
-    editte_twint: "Editte Twint",
-    migros: "Migros",
-    coop: "Coop:",
-    lidl: "Lidl",
-  };
+  let endpoints = getEndpointsForEmail(endpoints_array, email_re);
+  return endpoints;
+}
 
+function generateEndpoints() {
+  let email = window.localStorage.getItem("email") || /.*/;
+  let endpoints = getSortedEndpoints(email);
+
+  let source_scorller = document.querySelector("#source");
+  for (let source of endpoints.sources) {
+    const endpoint = document.createElement('sd-endpoint');
+    endpoint.classList.add("slot");
+    endpoint.institution = source;
+    endpoint.description = snake_case2PascalCase(source);
+    source_scorller.appendChild(endpoint);
+  }
+
+  let destination_scorller = document.querySelector("#destination");
+  for (let destination of endpoints.destinations) {
+    const endpoint = document.createElement('sd-endpoint');
+    endpoint.classList.add("slot");
+    endpoint.institution = destination;
+    endpoint.description = snake_case2PascalCase(destination);
+    destination_scorller.appendChild(endpoint);
+  }
 }
 
 function navToEmail() {
@@ -381,6 +409,8 @@ function updateLocalStorageFromUrl(key, url) {
 
 window.onload = () => {
   'use strict';
+
+  console.log("onload");
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
