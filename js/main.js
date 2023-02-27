@@ -1,5 +1,34 @@
 // @import url("./currency.js");
 
+// Using a global object, but others shouldn't use it.
+var settings = {};
+function getSetting(key) {
+  const defaults = 
+    {
+      "processing_email_address": "anerbenartzi+email2sheet@gmail.com",
+      "spreadsheet_id": "16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw",
+      "sheet_name": "entries",
+      "published_endpoints_url", "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ52nlttYPwbVkhwFXeMAz-zz0XJBmmJxi5Aa17zPrKpRXoGGWDDqbvRzvaYQ8F-eiofW_g8grnpHuz/pub?gid=1276802080&single=true&output=csv",
+      "email_re": ".*",
+      "keypad_location": "right",
+    }
+  if (!(key in defaults)) {
+    return undefined;  // This is an error.  Every setting must have a default.
+  }
+  if (!(key in settings)) {
+    settings[key] = window.localStorage.getItem(key) || defaults[key];
+  }
+  return settings[key];
+}
+
+function updateSettings() {
+  let inputs = document.querySelectorAll("#settings input");
+  for (let input of inputs) {
+    window.localStorage.setItem(input.id, input.value);
+  }
+  settings = {};  // A priveledged access to settings variable
+}
+
 function reclick(e) {
   e.click()
 };
@@ -21,8 +50,8 @@ function postSend() {
 
 function snake_case2PascalCase(snake_case, delimiter = "") {
   let PascalCaseTokens = [];
-  for (token of snake_case.split("_")) {
-    token[0] = token[0].toLocaleUpperCase();
+  for (let token of snake_case.split("_")) {
+    token = token[0].toLocaleUpperCase() + token.slice(1);
     PascalCaseTokens.push(token);
   }
   return PascalCaseTokens.join(delimiter);
@@ -62,11 +91,13 @@ function ready() {
   
   subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
 
+
+
   let body_json = JSON.stringify(body);
   let finalValues = [
-    'mailto:anerbenartzi+email2sheet@gmail.com?subject=' + encodeURIComponent(subject),
-    'cc=' + encodeURIComponent('"16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw" <anerbenartzi+email2sheet@gmail.com>'),
-    'bcc=' + encodeURIComponent('"entries" <anerbenartzi+email2sheet@gmail.com>'),
+    'mailto:' + getSetting("processing_email_address") + '?subject=' + encodeURIComponent(subject),
+    'cc=' + encodeURIComponent('"' + getSetting("spreadsheet_id") + '" <' + getSetting("processing_email_address") + '>'),
+    'bcc=' + encodeURIComponent(('"' + getSetting("sheet_name") + '" <' + getSetting("processing_email_address") + '>'),
     'body=' + encodeURIComponent(body_json),
   ];
 
@@ -448,7 +479,7 @@ window.onload = () => {
   window.onscroll = noScroll;
 
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
-  updateLocalStorageFromUrl("endpoints", "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ52nlttYPwbVkhwFXeMAz-zz0XJBmmJxi5Aa17zPrKpRXoGGWDDqbvRzvaYQ8F-eiofW_g8grnpHuz/pub?gid=1276802080&single=true&output=csv");
+  updateLocalStorageFromUrl("published_endpoints_csv", settings["publish_endpoints_url"]);
 
   generateEndpoints();
 
@@ -482,5 +513,6 @@ function resizeHandler() {
   }
 
 */
+  document.querySelector("#amount_keypad").classList(getSetting("keypad_location"));
   window.setTimeout(scrollEndpointsToBottom, 300);
 }

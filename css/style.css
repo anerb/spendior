@@ -77,14 +77,55 @@ body {
   #source {
     position: absolute;
     bottom: 77dvw;
-    left: 4dvw;
+    left: 2.5dvw;
     transform: scale3d(2.0 2.0 1.0);
   }
 
   #destination{
     position: absolute;
     bottom: 77dvw;
-    left: 50dvw;
+    left: 49.5dvw;
+  }
+
+  .y-scroller {
+    display: flex;
+    overflow: auto;
+    flex: none;
+    height: calc(24dvw * 5);  /*has to be odd for some reason*/
+    flex-flow: column nowrap;
+    scroll-snap-type: y mandatory;
+  }
+  
+  .slot {
+    scroll-snap-align: center;
+    flex: none;
+    width: 44dvw;
+    height: 24dvw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffffab;
+    border-radius: 3dvw;
+  }
+
+  .frame {
+    width: 42dvw;
+    height: 22dvw;
+    border: 6px solid grey;
+    position: absolute;
+    z-index: 22222222;
+    pointer-events: none;
+    border-radius: 3dvw;
+  }
+  
+  #source_frame {
+    left: 2.5dvw;
+    bottom: 76.5dvw;
+  }
+
+  #destination_frame {
+    right: 1.5dvw;
+    bottom: 76.5dvw;
   }
 
   #amount {
@@ -101,9 +142,9 @@ body {
   
   #what {
     position: absolute;
-    bottom: 0dvw;
-    left: 2dvw;
-    width: 90dvw;
+    bottom: 1dvw;
+    left: 8dvw;
+    width: 85dvw;
   }
   
   .endpoint_label {
@@ -124,7 +165,7 @@ body {
   
   #amount_keypad {
     position: absolute;
-    bottom: 8dvw;
+    bottom: 9dvw;
     right: 0dvw;
   }
   
@@ -155,26 +196,6 @@ body {
   border-radius: 30%;
 }
 
-.y-scroller {
-  display: flex;
-  overflow: auto;
-  flex: none;
-  height: calc(24dvw * 5);  /*has to be odd for some reason*/
-  flex-flow: column nowrap;
-  scroll-snap-type: y mandatory;
-}
-
-.slot {
-  scroll-snap-align: center;
-  flex: none;
-  width: 44dvw;
-  height: 24dvw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-}
-
 form {
   margin: 0px;
   padding: 0px;
@@ -185,24 +206,6 @@ form {
   opacity: 0.0;
 }
 
-.frame {
-  width: 40dvw;
-  height: 22dvw;
-  border: 6px solid grey;
-  position: absolute;
-  z-index: 22222222;
-  pointer-events: none;
-}
-
-#source_frame {
-  left: 4dvw;
-  bottom: 76.5dvw;
-}
-
-#destination_frame {
-  right: 2dvw;
-  bottom: 76.5dvw;
-}
 
 .top_only {
   height: 0.2dvw;
@@ -239,4 +242,25 @@ a {
 
 .display_none {
   display: none;
+}
+
+.gear {
+  width: 6dvw;
+  height: 6dvw;
+  font-size: 6dvw;
+}
+
+#gear {
+  position: absolute;
+  left: 1dvw;
+  bottom: 2dvw;
+}
+
+/* A Hack where I reuse the human values of left and right directly from the input */
+#amount_keypad .left {
+  left: 0dvw;
+}
+
+#amount_keypad .right {
+  right: 0dvw;
 }
