@@ -219,11 +219,12 @@ form {
 .send-button {
   width: 20dvw;
   height: 20dvw;
+  font-size: 24dvw;
 }
 
 #sendnow {
   position: absolute;
-  top: 65dvw;
+  top: 56dvw;
   left: 11dvw;
 }
 

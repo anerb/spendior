@@ -281,25 +281,23 @@ function getEndpointsForEmail(arr, email_re) {
     }
     let source = row[header["source"]];
     let destination = row[header["destination"]];
-    try {
-      // Add up the counts for all the emails we care about (that match email_re).
-      let count = 0;
-      for (let email of emails) {
-        count += parseInt(row[header[email]] || "0");
+    let count = 0;
+    for (let email of emails) {
+      let value = parseInt(row[header[email]]);
+      if (isNaN(value)) {
+        value = 0;
       }
-    } catch (e) {
-      // ignore this row, and move on.
-      continue;
+      count += value;
     }
     // For now, I'm keeping it simple so the source-destination linkage is ignored.
     if (!(source in sources)) {
       sources[source] = 0;
     }
-    sources[source]++;
+    sources[source]+=count;
     if (!(destination in destinations)) {
       destinations[destination] = 0;
     }
-    destinations[destination]++;
+    destinations[destination]+=count;
   }
 
   let less_than = function(a, b) {
@@ -319,6 +317,9 @@ function getEndpointsForEmail(arr, email_re) {
   sources_sorted.sort(less_than);
   let source_names = [];
   for (let source of sources_sorted) {
+    if (source.count <= 0) {
+      continue;
+    }
     source_names.push(source.name);
   }
   let destinations_sorted = [];
@@ -328,6 +329,9 @@ function getEndpointsForEmail(arr, email_re) {
   destinations_sorted.sort(less_than);
   let destination_names = [];
   for (let destination of destinations_sorted) {
+    if (destination.count <= 0) {
+      continue;
+    }
     destination_names.push(destination.name);
   }
   return {sources: source_names, destinations: destination_names}
@@ -387,8 +391,7 @@ function appendEndpoint(parent, name) {
 }
 
 function generateEndpoints() {
-  let email = window.localStorage.getItem("email") || /.*/;
-  let endpoints = getSortedEndpoints(email);
+  let endpoints = getSortedEndpoints(getSetting("email_re"));
 
   let source_scroller = document.querySelector("#source");
   for (let source of endpoints.sources) {
