@@ -89,6 +89,9 @@ body {
     position: absolute;
     bottom: 10dvw;
     right: 51dvw;
+  }
+
+  .amount {
     width: 43dvw;
     font-size: 12dvw;
     text-align: end;
@@ -186,6 +189,7 @@ form {
   border: 6px solid grey;
   position: absolute;
   z-index: 22222222;
+  pointer-events: none;
 }
 
 #source_frame {
@@ -205,4 +209,33 @@ form {
   left: 0dvw;
   border-bottom-width: 0px;
   border-top-color: white;
+}
+
+
+.send-button {
+  width: 20dvw;
+  height: 20dvw;
+}
+
+#sendnow {
+  position: absolute;
+  top: 65dvw;
+  left: 11dvw;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+#converter {
+  position: absolute;
+  top: 31dvw;
+  right: 28dvw;
+  transform: scale(0.5);
+  width: 88dvw;
+}
+
+.display_none {
+  display: none;
 }

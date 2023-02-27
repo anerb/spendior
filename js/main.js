@@ -1,9 +1,5 @@
 // @import url("./currency.js");
 
-function scrollerMoved(e) {
-  console.log([e, e.scrollLeft, e.scrollTop]);
-}
-
 function reclick(e) {
   e.click()
 };
@@ -42,7 +38,6 @@ function getScrollerValue(id) {
 }
 
 function ready() {
-  console.log("ready");
   let body = {
     source: "",
     destination: "",
@@ -66,8 +61,27 @@ function ready() {
     'body=' + encodeURIComponent(body_json),
   ];
 
-  let sendItem = document.querySelector("#send-email");
-  sendItem.action = finalValues.join('&'); 
+  let mailtourl = finalValues.join('&');
+//  let sendItem = document.querySelector("#send-email");
+//  sendItem.action = finalValues.join('&'); 
+   document.querySelector("#sendlink").href = mailtourl;
+
+  // Update exchange rate
+  let converter = document.querySelector("#converter");
+  if (body.currency == "CHF") {
+    converter.classList.add("display_none");
+  }
+  if (body.currency != "CHF") {
+    let chf = window.localStorage.getItem('CHF');
+    if (chf) {
+      chf = JSON.parse(chf);
+      let rate = chf.conversion_rates[body.currency];
+      let chf_value = rate * body.amount;
+      chf_value = Math.round(chf_value * 100) / 100;
+      converter.innerHTML = "= " + chf_value + " CHF";
+      converter.classList.remove("display_none");
+    }
+  }
 }
 
 function updateSource() {
@@ -177,6 +191,12 @@ function generateEndpoints() {
 
 }
 
+function navToEmail() {
+//  window.open("mailto:anerbenartzi@gmail.com?subject=Howdy&Body=Pardner", "_blank");
+  document.querySelector("#sendlink").click();
+}
+
+
 /**
  * A keypad for entering in a currency amount.
  * Some unusual behavior for which I ask forgiveness:
@@ -219,13 +239,27 @@ function currencykeyclick(e) {
   ready();
 }
 
-
 function keydown(e) {
   document.getElementById('console-log').innerHTML += `${e.key}<br>`;
 }
 
 function noScroll() {
   window.scrollTo(0, 0);
+}
+
+function fetchCurrencies() {
+  fetch("https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF")
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        console.error("NETWORK RESPONSE ERROR");  // is there a response.errorcode?
+      }
+    })
+    .then((data) => {
+      window.localStorage.setItem("CHF", JSON.stringify(data));
+    })
+    .catch((error) => console.error("FETCH ERROR:", error));
 }
 
 window.onload = () => {
@@ -241,6 +275,8 @@ window.onload = () => {
   window.onscroll = noScroll;
 
   generateEndpoints();
+
+  fetchCurrencies();
 
   let input_elements = document.querySelectorAll('input')
   for (let input_element of input_elements) {

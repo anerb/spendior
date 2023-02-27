@@ -13,7 +13,9 @@
 </head>
 <body class="fullscreen">
   <div class="static_header" >
-      <div class="y-scroller" id="source" dir="rtl" onscroll="scrollerMoved(this)">
+    <div id="sendnow" class="send-button"><a id="sendlink" href="mailto:foo">🖂</a> </div>
+    <div id="converter" class="amount display_none">=0.00 CHF</div>
+      <div class="y-scroller" id="source" dir="rtl">
         <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
         <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
         <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
@@ -27,8 +29,6 @@
         <sd-endpoint class="slot" institution="migros" description="Migros"></sd-endpoint>
         <sd-endpoint class="slot" institution="coop" description="Coop"></sd-endpoint>
         <sd-endpoint class="slot" institution="lidl" description="Lidl"></sd-endpoint>
-      
-
       </div>
 
       <div class="y-scroller" id="destination" dir="ltr" onscroll="scrollerMoved(this)">
@@ -47,8 +47,8 @@
         <sd-endpoint class="slot" institution="lidl" description="Lidl"></sd-endpoint>
       </div>
 
-    <span id="amount" class="amount_clear">0.00</span>
-    <form id="send-email" action="mailto:foo@example.com"  method="get" enctype="text/plain">
+    <span id="amount" class="amount" class="amount_clear">0.00</span>
+    <form id="send-email" onsubmit="navToEmail()">
     <input id="what" type="search" enterkeyhint="send" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
     </form>
     <div class="keypad" id="amount_keypad">
@@ -56,7 +56,7 @@
       <div class="keyrow"><div class="key">4</div><div class="key">5</div><div class="key">6</div></div>
       <div class="keyrow"><div class="key">7</div><div class="key">8</div><div class="key">9</div></div>
       <div class="keyrow"><div class="key currency_key"></div><div class="key">0</div><div class="key" id="decimal_clear">.</div></div>
-      <select id="currency" name="currency">
+      <select id="currency" name="currency" onchange="ready()">
         <option value="CHF" selected>🇨🇭Fr.</option>
         <option value="USD">🇺🇸$</option>
         <option value="EUR">🇪🇺€</option>
