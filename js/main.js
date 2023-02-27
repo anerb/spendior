@@ -68,7 +68,7 @@ function ready() {
 
   // Update exchange rate
   let converter = document.querySelector("#converter");
-  if (body.currency == "CHF") {
+  if (body.currency == "CHF" || body.currency == "OTH") {
     converter.classList.add("display_none");
   }
   if (body.currency != "CHF") {
@@ -76,7 +76,7 @@ function ready() {
     if (chf) {
       chf = JSON.parse(chf);
       let rate = chf.conversion_rates[body.currency];
-      let chf_value = rate * body.amount;
+      let chf_value = body.amount / rate;
       chf_value = Math.round(chf_value * 100) / 100;
       converter.innerHTML = "= " + chf_value + " CHF";
       converter.classList.remove("display_none");
