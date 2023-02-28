@@ -529,6 +529,6 @@ function resizeHandler() {
   }
 
 */
-  document.querySelector("#amount_keypad").classList.add(getSetting("keypad_location"));
+  document.querySelector("#static_header").classList.add(getSetting("keypad_location"));
   window.setTimeout(scrollEndpointsToBottom, 300);
 }

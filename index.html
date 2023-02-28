@@ -12,9 +12,11 @@
   <script src="./js/main.js"></script>
 </head>
 <body class="fullscreen">
-  <div class="static_header" >
-    <div id="sendnow" class="send-button"><a id="sendlink" href="mailto:foo">📨</a> </div>
-    <div id="converter" class="amount display_none">=0.00 CHF</div>
+  <div id="gear" class="gear" onclick="showSettings()">⚙</div>
+  <div id="static_header" class="static_header" >
+    <div class="static_header top_only" ></div>
+    <div id="source_frame" class="frame"></div>
+    <div id="destination_frame" class="frame"></div>  
       <div class="y-scroller scroll-none" id="source" dir="rtl">
         <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
         <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
@@ -29,10 +31,11 @@
         <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
       </div>
 
-    <span id="amount" class="amount" class="amount_clear">0.00</span>
-    <form id="send-email" onsubmit="navToEmail()">
-    <input id="what" type="search" enterkeyhint="send" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
-    </form>
+    <div id="panel" class="panel">
+      <div id="converter" class="amount display_none">=0.00 CHF</div>
+      <span id="amount" class="amount" class="amount_clear">0.00</span>  
+    </div>
+
     <div class="keypad" id="amount_keypad">
       <div class="keyrow"><div class="key">1</div><div class="key">2</div><div class="key">3</div></div>
       <div class="keyrow"><div class="key">4</div><div class="key">5</div><div class="key">6</div></div>
@@ -47,10 +50,13 @@
       </select>
     </div>
     
-    <div class="static_header top_only" ></div>
-    <div id="source_frame" class="frame"></div>
-    <div id="destination_frame" class="frame"></div>  
-    <div id="gear" class="gear" onclick="showSettings()">⚙</div>
+    <div id="footer" class="footer">
+      <form id="send-email" onsubmit="navToEmail()">
+        <input id="what" type="search" enterkeyhint="send" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
+      </form>
+      <div id="sendnow" class="send-button"><a id="sendlink" href="mailto:foo">📨</a> </div>
+    </div> 
+
     <div id="settings" class="settings display_none">
       <div id="close_settings" class="close_settings">reload to apply settings</div>
       processing_email_address:<br/>

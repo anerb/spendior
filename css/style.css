@@ -50,12 +50,15 @@ body {
     width: 38px;
     font-size: medium;
   }
-  
+
+  #static_header {
+    position: fixed;
+    z-index: 999;
+    bottom: 11dvw;
+  }
+
   .static_header {
     display: flex;
-    position: fixed;
-    bottom: 0dvw;
-    z-index: 999;
     background-color: #ffc0cbdb;
     padding: 10px;
     width: 90dvw;
@@ -72,6 +75,13 @@ body {
     bottom: 104dvw;
     border-bottom-color: transparent;
     border-top-color: white;
+    height: 0.2dvw;
+    bottom: 100dvw;
+    left: -2dvw;
+    border-bottom-width: 0px;
+    border-top-color: white;
+    position: absolute;
+    z-index: 9;
   }
 
   #source {
@@ -130,8 +140,8 @@ body {
 
   #amount {
     position: absolute;
-    bottom: 10dvw;
-    right: 51dvw;
+    bottom: 4dvw;
+    right: 0dvw;
   }
 
   .amount {
@@ -143,8 +153,8 @@ body {
   #what {
     position: absolute;
     bottom: 1dvw;
-    left: 8dvw;
-    width: 85dvw;
+    left: 1dvw;
+    width: 79dvw;
   }
   
   .endpoint_label {
@@ -153,8 +163,8 @@ body {
   
   #currency {
     position: absolute;
-    bottom: 5dvw;
-    left: 1dvw;
+    bottom: 10dvw;
+    left: 2dvw;
     font-size: 6dvw;
     width: calc(0.01em * 240);
     appearance: none;
@@ -206,26 +216,16 @@ form {
   opacity: 0.0;
 }
 
-
-.top_only {
-  height: 0.2dvw;
-  bottom: 102dvw;
-  left: 0dvw;
-  border-bottom-width: 0px;
-  border-top-color: white;
-}
-
-
 .send-button {
   width: 20dvw;
-  height: 20dvw;
-  font-size: 24dvw;
+  height: 12dvw;
+  font-size: 12dvw;
 }
 
 #sendnow {
   position: absolute;
-  top: 56dvw;
-  left: 11dvw;
+  bottom: 0dvw;
+  right: -5dvw;
 }
 
 a {
@@ -235,10 +235,10 @@ a {
 
 #converter {
   position: absolute;
-  top: 31dvw;
-  right: 28dvw;
+  right: -21dvw;
   transform: scale(0.5);
   width: 88dvw;
+  bottom: -3dvw;
 }
 
 .display_none {
@@ -253,16 +253,16 @@ a {
 
 #gear {
   position: absolute;
+  top: 1dvw;
   left: 1dvw;
-  bottom: 2dvw;
 }
 
 /* A Hack where I reuse the human values of left and right directly from the input */
-#amount_keypad.left {
+.left #amount_keypad {
   left: 0dvw;
 }
 
-#amount_keypad.right {
+.right #amount_keypad {
   right: 0dvw;
 }
 
@@ -270,10 +270,43 @@ a {
   background: white;
   font-size: 4dvw;
   width: 100dvw;
-  height: 100dvw;
+  height: 88dvw;
   z-index: 99999;
+  padding: 2dvw;
+  border: 2px solid black;
 }
 
 #settings input {
   font-size: 4dvw;
+  width: 80dvw;
+  margin: 0dvw 0dvw 2dvw 0dvw;
+}
+
+#panel {
+  position: absolute;
+  bottom: 12dvw;
+}
+
+/* HACKY: "left" means the keypad is on the left */
+.left #panel {
+  right: 0dvw;
+}
+.right #panel {
+  left: 0dvw;
+}
+
+.panel {
+  width: 44dvw;
+  height: 64dvw;
+}
+
+.footer {
+  width: 100dvw;
+  height: 12dvw;
+}
+
+#footer {
+  position: absolute;
+  left: 0dvw;
+  bottom: 0dvw;
 }
