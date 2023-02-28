@@ -66,6 +66,7 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
 }
 
 function getScrollerValue(id) {
+  console.log("getScrollerValue");
   let id_selector = "#" + id;
   let scroller = document.querySelector(id_selector);
   let parent_bottom = source.getBoundingClientRect().bottom;
@@ -76,6 +77,7 @@ function getScrollerValue(id) {
     let child_bottom = c.getBoundingClientRect().bottom;
     let diff = Math.abs(parent_bottom - child_bottom);
     if (diff < min_diff && diff < 100) {  // ARBITRARY
+      min_diff = diff;
       value = c.getAttribute("institution");
       navigator.vibrate([64]);
     }
