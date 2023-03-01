@@ -500,11 +500,7 @@ function updateLocalStorageFromUrl(key, url) {
     .catch((error) => console.error("FETCH ERROR:", error));
 }
 
-window.onload = () => {
-  'use strict';
-
-  console.log("onload");
-
+function PWA() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', {scope: './', type: 'classic', updateViaCache: 'none'}).then((registration) => {
       console.log('Service worker registration succeeded:', registration);
@@ -514,18 +510,37 @@ window.onload = () => {
   } else {
     console.error('Service workers are not supported.');
   }
+}
 
+function WebComponents() {
   customElements.define("sd-endpoint", Endpoint);
+}
 
-  window.onscroll = noScroll;
 
+function BuildPage() {
+  // HACKY: This implicitly depends on settings.
+  generateEndpoints();
+}
+
+function LoadSettings() {
   fillSettings();
-
+  // TODO: Only do these if the old ones are more than a couple of hours old.
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
   updateLocalStorageFromUrl("published_endpoints_csv", getSetting("published_endpoints_url"));
 
+  // TODO: Add a button in settings to refresh exchange rate and published endpoints.
 
-  generateEndpoints();
+  // TODO: Add the currency based on the locale timestamp and/or location.
+}
+
+function ApplySettings() {
+  // Applying the settings at startup.  This is why a refresh is needed when settings change.
+  document.querySelector("#static_header").classList.add(getSetting("keypad_location"));
+  document.body.style.background = getSetting("background");
+}
+
+function AddEventListeners() {
+  window.onscroll = noScroll;
 
   let input_elements = document.querySelectorAll('input')
   for (let input_element of input_elements) {
@@ -541,24 +556,24 @@ window.onload = () => {
     currency_key_element.addEventListener('click', currencykeyclick);
   }
   document.querySelector("#what").addEventListener('keydown', keydown);
+}
 
-/*
-  const height = window.visualViewport.height;
-const viewport = window.visualViewport;
-
-window.addEventListener("scroll", () => input.blur());
-window.visualViewport.addEventListener("resize", resizeHandler);
-
-function resizeHandler() {
-//    if (!/iPhone|iPad|iPod/.test(window.navigator.userAgent)) {
-//      height = viewport.height;
-//    }
-    button.style.bottom = `${height - viewport.height + 10}px`;
-  }
-
-*/
-  document.querySelector("#static_header").classList.add(getSetting("keypad_location"));
-  document.body.style.background = getSetting("background");
-
+// HACKY: Find a better name.
+// This puts all the scrolling/focus/orientation/animations in place to start.
+// TODO: StartingPlaces() should probably be combined with PostSend().
+function StartingPlaces() {
   window.setTimeout(scrollEndpointsToBottom, 300);
+}
+
+window.onload = () => {
+  'use strict';
+  console.log("onload");
+  PWA();
+  WebComponents();
+  LoadSettings();
+  // FRAGILE: This needs to come after LoadSettings() to get the latest published_endpoints for the specific email_address.
+  BuildPage();
+  ApplySettings();
+  AddEventListeners();
+  StartingPlaces();
 }
