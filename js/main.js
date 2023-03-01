@@ -400,8 +400,23 @@ function appendEndpoint(parent, name) {
   parent.innerHTML += html;
 }
 
+
+function modifyEndpointsOther(endpoints) {
+  let other_index = endpoints.sources.indexOf("other");
+  if (other_index >= 0) {
+    endpoints.sources.splice(other_index, 1);
+  }
+  endpoints.sources.splice(0, 0, "other");
+  other_index = endpoints.destinations.indexOf("other");
+  if (other_index >= 0) {
+    endpoints.destinations.splice(other_index, 1);
+  }
+  endpoints.destinations.splice(0, 0, "other");
+}
+
 function generateEndpoints() {
   let endpoints = getSortedEndpoints(getSetting("email_re"));
+  modifyEndpointsOther(endpoints);
 
   let source_scroller = document.querySelector("#source");
   for (let source of endpoints.sources) {
