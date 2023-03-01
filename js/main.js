@@ -544,10 +544,9 @@ function ApplySettings() {
 
 function AddEventListeners() {
   window.onscroll = noScroll;
-  document.querySelectorAll('.y-scroller').forEach((element) =>
-  {
+  for (let element of document.querySelectorAll('.y-scroller')) {
     element.addEventListener('scroll', ready);
-  });
+  }
 
   let input_elements = document.querySelectorAll('input')
   for (let input_element of input_elements) {
