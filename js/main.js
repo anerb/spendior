@@ -93,14 +93,21 @@ function getScrollerValue(id) {
   return value;
 }
 
+function formatDate(date) {
+  let year = date.getFullYear();
+  let month = String(date.getMonth() + 1).padStart(2, "0");
+  let day = String(date.getDate()).padStart(2, "0");
+  let formattedDate = [year, month, day].join('-');
+  return formattedDate;
+}
+
 function ready() {
-  let body = {
-    source: "",
-    destination: "",
-    amount: "",
-    currency: "",
-    what: "",
-  }
+  let body = {};
+  today = new Date();
+  body.spreadsheet_id = getSetting("spreadsheet_id");
+  body.sheet_name = getSetting("sheet_name");
+  body.date_first = formatDate(today);
+  body.date_final = formatDate(today);
   body.source = getScrollerValue("source");
   body.destination = getScrollerValue("destination");
   body.currency = document.querySelector("#currency").value;
@@ -109,13 +116,9 @@ function ready() {
   
   subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
 
-
-
   let body_json = JSON.stringify(body);
   let finalValues = [
-    'mailto:' + getSetting("processing_email_address") + '?subject=' + encodeURIComponent(subject),
-    'cc=' + encodeURIComponent('"' + getSetting("spreadsheet_id") + '" <' + getSetting("processing_email_address") + '>'),
-    'bcc=' + encodeURIComponent('"' + getSetting("sheet_name") + '" <' + getSetting("processing_email_address") + '>'),
+    'mailto:' + encodeURIComponent(getSetting("processing_email_address")) + '?subject=' + encodeURIComponent(subject),
     'body=' + encodeURIComponent(body_json),
   ];
 
@@ -541,6 +544,10 @@ function ApplySettings() {
 
 function AddEventListeners() {
   window.onscroll = noScroll;
+  document.querySelectorAll('.y-scroller').forEach((element) =>
+  {
+    element.addEventListener('scroll', ready);
+  });
 
   let input_elements = document.querySelectorAll('input')
   for (let input_element of input_elements) {
