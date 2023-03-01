@@ -6,11 +6,11 @@
     "start_url": "./index.html",
     "name": "Spendior spend tracking app",
     "short_name": "Spendior",
-    "ignorable_property": "202303011319",
+    "ignorable_property": "202303011425",
     "description": "Keep track of spendings.",
     "icons": [
         {
-            "src": "./images/icon-192x192.png",
+            "src": "./images/spendior-icon-192x192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any maskable"
