@@ -10,8 +10,6 @@ html {
 
 body {
     font-size:12dvw;
-    background: pink;
-    background-image: url('../images/pinkdior.jpg');
   }
   
   .fullscreen {
@@ -270,7 +268,7 @@ a {
   background: white;
   font-size: 4dvw;
   width: 100dvw;
-  height: 88dvw;
+  height: 96dvw;
   z-index: 99999;
   padding: 2dvw;
   border: 2px solid black;
@@ -309,4 +307,15 @@ a {
   position: absolute;
   left: 0dvw;
   bottom: 0dvw;
+}
+
+#settings .background {
+  width: 64dvw;
+}
+#settings .background_color{
+  width: 12dvw;
+}
+#background_color {
+  position: absolute;
+  right: 8dvw;
 }

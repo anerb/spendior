@@ -10,6 +10,8 @@ const defaults =
   "published_endpoints_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ52nlttYPwbVkhwFXeMAz-zz0XJBmmJxi5Aa17zPrKpRXoGGWDDqbvRzvaYQ8F-eiofW_g8grnpHuz/pub?gid=1276802080&single=true&output=csv",
   "email_re": ".*",
   "keypad_location": "right",
+  "background": "url('../images/pinkdior.jpg')",
+  "background_color": "#FFBBBB"
 }
 function getSetting(key) {
   if (!(key in defaults)) {
@@ -27,6 +29,7 @@ function fillSettings() {
   }
 }
 function updateSettings() {
+  console.log("updateSettings");
   let inputs = document.querySelectorAll("#settings input");
   for (let input of inputs) {
     window.localStorage.setItem(input.id, input.value);
@@ -36,6 +39,11 @@ function updateSettings() {
 function showSettings() {
   document.querySelector("#settings").classList.remove("display_none");
 }
+function setBackgroundSetting() {
+  document.querySelector("#background").value = document.querySelector("#background_color").value;
+  updateSettings();
+}
+
 
 function reclick(e) {
   e.click()
@@ -342,7 +350,7 @@ function getEndpointsForEmail(arr, email_re) {
 
 
 function getSortedEndpoints(email_re) {
-  let endpoints_text = window.localStorage.getItem("endpoints");
+  let endpoints_text = window.localStorage.getItem("published_endpoints_csv");
   if (!endpoints_text) {
     endpoints_text = 
     ["COUNTA of source,,from,,,,,",
@@ -530,5 +538,7 @@ function resizeHandler() {
 
 */
   document.querySelector("#static_header").classList.add(getSetting("keypad_location"));
+  document.body.style.background = getSetting("background");
+
   window.setTimeout(scrollEndpointsToBottom, 300);
 }
