@@ -505,7 +505,7 @@ function updateLocalStorageFromUrl(key, url) {
 
 function PWA() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', {scope: './', type: 'classic', updateViaCache: 'none'}).then((registration) => {
+    navigator.serviceWorker.register('/sw.js', {scope: './spendior/', type: 'classic', updateViaCache: 'none'}).then((registration) => {
       console.log('Service worker registration succeeded:', registration);
     }, /*catch*/ (error) => {
       console.error(`Service worker registration failed: ${error}`);
