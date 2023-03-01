@@ -506,7 +506,7 @@ window.onload = () => {
   console.log("onload");
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', {scope: './', type: 'classic', type: 'none'}).then((registration) => {
+    navigator.serviceWorker.register('/sw.js', {scope: './', type: 'classic', updateViaCache: 'none'}).then((registration) => {
       console.log('Service worker registration succeeded:', registration);
     }, /*catch*/ (error) => {
       console.error(`Service worker registration failed: ${error}`);
