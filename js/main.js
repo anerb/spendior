@@ -506,8 +506,13 @@ window.onload = () => {
   console.log("onload");
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-             .register('./sw.js');
+    navigator.serviceWorker.register('/sw.js', {scope: './', type: 'classic', type: 'none'}).then((registration) => {
+      console.log('Service worker registration succeeded:', registration);
+    }, /*catch*/ (error) => {
+      console.error(`Service worker registration failed: ${error}`);
+    });
+  } else {
+    console.error('Service workers are not supported.');
   }
 
   customElements.define("sd-endpoint", Endpoint);
