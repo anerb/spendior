@@ -4,9 +4,9 @@
     "display": "standalone",
     "scope": "https://anerb.github.io",
     "start_url": "/spendior/index.html",
-    "name": "Spendior",
+    "name": "Spendior spend tracking app",
     "short_name": "Spendior",
-    "ignorable_property": "202302081718",
+    "ignorable_property": "202303011319",
     "description": "Keep track of spendings.",
     "icons": [
         {
