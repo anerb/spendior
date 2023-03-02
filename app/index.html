@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Spendior</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" type="text/css" href="./css/style.css">
+  <link rel="icon" type="image/png" href="./images/spendior-icon-192x192.png">
+  <link rel="apple-touch-icon" href="./images/spendior-icon-192x192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="white"/>
+  <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+  <script src="./js/main.js"></script>
+</head>
+<body class="fullscreen">
+  <div id="gear" class="gear" onclick="showSettings()">⚙</div>
+  <div id="static_header" class="static_header" >
+    <div class="static_header top_only" ></div>
+    <div id="source_frame" class="frame"></div>
+    <div id="destination_frame" class="frame"></div>  
+      <div class="y-scroller scroll-none" id="source" dir="rtl">
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+      </div>
+
+      <div class="y-scroller scroll-none" id="destination" dir="rtl">
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+        <sd-endpoint class="slot filler" institution="FILLER" description="FILLER"></sd-endpoint>
+      </div>
+
+    <div id="panel" class="panel">
+      <div id="converter" class="amount display_none">=0.00 CHF</div>
+      <span id="amount" class="amount" class="amount_clear">0.00</span>  
+    </div>
+
+    <div class="keypad" id="amount_keypad">
+      <div class="keyrow"><div class="key">1</div><div class="key">2</div><div class="key">3</div></div>
+      <div class="keyrow"><div class="key">4</div><div class="key">5</div><div class="key">6</div></div>
+      <div class="keyrow"><div class="key">7</div><div class="key">8</div><div class="key">9</div></div>
+      <div class="keyrow"><div class="key currency_key"></div><div class="key">0</div><div class="key" id="decimal_clear">.</div></div>
+      <select id="currency" name="currency" onchange="ready()">
+        <option value="CHF" selected>🇨🇭Fr.</option>
+        <option value="USD">🇺🇸$</option>
+        <option value="EUR">🇪🇺€</option>
+        <option value="GBP">🇬🇧£</option>
+        <option value="OTH">🏴‍☠️?</option>
+      </select>
+    </div>
+    
+    <div id="footer" class="footer">
+      <form id="send-email" onsubmit="navToEmail()">
+        <input id="what" type="search" enterkeyhint="send" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
+      </form>
+      <div id="sendnow" class="send-button"><a id="sendlink" href="mailto:foo">📨</a> </div>
+    </div> 
+
+    <div id="settings" class="settings display_none">
+      <div id="close_settings" class="close_settings">reload to apply settings</div>
+      processing_email_address:<br/>
+      <input type="text" id="processing_email_address" class="settings_input" oninput="updateSettings()"/><br/>
+      spreadsheet_id:<br/>
+      <input type="text" id="spreadsheet_id" class="settings_input" oninput="updateSettings()"/><br/>
+      sheet_name:<br/>
+      <input type="text" id="sheet_name" class="settings_input" oninput="updateSettings()"/><br/>
+      email_re:<br/>
+      <input type="text" id="email_re" class="settings_input" oninput="updateSettings()"/><br/>
+      published_endpoints_url:<br/>
+      <input type="text" id="published_endpoints_url" class="settings_input" oninput="updateSettings()"/><br/>
+      keypad_location:<br/>
+      <input type="text" id="keypad_location" class="settings_input" oninput="updateSettings()"/><br/>
+      background:<br/>
+      <input type="text" id="background" class="background" oninput="updateSettings()" />
+      <input type="color" id="background_color" class="background_color" onchange="setBackgroundSetting(this)"/>
+    </div>
+  </div>
+
+
+</body>
+</html>

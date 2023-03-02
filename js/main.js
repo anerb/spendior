@@ -1,3 +1,5 @@
+'use strict';
+
 // @import url("./currency.js");
 
 // Using a global object, but others shouldn't use it.
@@ -504,15 +506,20 @@ function updateLocalStorageFromUrl(key, url) {
 }
 
 function PWA() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("../pwa/sw.js");
+  }
+  /*
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', {scope: './spendior/', type: 'classic', updateViaCache: 'none'}).then((registration) => {
       console.log('Service worker registration succeeded:', registration);
-    }, /*catch*/ (error) => {
+    },  (error) => {
       console.error(`Service worker registration failed: ${error}`);
     });
   } else {
     console.error('Service workers are not supported.');
   }
+  */
 }
 
 function WebComponents() {
@@ -572,7 +579,6 @@ function StartingPlaces() {
 }
 
 window.onload = () => {
-  'use strict';
   console.log("onload");
   PWA();
   WebComponents();
