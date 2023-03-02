@@ -12,5 +12,5 @@
   ],
   "name": "Spendior for collecting spending data",
   "short_name": "Spendior",
-  "start_url": "../index.html"
+  "start_url": "../app/index.html"
 }
