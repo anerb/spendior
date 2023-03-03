@@ -116,7 +116,7 @@ function ready() {
   body.amount = document.querySelector("#amount").innerHTML;
   body.what = document.querySelector("#what").value;
   
-  subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
+  let subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
 
   let body_json = JSON.stringify(body);
   let finalValues = [
