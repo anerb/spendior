@@ -105,7 +105,7 @@ function formatDate(date) {
 
 function ready() {
   let body = {};
-  today = new Date();
+  let today = new Date();
   body.spreadsheet_id = getSetting("spreadsheet_id");
   body.sheet_name = getSetting("sheet_name");
   body.date_first = formatDate(today);
