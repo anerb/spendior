@@ -10,7 +10,7 @@ html {
 
 body {
     font-size:12dvw;
-    font-family: 'Playfair Display', serif;
+    font-family: serif, 'Playfair Display';
   }
   
   .fullscreen {
