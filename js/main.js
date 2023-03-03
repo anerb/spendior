@@ -209,7 +209,7 @@ class Endpoint extends HTMLElement {
 
     const img = document.createElement('img');
     img.setAttribute('class', 'endpoint');
-    img.src = './images/' + institution + ".png";
+    img.src = '../images/' + institution + ".png";
     img.setAttribute('alt', description);
 
     const label = document.createElement('div');
