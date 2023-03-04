@@ -1,5 +1,6 @@
 {
   "background_color": "pink",
+  " theme_color": "pink",
   "description": "Prepares an email with a JSON body that records spending events.",
   "display": "fullscreen",
   "icons": [
@@ -12,5 +13,6 @@
   ],
   "name": "Spendior for collecting spending data",
   "short_name": "Spendior",
-  "start_url": "../app/index.html"
+  "start_url": "../app/index.html",
+  "scope": "https://anerb.github.io/spendior/"
 }
