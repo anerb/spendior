@@ -6,10 +6,10 @@
 var settings = {};
 const defaults = 
 {
-  "processing_email_address": "anerbenartzi+email2sheet@gmail.com",
-  "spreadsheet_id": "16I2ldN2v_an0u5c09zYpr_bKAw0DBeTH53NRnxtvFkw",
-  "sheet_name": "entries",
-  "published_endpoints_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ52nlttYPwbVkhwFXeMAz-zz0XJBmmJxi5Aa17zPrKpRXoGGWDDqbvRzvaYQ8F-eiofW_g8grnpHuz/pub?gid=1276802080&single=true&output=csv",
+  "processing_email_address": "email2sheets@gmail.com",
+  "spreadsheet_id": "",
+  "sheet_name": "data",
+  "published_endpoints_url": "",
   "email_re": ".*",
   "keypad_location": "right",
   "background": "url('../images/pinkdior.jpg')",
