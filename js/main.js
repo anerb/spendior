@@ -406,17 +406,20 @@ function appendEndpoint(parent, name) {
 }
 
 
+// Originally, I set "other" to be at the start (farthest from the most popular).
+// However, that made it so the most popular were pre-selected in endpoints, which means open,digits,send would erronously capture the endpoints.
 function modifyEndpointsOther(endpoints) {
   let other_index = endpoints.sources.indexOf("other");
   if (other_index >= 0) {
     endpoints.sources.splice(other_index, 1);
   }
-  endpoints.sources.splice(0, 0, "other");
+  endpoints.sources.push("other");
+
   other_index = endpoints.destinations.indexOf("other");
   if (other_index >= 0) {
     endpoints.destinations.splice(other_index, 1);
   }
-  endpoints.destinations.splice(0, 0, "other");
+  endpoints.destinations.push("other");
 }
 
 function generateEndpoints() {
