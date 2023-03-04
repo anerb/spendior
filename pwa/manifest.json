@@ -1,6 +1,6 @@
 {
   "background_color": "pink",
-  " theme_color": "pink",
+  "theme_color": "pink",
   "description": "Prepares an email with a JSON body that records spending events.",
   "display": "fullscreen",
   "icons": [
