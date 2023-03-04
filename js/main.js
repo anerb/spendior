@@ -83,7 +83,6 @@ function getScrollerValue(id) {
     if (diff < min_diff && diff < 100) {  // ARBITRARY
       min_diff = diff;
       value = c.getAttribute("institution");
-      navigator.vibrate([64]);
     }
   }
   return value;
