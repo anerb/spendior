@@ -60,13 +60,6 @@ function selectItem(item) {
   item.classList.add('selected');
 }
 
-function postSend() {
-  document.querySelector("#amount").value = "0.00";
-  document.querySelector("#what").value = "";
-  StartingPlaces();
-  return true;
-}
-
 function snake_case2PascalCase(snake_case, delimiter = "") {
   let PascalCaseTokens = [];
   for (let token of snake_case.split("_")) {
@@ -560,7 +553,11 @@ function AddEventListeners() {
 // This puts all the scrolling/focus/orientation/animations in place to start.
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
-  window.setTimeout(scrollEndpointsToBottom, 300);
+  while (  document.querySelector("#amount").innerHTML != "0.00") {
+    document.querySelector("#decimal_clear").click();
+  }
+  document.querySelector("#what").value = "";
+  scrollEndpointsToBottom();
   ready();
 }
 
