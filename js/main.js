@@ -484,7 +484,7 @@ function updateLocalStorageFromUrl(key, url) {
 
 function PWA() {
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("../pwa/sw.js", {scope: 'https://anerb.github.io/spendior'});
+    navigator.serviceWorker.register("../pwa/sw.js", {scope: 'https://anerb.github.io/spendior/'});
   }
   /*
   if ('serviceWorker' in navigator) {
