@@ -53,7 +53,7 @@ body {
   #static_header {
     position: fixed;
     z-index: 999;
-    bottom: 11dvw;
+    bottom: 0dvw;
   }
 
   .static_header {
@@ -70,8 +70,6 @@ body {
   }
   
   .top_only {
-    height: 0.2dvw;
-    bottom: 104dvw;
     border-bottom-color: transparent;
     border-top-color: white;
     height: 0.2dvw;
