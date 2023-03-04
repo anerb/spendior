@@ -61,8 +61,9 @@ function selectItem(item) {
 }
 
 function postSend() {
-  document.querySelector("#amount").value = "";
+  document.querySelector("#amount").value = "0.00";
   document.querySelector("#what").value = "";
+  StartingPlaces();
   return true;
 }
 
@@ -165,6 +166,7 @@ function selectEndpoint(e) {
   let scroll_needed = initial_bottom - parent_bottom;
   let initial_scroll = parentElement.scrollTop;
   parentElement.scrollTo({ top: initial_scroll + scroll_needed, behavior: 'smooth' });
+  ready();
 }
 
 function scrollEndpointsToBottom() {
@@ -579,6 +581,7 @@ function AddEventListeners() {
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
   window.setTimeout(scrollEndpointsToBottom, 300);
+  ready();
 }
 
 window.onload = () => {

@@ -58,7 +58,7 @@
       <form id="send-email" onsubmit="navToEmail()">
         <input id="what" type="search" enterkeyhint="send" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
       </form>
-      <div id="sendnow" class="send-button"><a id="sendlink" href="mailto:foo">📨</a> </div>
+      <div id="sendnow" class="send-button"><a id="sendlink" href="mailto:foo" onclick="postSend()">📨</a> </div>
     </div> 
 
     <div id="settings" class="settings display_none">
