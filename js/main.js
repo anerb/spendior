@@ -9,7 +9,7 @@ const defaults =
   "processing_email_address": "email2sheets@gmail.com",
   "spreadsheet_id": "",
   "sheet_name": "data",
-  "published_spreadsheet_url": "",
+  "published_spreadsheet_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRMs9eegLp0nXmdSbFMKKVREhYVt6O0jBKPauV5bIvMLMIJkj65XjwkXi1WxvyqCk8DWiWBJB8Fi7_/pubhtml",
   "email_re": ".*",
   "keypad_location": "right",
   "background": "url('../images/pinkdior.jpg')",
@@ -447,13 +447,13 @@ function tbody2csv(tbody) {
 // FRAGILE: Based on the specific way Google Sheets published to the web.
 // FRAGILE: hardcodes the expeceted sheet_names for this program.
 // Returns a mapping from sheet_name -> gid
-function getSheetNames(parsed_body) {
+function getSheetNames(desired_body) {
   let sheet_names = {
     images: null,
     endpoints: null,
   };
 
-  let lis = parsed_body.querySelectorAll('li[id*="sheet-button-"]');
+  let lis = desired_body.querySelectorAll('li[id*="sheet-button-"]');
   for (let li of lis) {
     let innerHTML = li.innerHTML;
     // By the nature of this loop, if multiple sheet_names match, the final one is retained.
@@ -474,6 +474,9 @@ function getSheetNames(parsed_body) {
 
 function memoFetch(key) {
   let value = window.localStorage.getItem(key);
+  if (!value) {
+    value = "";
+  }
   return value;
 }
 
@@ -481,6 +484,9 @@ function memoFetch(key) {
 // FRAGILE: Relies on the way Google Sheets generates a published spreadsheet html.
 function getDesiredBodyFromPublishedSpreadsheet() {
   let published_spreadsheet_text = memoFetch("published_spreadsheet_text");
+  if (published_spreadsheet_text.indexOf("<body") < 0) {
+    published_spreadsheet_text = "<body></body>";
+  }
   let desired_body_text = published_spreadsheet_text.slice(
     published_spreadsheet_text.indexOf("<body"),
     published_spreadsheet_text.indexOf("</body") + "</body>".length
@@ -496,7 +502,7 @@ function getTbodyByName(name) {
   let gid = sheet_names[name];  // FRAGILE (hardcoded key)
   if (!gid) {
     // not necessarily an error if no images where published
-    return;
+    return undefined;
   }
   // Everything we need is in the tbodys that each represent a published sheet.
   let tbody = desired_body.querySelector(`div[id="${gid}"] tbody`);
@@ -505,6 +511,9 @@ function getTbodyByName(name) {
 
 function storeEndpointsImageMapping() {
   let tbody = getTbodyByName("images");
+  if (tbody === undefined) {
+    return;
+  }
   let image_mapping = tbody2imageMapping(tbody)
   window.localStorage.setItem("endpoints_image_mapping", JSON.stringify(image_mapping));
 }
@@ -513,6 +522,9 @@ function storeEndpointsImageMapping() {
 // but that depends on the email_re
 function storeEndpointsArray() {
   let tbody = getTbodyByName("endpoints");
+  if (tbody === undefined) {
+    return;
+  }
   let endpoints_array = tbody2array(tbody);
   window.localStorage.setItem("endpoints_array", JSON.stringify(endpoints_array));
 }
