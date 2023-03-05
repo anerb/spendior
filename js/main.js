@@ -347,9 +347,8 @@ function getEndpointsForEmail(arr, email_re) {
 
 }
 
-
-function getSortedEndpoints(email_re) {
-  let endpoints_text = window.localStorage.getItem("published_endpoints_csv");
+function getEndpointsCsv() {
+  let endpoints_text = window.localStorage.getItem("endpoints_csv");
   if (!endpoints_text) {
     endpoints_text = 
     [
@@ -364,11 +363,15 @@ function getSortedEndpoints(email_re) {
     "person,cash,1",
   ].join("\n");
   }
-  let endpoints_array = csv2array(endpoints_text);
+}
+
+function getSortedEndpoints() {
+  let email_re = getSetting("email_re");
+  let endpoints_csv = getEndpointsCsv();
+  let endpoints_array = csv2array(endpoints_csv);
   let endpoints = getEndpointsForEmail(endpoints_array, email_re);
   return endpoints;
 }
-
 
 function appendEndpoint(parent, name) {
   // TODO: check agains a less permissive regexp
@@ -395,9 +398,87 @@ function modifyEndpointsOther(endpoints) {
   }
   endpoints.destinations.push("other");
 }
+var cap = undefined;
+
+
+function tbody2imageMapping(tbody) {
+  let images = tbody.querySelectorAll("img");
+  let image_mapping = {};
+  for (let image of images) {
+    image_mapping[image.title] = image.src;
+  }
+  return image_mapping;
+}
+
+// ignore rowspan
+// handle colspan
+// HACK: assumes rectangular table
+function tbody2array(tbody) {
+  arr = [];
+  let trs = tbody.querySelectorAll("tr");
+  for (let tr of trs) {
+    let row = [];
+    let tds = trs.querySelectorAll("td");
+    for (let td of tds) {
+      let value = td.innerHTML;
+      let colspan = td.getAttribute('colspan') || 1;
+      for (let i = 0; i < colspan; i++) {
+        row.push(value);
+      }
+    }
+    arr.push(row);
+  }
+  return arr;
+}
+
+// HACK: assumes all values are strings, and no complex quoting.
+// TODO: make the base setting a JSON(array) instead of csv.
+function array2csv(arr) {
+  let csv_rows = [];
+  for (let row of arr) {
+    let csv_row = row.join(",");
+    csv_rows.push(csv_row);
+  }
+  let csv = csv_rows.join("\n");
+  return csv;
+}
+
+function tbody2csv(tbody) {
+  let arr = tbody2array(tbody);
+  let csv = array2csv(arr);
+  return csv;
+}
+
+function extractEndpointData(data) {
+  let text = data.slice(data.indexOf("<body"), data.indexOf("</body") + "</body>".length);
+  let parser = new DOMParser();
+  let parsed = parser.parseFromString(text, "text/html");
+  let tbodys = parsed.querySelectorAll("tbody");
+
+  let endpoints_images = {};
+  let endpoints_csv = "";
+  for (let tbody of tbodys) {
+    let images = tbody.querySelectorAll("img");
+    if (images.length > 0) {
+      endpoints_images = tbody2imageMapping(tbody)
+    } else {
+      endpoints_csv = tbody2csv(tbody);
+    }
+  }
+  window.localStorage.setItem("endpoints_images", JSON.stringify(endpoints_images));
+  window.localStorage.setItem("endpoints_csv", JSON.stringify(endpoints_csv));
+}
+
+function fetchEndpointData() {
+  let url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRMs9eegLp0nXmdSbFMKKVREhYVt6O0jBKPauV5bIvMLMIJkj65XjwkXi1WxvyqCk8DWiWBJB8Fi7_/pubhtml";
+  window.fetch(url).then(
+    (r) => r.text()).then(
+    (d) => extractEndpointData(d)
+  )
+}
 
 function generateEndpoints() {
-  let endpoints = getSortedEndpoints(getSetting("email_re"));
+  let endpoints = getSortedEndpoints();
   modifyEndpointsOther(endpoints);
 
   let source_scroller = document.querySelector("#source");
@@ -513,7 +594,7 @@ function LoadSettings() {
   fillSettings();
   // TODO: Only do these if the old ones are more than a couple of hours old.
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
-  updateLocalStorageFromUrl("published_endpoints_csv", getSetting("published_endpoints_url"));
+  updateLocalStorageFromUrl("endpoints_csv", getSetting("published_endpoints_url"));
 
   // TODO: Add a button in settings to refresh exchange rate and published endpoints.
 

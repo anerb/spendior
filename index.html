@@ -8,8 +8,29 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
 </head>
+<script>
+  function foo() {
+    let url = "https://script.google.com/macros/s/AKfycbyIWDEjgSPY4tdLr8YIxSXd9BwGleKNnwBbj2iO9zdUbHYbDyGb6BfdXd7NxXozWKqIkQ/exec/foo";
+    window.fetch(url,
+    {
+      redirect: "follow",
+      method: "GET",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+      mode: 'no-cors'
+    }
+    ).then(
+      (r) => r.text()).then (
+        (d) => console.log(d)
+      )
+  }
+</script>
 <body>
     <div>Welcome to Spendior</div>
+
+    <img src="https://drive.google.com/uc?id=1IgW1Tam8XtzAA1na717C76EdiywO4Uaz">
+    <span onclick="foo()"> click here</span>
 
     <div>
     The <a href="./app/">Spendior App</a> can be installed from the menu.
