@@ -9,7 +9,7 @@ const defaults =
   "processing_email_address": "email2sheets@gmail.com",
   "spreadsheet_id": "",
   "sheet_name": "data",
-  "published_endpoints_url": "",
+  "published_spreadsheet_url": "",
   "email_re": ".*",
   "keypad_location": "right",
   "background": "url('../images/pinkdior.jpg')",
@@ -189,8 +189,9 @@ class Endpoint extends HTMLElement {
   //  const wrapper = document.createElement('div');
   //  wrapper.setAttribute('class', 'wrapper');
 
-    const institution = this.getAttribute('institution');
-    const description = this.getAttribute('description');
+    const endpoint = this.getAttribute('endpoint');
+    const title = this.getAttribute('title');
+    const img_src = this.getAttribute('img_src');
 
     /*
     const source_radio = document.createElement('input');
@@ -203,8 +204,9 @@ class Endpoint extends HTMLElement {
 
     const img = document.createElement('img');
     img.setAttribute('class', 'endpoint');
-    img.src = '../images/' + institution + ".png";
-    img.setAttribute('alt', description);
+    img.src = img_src;
+    img.setAttribute('alt', endpoint);
+    img.setAttribute('title', title)
 
     const label = document.createElement('div');
     label.innerHTML = description;
@@ -365,20 +367,27 @@ function getEndpointsCsv() {
   }
 }
 
+
+// TODO: Perhaps formalize the store/retrieve pattern separate from fetch/refetch
+function retrieveEndpointsArray() {
+  return window.localStorage.getItem("endpoints_array") || [];
+}
+
 function getSortedEndpoints() {
   let email_re = getSetting("email_re");
-  let endpoints_csv = getEndpointsCsv();
-  let endpoints_array = csv2array(endpoints_csv);
+  let endpoints_array = retrieveEndpointsArray());
   let endpoints = getEndpointsForEmail(endpoints_array, email_re);
+  // add "other" to the bottom of the list (most common)
+  modifyEndpointsOther(endpoints);
   return endpoints;
 }
 
-function appendEndpoint(parent, name) {
-  // TODO: check agains a less permissive regexp
-  if (name == "") {
+function appendEndpoint(parent, endpoint, img_src, title) {
+  // TODO: check against a less permissive regexp
+  if (endpoint == "") {
     return;
   }
-  let html = `<sd-endpoint class="slot" institution="${name}" description="${snake_case2PascalCase(name, " ")}"></sd-endpoint>`;
+  let html = `<sd-endpoint class="slot" endpoint="${endpoint}" img_src="${img_src}" title="${title}"></sd-endpoint>`;
   parent.innerHTML += html;
 }
 
@@ -398,8 +407,6 @@ function modifyEndpointsOther(endpoints) {
   }
   endpoints.destinations.push("other");
 }
-var cap = undefined;
-
 
 function tbody2imageMapping(tbody) {
   let images = tbody.querySelectorAll("img");
@@ -449,47 +456,98 @@ function tbody2csv(tbody) {
   return csv;
 }
 
-function extractEndpointData(data) {
-  let text = data.slice(data.indexOf("<body"), data.indexOf("</body") + "</body>".length);
-  let parser = new DOMParser();
-  let parsed = parser.parseFromString(text, "text/html");
-  let tbodys = parsed.querySelectorAll("tbody");
 
-  let endpoints_images = {};
-  let endpoints_csv = "";
-  for (let tbody of tbodys) {
-    let images = tbody.querySelectorAll("img");
-    if (images.length > 0) {
-      endpoints_images = tbody2imageMapping(tbody)
-    } else {
-      endpoints_csv = tbody2csv(tbody);
+// FRAGILE: Based on the specific way Google Sheets published to the web.
+// FRAGILE: hardcodes the expeceted sheet_names for this program.
+// Returns a mapping from sheet_name -> gid
+function getSheetNames(parsed_body) {
+  let sheet_names = {
+    images: null,
+    endpoints: null,
+  };
+
+  let lis = parsed_body.querySelectorAll('li[id~="sheet-button"']);
+  for (let li of lis) {
+    let innerHTML = li.innerHTML;
+    for (let sheet_name of sheet_names) {
+      if (innerHTML.indexOf("sheet_name") < 0) {
+        continue;
+      }
+      let match = li.id.match(/sheet-button-(.*)/);
+      let gid = match[1];
+      sheet_names[sheet_name] = gid;
     }
   }
-  window.localStorage.setItem("endpoints_images", JSON.stringify(endpoints_images));
-  window.localStorage.setItem("endpoints_csv", JSON.stringify(endpoints_csv));
+  return sheet_names;
 }
 
-function fetchEndpointData() {
-  let url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRMs9eegLp0nXmdSbFMKKVREhYVt6O0jBKPauV5bIvMLMIJkj65XjwkXi1WxvyqCk8DWiWBJB8Fi7_/pubhtml";
-  window.fetch(url).then(
-    (r) => r.text()).then(
-    (d) => extractEndpointData(d)
-  )
+
+// Inside the HTML, there is a script that has text which describes the desired body.
+// FRAGILE: Relies on the way Google Sheets generates a published spreadsheet html.
+function getDesiredBodyFromPublishedSpreadsheet() {
+  let published_endpoints_text = getSetting("published_endpoints_text");
+  let desired_body_text = published_endpoints_text.slice(
+    published_endpoints_text.indexOf("<body"),
+    published_endpoints_text.indexOf("</body") + "</body>".length
+  );
+  let parser = new DOMParser();
+  let desired_body = parser.parseFromString(desired_body_text, "text/html");
+  return desired_body;
+}
+
+function storeEndpointsImageMapping() {
+  let desired_body = getDesiredBodyFromPublishedSpreadsheet
+  let sheet_names = getSheetNames(desired_body);
+  let gid = sheet_names["images"];  // FRAGILE (hardcoded key)
+  if (!gid) {
+    // not necessarily an error if no images where published
+    return;
+  }
+
+  // Everything we need is in the tbodys that each represent a published sheet.
+  let tbody = parsed_body.querySelectorAll(`div[id="${gid}"] tbody`);
+
+  let image_mapping = tbody2imageMapping(tbody)
+  window.localStorage.setItem("endpoints_image_mapping", JSON.stringify(image_mapping));
+}
+
+// EARLIER: This was going to store the final ordering,
+// but that depends on the email_re
+function storeEndpointsArray() {
+  let desired_body = getDesiredBodyFromPublishedSpreadsheet
+  let sheet_names = getSheetNames(desired_body);
+  let gid = sheet_names["endpoints"];  // FRAGILE (hardcoded key)
+  if (!gid) {
+    // not necessarily an error if no images where published
+    return;
+  }
+
+  let tbody = parsed_body.querySelectorAll(`div[id="${gid}"] tbody`);
+  let endpoints_array = tbody2array(tbody);
+  window.localStorage.setItem("endpoints_array", JSON.stringify(endpoints_array));
+}
+
+// TODO: Perhaps run extraction from published html here.
+function getEndpointsImageMapping() {
+  let image_mapping = window.localStorage.getItem("endpoints_image_mapping") || {};
+  return image_mapping;
+}
+
+function populateScroller(scroller, endpoints) {
+  let image_mapping = getEndpointsImageMapping();
+
+  for (let endpoint of endpoints) {
+    let img_src = image_mapping[endpoint] || `../images/${endpoint}.png`;
+    let title = snake_case2PascalCase(endpoint);
+    appendEndpoint(scroller, endpoint, img_src, title);
+  }
 }
 
 function generateEndpoints() {
   let endpoints = getSortedEndpoints();
-  modifyEndpointsOther(endpoints);
 
-  let source_scroller = document.querySelector("#source");
-  for (let source of endpoints.sources) {
-    appendEndpoint(source_scroller, source);
-  }
-
-  let destination_scroller = document.querySelector("#destination");
-  for (let destination of endpoints.destinations) {
-    appendEndpoint(destination_scroller, destination);
-  }
+  populateScroller(document.querySelector("#source"), endpoints.sources);
+  populateScroller(document.querySelector("#destination"), endpoints.destinations);
 }
 
 function navToEmail() {
@@ -594,8 +652,9 @@ function LoadSettings() {
   fillSettings();
   // TODO: Only do these if the old ones are more than a couple of hours old.
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
-  updateLocalStorageFromUrl("endpoints_csv", getSetting("published_endpoints_url"));
-
+  updateLocalStorageFromUrl("publihshed_spreadsheet_html", getSetting("published_spreadsheet_url"));
+  storeEndpointsArray();
+  storeEndpointsImageMapping();
   // TODO: Add a button in settings to refresh exchange rate and published endpoints.
 
   // TODO: Add the currency based on the locale timestamp and/or location.
