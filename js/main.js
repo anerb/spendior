@@ -181,26 +181,15 @@ class Endpoint extends HTMLElement {
       return;
     }
 
-
     // Create a shadow root
-//    const shadow = this.attachShadow({mode: 'open'});
-
+    //    const shadow = this.attachShadow({mode: 'open'});
     // Create spans
-  //  const wrapper = document.createElement('div');
-  //  wrapper.setAttribute('class', 'wrapper');
+    //    const wrapper = document.createElement('div');
+    //    wrapper.setAttribute('class', 'wrapper');
 
     const endpoint = this.getAttribute('endpoint');
     const title = this.getAttribute('title');
     const img_src = this.getAttribute('img_src');
-
-    /*
-    const source_radio = document.createElement('input');
-    source_radio.setAttribute('class', 'source_radio');
-    source_radio.setAttribute('type', 'radio');
-    source_radio.setAttribute('name', 'source');
-    source_radio.setAttribute('value', institution);
-    source_radio.addEventListener('input', updateSource);
-  */
 
     const img = document.createElement('img');
     img.setAttribute('class', 'endpoint');
@@ -209,16 +198,9 @@ class Endpoint extends HTMLElement {
     img.setAttribute('title', title)
 
     const label = document.createElement('div');
-    label.innerHTML = description;
+    label.innerHTML = title;
     label.setAttribute('class', 'endpoint_label');
-/*
-    const destination_radio = document.createElement('input');
-    destination_radio.setAttribute('class', 'destination_radio');
-    destination_radio.setAttribute('type', 'radio');
-    destination_radio.setAttribute('name', 'destination');
-    destination_radio.setAttribute('value', institution);
-    destination_radio.addEventListener('input', updateDestination);
-*/
+
     // Create some CSS to apply to the shadow dom
     const style = document.createElement('style');
 
@@ -370,12 +352,17 @@ function getEndpointsCsv() {
 
 // TODO: Perhaps formalize the store/retrieve pattern separate from fetch/refetch
 function retrieveEndpointsArray() {
-  return window.localStorage.getItem("endpoints_array") || [];
+  let json = window.localStorage.getItem("endpoints_array");
+  let endpoints_array = [];
+  try {
+    endpoints_array = JSON.parse(json);
+  } catch(e) {}
+  return endpoints_array;
 }
 
 function getSortedEndpoints() {
   let email_re = getSetting("email_re");
-  let endpoints_array = retrieveEndpointsArray());
+  let endpoints_array = retrieveEndpointsArray();
   let endpoints = getEndpointsForEmail(endpoints_array, email_re);
   // add "other" to the bottom of the list (most common)
   modifyEndpointsOther(endpoints);
@@ -421,11 +408,11 @@ function tbody2imageMapping(tbody) {
 // handle colspan
 // HACK: assumes rectangular table
 function tbody2array(tbody) {
-  arr = [];
+  let arr = [];
   let trs = tbody.querySelectorAll("tr");
   for (let tr of trs) {
     let row = [];
-    let tds = trs.querySelectorAll("td");
+    let tds = tr.querySelectorAll("td");
     for (let td of tds) {
       let value = td.innerHTML;
       let colspan = td.getAttribute('colspan') || 1;
@@ -466,47 +453,58 @@ function getSheetNames(parsed_body) {
     endpoints: null,
   };
 
-  let lis = parsed_body.querySelectorAll('li[id~="sheet-button"']);
+  let lis = parsed_body.querySelectorAll('li[id*="sheet-button-"]');
   for (let li of lis) {
     let innerHTML = li.innerHTML;
-    for (let sheet_name of sheet_names) {
-      if (innerHTML.indexOf("sheet_name") < 0) {
+    // By the nature of this loop, if multiple sheet_names match, the final one is retained.
+    for (let sheet_name in sheet_names) {
+      // TODO: Make this case-insesitive.
+      if (innerHTML.indexOf(sheet_name) < 0) {
         continue;
       }
       let match = li.id.match(/sheet-button-(.*)/);
       let gid = match[1];
       sheet_names[sheet_name] = gid;
+      break;  // We found the sheet that matches this li
     }
   }
   return sheet_names;
 }
 
 
+function memoFetch(key) {
+  let value = window.localStorage.getItem(key);
+  return value;
+}
+
 // Inside the HTML, there is a script that has text which describes the desired body.
 // FRAGILE: Relies on the way Google Sheets generates a published spreadsheet html.
 function getDesiredBodyFromPublishedSpreadsheet() {
-  let published_endpoints_text = getSetting("published_endpoints_text");
-  let desired_body_text = published_endpoints_text.slice(
-    published_endpoints_text.indexOf("<body"),
-    published_endpoints_text.indexOf("</body") + "</body>".length
+  let published_spreadsheet_text = memoFetch("published_spreadsheet_text");
+  let desired_body_text = published_spreadsheet_text.slice(
+    published_spreadsheet_text.indexOf("<body"),
+    published_spreadsheet_text.indexOf("</body") + "</body>".length
   );
   let parser = new DOMParser();
   let desired_body = parser.parseFromString(desired_body_text, "text/html");
   return desired_body;
 }
 
-function storeEndpointsImageMapping() {
-  let desired_body = getDesiredBodyFromPublishedSpreadsheet
+function getTbodyByName(name) {
+  let desired_body = getDesiredBodyFromPublishedSpreadsheet();
   let sheet_names = getSheetNames(desired_body);
-  let gid = sheet_names["images"];  // FRAGILE (hardcoded key)
+  let gid = sheet_names[name];  // FRAGILE (hardcoded key)
   if (!gid) {
     // not necessarily an error if no images where published
     return;
   }
-
   // Everything we need is in the tbodys that each represent a published sheet.
-  let tbody = parsed_body.querySelectorAll(`div[id="${gid}"] tbody`);
+  let tbody = desired_body.querySelector(`div[id="${gid}"] tbody`);
+  return tbody;
+}
 
+function storeEndpointsImageMapping() {
+  let tbody = getTbodyByName("images");
   let image_mapping = tbody2imageMapping(tbody)
   window.localStorage.setItem("endpoints_image_mapping", JSON.stringify(image_mapping));
 }
@@ -514,27 +512,23 @@ function storeEndpointsImageMapping() {
 // EARLIER: This was going to store the final ordering,
 // but that depends on the email_re
 function storeEndpointsArray() {
-  let desired_body = getDesiredBodyFromPublishedSpreadsheet
-  let sheet_names = getSheetNames(desired_body);
-  let gid = sheet_names["endpoints"];  // FRAGILE (hardcoded key)
-  if (!gid) {
-    // not necessarily an error if no images where published
-    return;
-  }
-
-  let tbody = parsed_body.querySelectorAll(`div[id="${gid}"] tbody`);
+  let tbody = getTbodyByName("endpoints");
   let endpoints_array = tbody2array(tbody);
   window.localStorage.setItem("endpoints_array", JSON.stringify(endpoints_array));
 }
 
 // TODO: Perhaps run extraction from published html here.
-function getEndpointsImageMapping() {
-  let image_mapping = window.localStorage.getItem("endpoints_image_mapping") || {};
+function retrieveEndpointsImageMapping() {
+  let json = window.localStorage.getItem("endpoints_image_mapping");
+  let image_mapping = {};
+  try {
+    image_mapping = JSON.parse(json);
+  } catch(e) {}
   return image_mapping;
 }
 
 function populateScroller(scroller, endpoints) {
-  let image_mapping = getEndpointsImageMapping();
+  let image_mapping = retrieveEndpointsImageMapping();
 
   for (let endpoint of endpoints) {
     let img_src = image_mapping[endpoint] || `../images/${endpoint}.png`;
@@ -652,7 +646,7 @@ function LoadSettings() {
   fillSettings();
   // TODO: Only do these if the old ones are more than a couple of hours old.
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
-  updateLocalStorageFromUrl("publihshed_spreadsheet_html", getSetting("published_spreadsheet_url"));
+  updateLocalStorageFromUrl("published_spreadsheet_text", getSetting("published_spreadsheet_url"));
   storeEndpointsArray();
   storeEndpointsImageMapping();
   // TODO: Add a button in settings to refresh exchange rate and published endpoints.
