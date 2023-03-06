@@ -2,59 +2,9 @@
 
 // @import url("./currency.js");
 
-// Using a global object, but others shouldn't use it.
-var settings = {};
-const defaults = 
-{
-  "processing_email_address": "email2sheets@gmail.com",
-  "spreadsheet_id": "",
-  "sheet_name": "data",
-  "published_spreadsheet_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRMs9eegLp0nXmdSbFMKKVREhYVt6O0jBKPauV5bIvMLMIJkj65XjwkXi1WxvyqCk8DWiWBJB8Fi7_/pubhtml",
-  "email_re": ".*",
-  "keypad_location": "right",
-  "background": "url('../images/pinkdior.jpg')",
-  "background_color": "#FFBBBB"
-}
 function getSetting(key) {
-  if (!(key in defaults)) {
-    return undefined;  // This is an error.  Every setting must have a default.
-  }
-  if (!(key in settings)) {
-    settings[key] = window.localStorage.getItem(key) || defaults[key];
-  }
-  return settings[key];
+  return window.localStorage.getItem(key);
 }
-function fillSettings() {
-  for (let d in defaults) {
-    let input = document.querySelector("#" + d);
-    input.value = getSetting(d);
-  }
-}
-function updateSettings() {
-  console.log("updateSettings");
-  let inputs = document.querySelectorAll("#settings input");
-  for (let input of inputs) {
-    window.localStorage.setItem(input.id, input.value);
-  }
-  settings = {};  // A priveledged access to settings variable
-}
-function showSettings() {
-  document.querySelector("#settings").classList.remove("display_none");
-}
-function setBackgroundSetting() {
-  document.querySelector("#background").value = document.querySelector("#background_color").value;
-  updateSettings();
-}
-
-
-function reclick(e) {
-  e.click()
-};
-
-function refocus(e) {
-  e.focus()
-};
-
 
 function selectItem(item) {
   item.classList.add('selected');
@@ -70,7 +20,6 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
 }
 
 function getScrollerValue(id) {
-  console.log("getScrollerValue");
   let id_selector = "#" + id;
   let scroller = document.querySelector(id_selector);
   let parent_bottom = source.getBoundingClientRect().bottom;
@@ -82,7 +31,7 @@ function getScrollerValue(id) {
     let diff = Math.abs(parent_bottom - child_bottom);
     if (diff < min_diff && diff < 100) {  // ARBITRARY
       min_diff = diff;
-      value = c.getAttribute("institution");
+      value = c.getAttribute("endpoint");
     }
   }
   return value;
@@ -107,9 +56,8 @@ function ready() {
   body.destination = getScrollerValue("destination");
   body.currency = document.querySelector("#currency").value;
   body.amount = document.querySelector("#amount").innerHTML;
-  body.what = document.querySelector("#what").value;
   
-  let subject = body.source + " > " + body.amount + " (" + body.what + ") > " + body.destination;
+  let subject = `${body.source} > [${body.amount} ${body.currency}] >  ${body.destination}`;
 
   let body_json = JSON.stringify(body);
   let finalValues = [
@@ -203,21 +151,6 @@ class Endpoint extends HTMLElement {
 
     // Create some CSS to apply to the shadow dom
     const style = document.createElement('style');
-
-    style.textContent = `
-    .endpoint2 {
-      width: 200px;
-      height: 120px;
-    }
-    .source_radio2 {
-      transform: translate(14px, -50px) scale(4);
-    }
-    .destination_radio2 {
-      transform: translate(-14px, -50px) scale(4);
-    }
-  //  .wrapper {
-  //    }
-    `;
 
     // Attach the created elements to the shadow dom
 //    shadow.appendChild(style);
@@ -648,14 +581,12 @@ function WebComponents() {
   customElements.define("sd-endpoint", Endpoint);
 }
 
-
 function BuildPage() {
   // HACKY: This implicitly depends on settings.
   generateEndpoints();
 }
 
 function LoadSettings() {
-  fillSettings();
   // TODO: Only do these if the old ones are more than a couple of hours old.
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
   updateLocalStorageFromUrl("published_spreadsheet_text", getSetting("published_spreadsheet_url"));
@@ -669,7 +600,7 @@ function LoadSettings() {
 function ApplySettings() {
   // Applying the settings at startup.  This is why a refresh is needed when settings change.
   document.querySelector("#static_header").classList.add(getSetting("keypad_location"));
-  document.body.style.background = getSetting("background");
+  document.body.style.backgroundColor = getSetting("background_color");
 }
 
 function AddEventListeners() {
@@ -691,7 +622,10 @@ function AddEventListeners() {
   for (let currency_key_element of currency_key_elements) {
     currency_key_element.addEventListener('click', currencykeyclick);
   }
-  document.querySelector("#what").addEventListener('keydown', keydown);
+}
+
+function sendIt() {
+
 }
 
 // HACKY: Find a better name.
@@ -701,7 +635,6 @@ function StartingPlaces() {
   while (  document.querySelector("#amount").innerHTML != "0.00") {
     document.querySelector("#decimal_clear").click();
   }
-  document.querySelector("#what").value = "";
   scrollEndpointsToBottom();
   ready();
 }
@@ -711,6 +644,7 @@ window.onload = () => {
   PWA();
   WebComponents();
   LoadSettings();
+
   // FRAGILE: This needs to come after LoadSettings() to get the latest published_endpoints for the specific email_address.
   BuildPage();
   ApplySettings();

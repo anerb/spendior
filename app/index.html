@@ -16,7 +16,7 @@
   <script src="../js/main.js"></script>
 </head>
 <body class="fullscreen">
-  <div id="gear" class="gear" onclick="showSettings()">⚙</div>
+  <div id="gear" class="gear"><a href="./settings.html">⚙</a></div>
   <div id="static_header" class="static_header" >
     <div class="static_header top_only" ></div>
     <div id="source_frame" class="frame"></div>
@@ -54,31 +54,7 @@
       </select>
     </div>
     
-    <div id="footer" class="footer">
-      <form id="send-email" onsubmit="navToEmail()">
-        <input id="what" type="search" enterkeyhint="send" value="" placeholder="description" onblur="reclick(this)" onclick="refocus(this)"/>
-      </form>
-      <div id="sendnow" class="send-button"><a id="sendlink" href="mailto:no_email@example.com" onclick="StartingPlaces()">📨</a> </div>
-    </div> 
-
-    <div id="settings" class="settings display_none">
-      <div id="close_settings" class="close_settings">reload to apply settings</div>
-      processing_email_address:<br/>
-      <input type="text" id="processing_email_address" class="settings_input" oninput="updateSettings()"/><br/>
-      spreadsheet_id:<br/>
-      <input type="text" id="spreadsheet_id" class="settings_input" oninput="updateSettings()"/><br/>
-      sheet_name:<br/>
-      <input type="text" id="sheet_name" class="settings_input" oninput="updateSettings()"/><br/>
-      email_re:<br/>
-      <input type="text" id="email_re" class="settings_input" oninput="updateSettings()"/><br/>
-      published_spreadsheet_url:<br/>
-      <input type="text" id="published_spreadsheet_url" class="settings_input" oninput="updateSettings()"/><br/>
-      keypad_location:<br/>
-      <input type="text" id="keypad_location" class="settings_input" oninput="updateSettings()"/><br/>
-      background:<br/>
-      <input type="text" id="background" class="background" oninput="updateSettings()" />
-      <input type="color" id="background_color" class="background_color" onchange="setBackgroundSetting(this)"/>
-    </div>
+    <div id="sendnow" class="send-button"><a id="sendlink" href="mailto:no_email@example.com" onclick="sendIt()" target=""_blank">📨</a> </div>
   </div>
 
 

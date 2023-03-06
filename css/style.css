@@ -61,7 +61,7 @@ body {
     background-color: #ffc0cbdb;
     padding: 10px;
     width: 90dvw;
-    height: 99dvw;
+    height: 95dvw;
     border-style: solid;
     border-width: 3px;
     border-color: white;
@@ -74,7 +74,7 @@ body {
     border-top-color: white;
     height: 0.2dvw;
     bottom: 100dvw;
-    left: -2dvw;
+    left: -2.5dvw;
     border-bottom-width: 0px;
     border-top-color: white;
     position: absolute;
@@ -263,22 +263,6 @@ a {
   right: 0dvw;
 }
 
-.settings {
-  background: white;
-  font-size: 4dvw;
-  width: 100dvw;
-  height: 96dvw;
-  z-index: 99999;
-  padding: 2dvw;
-  border: 2px solid black;
-}
-
-#settings input {
-  font-size: 4dvw;
-  width: 80dvw;
-  margin: 0dvw 0dvw 2dvw 0dvw;
-}
-
 #panel {
   position: absolute;
   bottom: 12dvw;
@@ -308,13 +292,3 @@ a {
   bottom: 0dvw;
 }
 
-#settings .background {
-  width: 64dvw;
-}
-#settings .background_color{
-  width: 12dvw;
-}
-#background_color {
-  position: absolute;
-  right: 8dvw;
-}

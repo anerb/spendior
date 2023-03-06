@@ -1,0 +1,19 @@
+.settings {
+    background: white;
+    font-size: 4dvw;
+    width: 90dvw;
+    height: 96dvw;
+    z-index: 99999;
+    padding: 2dvw;
+    border: 2px solid black;
+  }
+  
+  #settings input {
+    font-size: 4dvw;
+    width: 80dvw;
+    margin: 0dvw 0dvw 2dvw 0dvw;
+  }
+  
+  #background_color {
+    position: absolute;
+  }
