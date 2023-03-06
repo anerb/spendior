@@ -324,13 +324,13 @@ function modifyEndpointsOther(endpoints) {
   if (other_index >= 0) {
     endpoints.sources.splice(other_index, 1);
   }
-  endpoints.sources.push("FromOTHER");
+  endpoints.sources.push("fromOTHER");
 
   other_index = endpoints.destinations.indexOf("toOTHER");
   if (other_index >= 0) {
     endpoints.destinations.splice(other_index, 1);
   }
-  endpoints.destinations.push("ToOTHER");
+  endpoints.destinations.push("foOTHER");
 }
 
 function tbody2imageMapping(tbody) {
