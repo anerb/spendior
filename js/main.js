@@ -56,6 +56,7 @@ function ready() {
   body.destination = getScrollerValue("destination");
   body.currency = document.querySelector("#currency").value;
   body.amount = document.querySelector("#amount").innerHTML;
+  body.description = "DESCRIPTION";
   
   let subject = `${body.source} > [${body.amount} ${body.currency}] >  ${body.destination}`;
 
