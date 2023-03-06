@@ -320,13 +320,13 @@ function appendEndpoint(parent, endpoint, img_src, title) {
 // Originally, I set "other" to be at the start (farthest from the most popular).
 // However, that made it so the most popular were pre-selected in endpoints, which means open,digits,send would erronously capture the endpoints.
 function modifyEndpointsOther(endpoints) {
-  let other_index = endpoints.sources.indexOf("FromOTHER");
+  let other_index = endpoints.sources.indexOf("fromOTHER");
   if (other_index >= 0) {
     endpoints.sources.splice(other_index, 1);
   }
   endpoints.sources.push("FromOTHER");
 
-  other_index = endpoints.destinations.indexOf("ToOTHER");
+  other_index = endpoints.destinations.indexOf("toOTHER");
   if (other_index >= 0) {
     endpoints.destinations.splice(other_index, 1);
   }
