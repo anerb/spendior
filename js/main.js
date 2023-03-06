@@ -61,6 +61,10 @@ function ready() {
   let subject = `${body.source} > [${body.amount} ${body.currency}] >  ${body.destination}`;
 
   let body_json = JSON.stringify(body);
+  body_json = body_json.replace(/,/g, ",\n  ");
+  body_json = body_json.replace(/:/g, ":  ");
+  body_json = body_json.replace(/{/, "{\n  ");
+  body_json = body_json.replace(/}/, "\n}");
   let finalValues = [
     'mailto:' + encodeURIComponent(getSetting("processing_email_address")) + '?subject=' + encodeURIComponent(subject),
     'body=' + encodeURIComponent(body_json),
