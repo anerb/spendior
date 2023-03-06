@@ -53,9 +53,9 @@ function ready() {
   body.date_first = formatDate(today);
   body.date_final = formatDate(today);
   body.source = getScrollerValue("source");
-  body.destination = getScrollerValue("destination");
-  body.currency = document.querySelector("#currency").value;
   body.amount = document.querySelector("#amount").innerHTML;
+  body.currency = document.querySelector("#currency").value;
+  body.destination = getScrollerValue("destination");
   body.description = "DESCRIPTION";
   
   let subject = `${body.source} > [${body.amount} ${body.currency}] >  ${body.destination}`;
@@ -302,7 +302,7 @@ function getSortedEndpoints() {
   let email_re = getSetting("email_re");
   let endpoints_array = retrieveEndpointsArray();
   let endpoints = getEndpointsForEmail(endpoints_array, email_re);
-  // add "other" to the bottom of the list (most common)
+  // add "OTHER" to the bottom of the list (most common)
   modifyEndpointsOther(endpoints);
   return endpoints;
 }
@@ -320,17 +320,17 @@ function appendEndpoint(parent, endpoint, img_src, title) {
 // Originally, I set "other" to be at the start (farthest from the most popular).
 // However, that made it so the most popular were pre-selected in endpoints, which means open,digits,send would erronously capture the endpoints.
 function modifyEndpointsOther(endpoints) {
-  let other_index = endpoints.sources.indexOf("other");
+  let other_index = endpoints.sources.indexOf("FromOTHER");
   if (other_index >= 0) {
     endpoints.sources.splice(other_index, 1);
   }
-  endpoints.sources.push("other");
+  endpoints.sources.push("FromOTHER");
 
-  other_index = endpoints.destinations.indexOf("other");
+  other_index = endpoints.destinations.indexOf("ToOTHER");
   if (other_index >= 0) {
     endpoints.destinations.splice(other_index, 1);
   }
-  endpoints.destinations.push("other");
+  endpoints.destinations.push("ToOTHER");
 }
 
 function tbody2imageMapping(tbody) {
