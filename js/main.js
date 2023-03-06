@@ -622,6 +622,14 @@ function AddEventListeners() {
   for (let currency_key_element of currency_key_elements) {
     currency_key_element.addEventListener('click', currencykeyclick);
   }
+
+  const state = document.visibilityState;
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState == 'visible') {
+      StartingPlaces();
+    }
+  });
 }
 
 function sendIt() {
