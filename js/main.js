@@ -330,7 +330,7 @@ function modifyEndpointsOther(endpoints) {
   if (other_index >= 0) {
     endpoints.destinations.splice(other_index, 1);
   }
-  endpoints.destinations.push("foOTHER");
+  endpoints.destinations.push("toOTHER");
 }
 
 function tbody2imageMapping(tbody) {
