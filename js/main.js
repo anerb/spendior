@@ -48,7 +48,6 @@ function formatDate(date) {
 function ready() {
   let body = {};
   let today = new Date();
-  body.spreadsheet_id = getSetting("spreadsheet_id");
   body.sheet_name = getSetting("sheet_name");
   body.date_first = formatDate(today);
   body.date_final = formatDate(today);
@@ -58,22 +57,18 @@ function ready() {
   body.destination = getScrollerValue("destination");
   body.description = "DESCRIPTION";
   
-  let subject = `${body.source} > [${body.amount} ${body.currency}] >  ${body.destination}`;
+  let queryParameters = [];
+  for (let key in body) {
+    let ẽkey = encodeURIComponent(key);
+    let ẽvalue = encodeURIComponent(body[key]);
+    let queryParameter = `${key}=${value}`;
+    queryParameters.push(queryParameter);
+  }
 
-  let body_json = JSON.stringify(body);
-  body_json = body_json.replace(/,/g, ",\n  ");
-  body_json = body_json.replace(/:/g, ":  ");
-  body_json = body_json.replace(/{/, "{\n  ");
-  body_json = body_json.replace(/}/, "\n}");
-  let finalValues = [
-    'mailto:' + encodeURIComponent(getSetting("processing_email_address")) + '?subject=' + encodeURIComponent(subject),
-    'body=' + encodeURIComponent(body_json),
-  ];
-
-  let mailtourl = finalValues.join('&');
-//  let sendItem = document.querySelector("#send-email");
-//  sendItem.action = finalValues.join('&'); 
-   document.querySelector("#sendlink").href = mailtourl;
+  let href = getSetting("server_url");
+  href += '?';
+  href += queryParameters.join('&');
+  document.querySelector("#sendlink").href = href;
 
   // Update exchange rate
   let converter = document.querySelector("#converter");
@@ -179,6 +174,15 @@ function csv2array(csv) {
   return arr;
 }
 
+function increment(obj, key, amount) {
+  if (!(key in obj)) {
+    obj[key] = 0;
+  }
+  obj[key] += count;
+}
+
+function sortCounterToArray
+
 function getEndpointsForEmail(arr, email_re) {
   // This will hold the index of the column for a header value.
   // E.G. header[source] is 0 or 1 ... header[anerbenartzi@outlook.com] is 4 or something like it.
@@ -221,14 +225,8 @@ function getEndpointsForEmail(arr, email_re) {
       count += value;
     }
     // For now, I'm keeping it simple so the source-destination linkage is ignored.
-    if (!(source in sources)) {
-      sources[source] = 0;
-    }
-    sources[source]+=count;
-    if (!(destination in destinations)) {
-      destinations[destination] = 0;
-    }
-    destinations[destination]+=count;
+    increment(sources, source, count);
+    increment(destinations, destination, count);
   }
 
   let less_than = function(a, b) {
@@ -243,6 +241,9 @@ function getEndpointsForEmail(arr, email_re) {
 
   let sources_sorted = [];
   for (let source in sources) {
+    if (!!source) {  // All manner of poorly formed names
+      continue;
+    }
     sources_sorted.push({name: source, count: sources[source]});
   }
   sources_sorted.sort(less_than);

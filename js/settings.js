@@ -14,8 +14,7 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
 // Using a global object, but others shouldn't use it.
 const defaults = 
 {
-  "processing_email_address": "email2sheets@gmail.com",
-  "spreadsheet_id": "1WeHYSMGYyA86B6MOZJpqh9id8g3tFX0kHCW3FFvKLic",
+  "server_url": "https://script.google.com/macros/s/AKfycbyJkMt-FRy2Xo8kXyqzl024XejKBAMW0AJhvHgHBlgRLwUp3RbdJIFn9fgivYhvEraO/exec",
   "sheet_name": "data",
   "published_spreadsheet_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRMs9eegLp0nXmdSbFMKKVREhYVt6O0jBKPauV5bIvMLMIJkj65XjwkXi1WxvyqCk8DWiWBJB8Fi7_/pubhtml",
   "email_re": ".*",
