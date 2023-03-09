@@ -190,7 +190,7 @@ class Endpoint extends HTMLElement {
     front.classList.add('endpoint_card_face');
 
     const img = document.createElement('img');
-    img.setAttribute('class', 'endpoint');
+    img.setAttribute('class', 'endpoint_image');
     img.src = img_src;
     img.setAttribute('alt', endpoint);
     img.setAttribute('title', title)
