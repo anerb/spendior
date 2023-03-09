@@ -100,6 +100,10 @@ function updateDestination() {
 }
 
 function selectEndpoint(e) {
+  let card = e.closest(".endpoint_card");
+  if ('endpoint_card_flipped' in card.classList) {
+    return;
+  }
   let initial_bottom = e.target.getBoundingClientRect().bottom;
   let parentElement = e.target.closest(".y-scroller");
   let parent_bottom = parentElement.getBoundingClientRect().bottom;
