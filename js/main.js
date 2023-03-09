@@ -116,6 +116,32 @@ function scrollEndpointsToBottom() {
   destination.scrollTo({top: destination.scrollHeight, behavior: 'smooth' });
 }
 
+function chooseImageFile(e) {
+  e.preventDefault();
+  e.target.querySelector("input").click();
+}
+
+function updateEndpointSrc(e) {
+  let endpoint = e.target.getAttribute('endpoint');
+  let key = `endpoint:${endpoint}`;
+  const reader = new FileReader();
+
+  let file = e.target.files[0];
+
+  reader.addEventListener(
+    'load',
+    () => {
+      // convert image file to base64 string
+      window.localStorage.setItem(key, reader.result);
+    },
+    false
+  );
+
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+}
+
 class Endpoint extends HTMLElement {
   constructor() {
 
@@ -125,6 +151,7 @@ class Endpoint extends HTMLElement {
 
     // HACK to stop multiple constructor calls
     this.addEventListener('click', selectEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
+    this.addEventListener('contextmenu', chooseImageFile);
     if (this.children.length > 0) {
       return;
     }
@@ -149,6 +176,12 @@ class Endpoint extends HTMLElement {
     label.innerHTML = title;
     label.setAttribute('class', 'endpoint_label');
 
+    const fileInput = document.createElement('input');
+    fileInput.setAttribute('type', 'file');
+    fileInput.setAttribute('endpoint', endpoint);
+    fileInput.classList.add('endpoint_input');
+    fileInput.addEventListener('onchange', updateEndpointSrc);
+
     // Create some CSS to apply to the shadow dom
     const style = document.createElement('style');
 
@@ -157,6 +190,7 @@ class Endpoint extends HTMLElement {
 //    shadow.appendChild(wrapper);
       this.appendChild(img);
       this.appendChild(label);
+      this.appendChild(fileInput);
 ////    wrapper.appendChild(source_radio);
 //    wrapper.appendChild(img);
 //    wrapper.appendChild(label);
@@ -486,15 +520,30 @@ function retrieveEndpointsImageMapping() {
   return image_mapping;
 }
 
+/*
+ * For isSource,
+ * Try source:endpoint, then destination:endpoint, then the hardcoded ../images/endpoint.png
+ */
 function chooseEndpointImageSrc(endpoint, isSource) {
-  let exactMatch = window.localStorage.getItem(`${prefix}${endpoint}`);
-  let backupMatch
-  let candidateSrcs = [
   let prefix = isSource ? `source:` : `destination:`;
-
+  let unprefix = isSource ? `destination:` : `source:`;
+  let candidateKeys = [
+    `${prefix}${endpoint}`,
+    `${unprefix}${endpoint}`,
+    endpoint,
   ]
-  let prefix = isSource ? `source:` : `destination:`;
-  let backup = `../images/${endpoint}.png`;
+
+  let chosenSrc = undefined
+  try {
+    chosenSrc = window.localStorage.getItem(`${prefix}${endpoint}`);
+  } catch (e) { 
+    try {
+      chosenSrc = window.localStorage.getItem(`${unprefix}${endpoint}`);
+    } catch (e) { 
+      chosenSrc = `../images/${endpoint}.png`;
+    }
+  }
+  return chosenSrc;
 }
 
 /*
@@ -511,10 +560,13 @@ function populateScroller(scroller, endpoints, isSource) {
 }
 
 function generateEndpoints() {
-  let endpoints = getSortedEndpoints();
-
-  populateScroller(document.querySelector("#source"), endpoints.sources);
-  populateScroller(document.querySelector("#destination"), endpoints.destinations);
+  //let endpoints = getSortedEndpoints();
+  let endpoints = {
+    sources: ["cash", "box", "ubs_twint", "bofa_mc", "fromOTHER"],
+    destinations: ["cash", "box", "ubs_twint", "bofa_mc", "person", "toOTHER"]
+  }
+  populateScroller(document.querySelector("#source"), endpoints.sources, isSource=true);
+  populateScroller(document.querySelector("#destination"), endpoints.destinations, isSource=false);
 }
 
 function navToEmail() {

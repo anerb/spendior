@@ -157,6 +157,13 @@ body {
   .endpoint_label {
     display: none;
   }
+
+  .endpoint_label {
+    position: absolute;
+    width: 0dvw;
+    height: 0dwv;
+    opacity: 0.0;
+  }
   
   #currency {
     position: absolute;
