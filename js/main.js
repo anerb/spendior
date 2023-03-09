@@ -181,13 +181,52 @@ function increment(obj, key, amount) {
   obj[key] += count;
 }
 
-function sortCounterToArray
+
+/*
+ * An Inventory is an object with sortable keys and sortable values
+ * The output is just the sorted keys in an array
+ */
+function sortInventory(inventory) {
+  if (typeof inventory != typeof {}) {
+    throw `sortInventory takes an object, but got a ${typeof inventory}`;
+  }
+  // Term-by-term comparison starting on the end
+  let less_than_pairs = function(p1, p2) {
+    if (p1[1] == p2[1]) {
+      if (p1[0] == p2[0]) {
+        return 0;
+      }
+      return p1[0] < p2[0] ? -1 : 1;
+    }
+    return p1[1] < p2[1] ? -1 : 1;
+  }
+
+  let sorted = Object.entries(inventory, array_less_than_reversed);
+  let sorted_keys = [];
+  for (let entry of sorted) {
+    sorted_keys.push(entry[0]);
+  }
+  return sorted_keys;
+}
+
+// in-place removal of inventory items with degenerate key or value
+function cleanupInventory(inventory) {
+  for (let key of inventory) {
+    // Use JS liberal truthiness interpretation of empty strings and zeros
+    if (!key || !inventory[key]) {
+      delete(inventory[key]);
+    }
+  }
+}
+
+
+//New convention, name objects with ĩ to indicate they are an Inventory.
 
 function getEndpointsForEmail(arr, email_re) {
   // This will hold the index of the column for a header value.
   // E.G. header[source] is 0 or 1 ... header[anerbenartzi@outlook.com] is 4 or something like it.
-  let sources = {};
-  let destinations = {};
+  let ĩsources = {};
+  let ĩdestinations = {};
   let header = {};
   let header_found = false;
   let emails = [];
@@ -225,48 +264,17 @@ function getEndpointsForEmail(arr, email_re) {
       count += value;
     }
     // For now, I'm keeping it simple so the source-destination linkage is ignored.
-    increment(sources, source, count);
-    increment(destinations, destination, count);
+    increment(ĩsources, source, count);
+    increment(ĩdestinations, destination, count);
   }
 
-  let less_than = function(a, b) {
-    if (a.count == b.count) {
-      if (a.name == b.name) {
-        return 0;
-      }
-      return a.name < b.name ? -1 : 1;
-    }
-    return a.count < b.count ? -1 : 1;
-  };
+  cleanupInventory(ĩsources);
+  cleanupInventory(ĩdestinations);
 
-  let sources_sorted = [];
-  for (let source in sources) {
-    if (!!source) {  // All manner of poorly formed names
-      continue;
-    }
-    sources_sorted.push({name: source, count: sources[source]});
+  return {
+    sources: sortInventory(ĩsources),
+    destinations: sortInventory(ĩdestinations),
   }
-  sources_sorted.sort(less_than);
-  let source_names = [];
-  for (let source of sources_sorted) {
-    if (source.count <= 0) {
-      continue;
-    }
-    source_names.push(source.name);
-  }
-  let destinations_sorted = [];
-  for (let destination in destinations) {
-    destinations_sorted.push({name: destination, count: destinations[destination]});
-  }
-  destinations_sorted.sort(less_than);
-  let destination_names = [];
-  for (let destination of destinations_sorted) {
-    if (destination.count <= 0) {
-      continue;
-    }
-    destination_names.push(destination.name);
-  }
-  return {sources: source_names, destinations: destination_names}
 
 }
 
@@ -593,6 +601,9 @@ function BuildPage() {
 }
 
 function LoadSettings() {
+  // TESTING
+  updateLocalStorageFromUrl("foobar", 'https://script.google.com/macros/s/AKfycbzr3ruJlweNJtXmhY_8pkVs07tuZVgP3YTGQFFkrOhPpDvfnsysOxWtYbrJxJ9fb_fp/exec');
+
   // TODO: Only do these if the old ones are more than a couple of hours old.
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
   updateLocalStorageFromUrl("published_spreadsheet_text", getSetting("published_spreadsheet_url"));

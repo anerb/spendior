@@ -1,5 +1,49 @@
 'use strict';
 
+
+
+
+function previewFile() {
+  const preview = document.querySelector("img");
+  const file = document.querySelector("input[type=file]").files[0];
+  const reader = new FileReader();
+
+  reader.addEventListener(
+    "load",
+    () => {
+      // convert image file to base64 string
+      preview.src = reader.result;
+    },
+    false
+  );
+
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+}
+
+
+function readFiles(files) {
+  document.getElementById('count').innerHTML = files.length;
+
+  var target = document.getElementById('target');
+  target.innerHTML = '';
+
+  for (var i = 0; i < files.length; ++i) {
+    var item = document.createElement('li');
+    item.setAttribute('data-idx', i);
+    var file = files[i];
+
+    var reader = new FileReader();
+    reader.addEventListener('load', getReadFile(reader, i));
+    reader.readAsDataURL()
+    reader.readAsText(file);
+
+    item.innerHTML = '' + file.name + ', ' + file.type + ', ' + file.size + ' bytes, last modified ' + file.lastModifiedDate + '';
+    target.appendChild(item);
+  };
+}
+
 // copy-paste 
 // TODO: make a common.js work
 function snake_case2PascalCase(snake_case, delimiter = "") {
