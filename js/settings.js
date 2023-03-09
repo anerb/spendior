@@ -4,8 +4,8 @@
 
 
 function previewFile() {
-  const preview = document.querySelector("img");
-  const file = document.querySelector("input[type=file]").files[0];
+  const preview = document.querySelector("#img2");
+  const file = document.querySelector("#file2").files[0];
   const reader = new FileReader();
 
   reader.addEventListener(

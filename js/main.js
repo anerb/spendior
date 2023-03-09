@@ -486,11 +486,25 @@ function retrieveEndpointsImageMapping() {
   return image_mapping;
 }
 
-function populateScroller(scroller, endpoints) {
+function chooseEndpointImageSrc(endpoint, isSource) {
+  let exactMatch = window.localStorage.getItem(`${prefix}${endpoint}`);
+  let backupMatch
+  let candidateSrcs = [
+  let prefix = isSource ? `source:` : `destination:`;
+
+  ]
+  let prefix = isSource ? `source:` : `destination:`;
+  let backup = `../images/${endpoint}.png`;
+}
+
+/*
+ * isSource (if not is_source, tha assumed is_destination)
+ */
+function populateScroller(scroller, endpoints, isSource) {
   let image_mapping = retrieveEndpointsImageMapping();
 
   for (let endpoint of endpoints) {
-    let img_src = image_mapping[endpoint] || `../images/${endpoint}.png`;
+    let img_src = chooseEndpointImageSrc(endpoint, isSource);
     let title = snake_case2PascalCase(endpoint);
     appendEndpoint(scroller, endpoint, img_src, title);
   }
