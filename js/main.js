@@ -122,7 +122,10 @@ function chooseImageFile(e) {
 }
 
 function updateEndpointSrc(e) {
-  let endpoint = e.target.getAttribute('endpoint');
+  let sdEndpoint = e.target.closest("sd-endpoint");
+  let endpoint = sdEndpoint.getAttribute('endpoint');
+  let card = sdEndpoint.querySelector('.endpoint_card');
+  let img = sdEndpoint.querySelector("img");  //  TODO:change to a class
   const reader = new FileReader();
 
   let file = e.target.files[0];
@@ -130,11 +133,14 @@ function updateEndpointSrc(e) {
   reader.addEventListener(
     'load',
     () => {
+      let dataUrl = reader.result;
       // convert image file to base64 string
       let key = `source:${endpoint}`;
-      window.localStorage.setItem(key, reader.result);
+      window.localStorage.setItem(key, dataUrl);
       key = `destination:${endpoint}`;
-      window.localStorage.setItem(key, reader.result);
+      window.localStorage.setItem(key, dataUrl);
+      img.src = dataUrl;
+      card.classList.remove('endpoint_card_flipped');
     },
     false
   );
@@ -142,6 +148,12 @@ function updateEndpointSrc(e) {
   if (file) {
     reader.readAsDataURL(file);
   }
+}
+
+
+function flipCard(e) {
+  e.preventDefault();
+  e.target.closest(".slot").querySelector(".endpoint_card").classList.toggle('endpoint_card_flipped');
 }
 
 class Endpoint extends HTMLElement {
@@ -153,7 +165,7 @@ class Endpoint extends HTMLElement {
 
     // HACK to stop multiple constructor calls
     this.addEventListener('click', selectEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
-//    this.addEventListener('contextmenu', chooseImageFile);
+    this.addEventListener('contextmenu', flipCard);
     let fileChild = this.querySelector("input");
     if (fileChild) {
       fileChild.addEventListener('change', updateEndpointSrc);
@@ -162,15 +174,16 @@ class Endpoint extends HTMLElement {
       return;
     }
 
-    // Create a shadow root
-    //    const shadow = this.attachShadow({mode: 'open'});
-    // Create spans
-    //    const wrapper = document.createElement('div');
-    //    wrapper.setAttribute('class', 'wrapper');
-
     const endpoint = this.getAttribute('endpoint');
     const title = this.getAttribute('title');
     const img_src = this.getAttribute('img_src');
+
+    const card = document.createElement('div');
+    card.classList.add('endpoint_card');
+
+    const front = document.createElement('div');
+    front.classList.add('endpoint_front');
+    front.classList.add('endpoint_card_face');
 
     const img = document.createElement('img');
     img.setAttribute('class', 'endpoint');
@@ -182,25 +195,33 @@ class Endpoint extends HTMLElement {
     label.innerHTML = title;
     label.setAttribute('class', 'endpoint_label');
 
+    front.appendChild(img);
+    front.appendChild(label);
+
+    const back = document.createElement('div');
+    back.classList.add('endpoint_back');
+    back.classList.add('endpoint_card_face');
+
+    const fileButton = document.createElement('div');
+    fileButton.classList.add('endpoint_file_button');
+    fileButton.innerHTML = 'Choose an Image';
+
     const fileInput = document.createElement('input');
     fileInput.setAttribute('type', 'file');
-    fileInput.setAttribute('endpoint', endpoint);
     fileInput.classList.add('endpoint_input');
     fileInput.addEventListener('change', updateEndpointSrc);
 
-    // Create some CSS to apply to the shadow dom
-    const style = document.createElement('style');
+    fileButton.appendChild(fileInput);
 
-    // Attach the created elements to the shadow dom
-//    shadow.appendChild(style);
-//    shadow.appendChild(wrapper);
-      this.appendChild(img);
-      this.appendChild(label);
-      this.appendChild(fileInput);
-////    wrapper.appendChild(source_radio);
-//    wrapper.appendChild(img);
-//    wrapper.appendChild(label);
-//    wrapper.appendChild(destination_radio);
+    back.appendChild(fileButton);
+
+//    front.innerHTML = "FRONT";
+//    back.innerHTML = "back";
+
+    card.appendChild(front);
+    card.appendChild(back);
+
+    this.appendChild(card);
   }
 }
 
