@@ -118,12 +118,11 @@ function scrollEndpointsToBottom() {
 
 function chooseImageFile(e) {
   e.preventDefault();
-  e.target.querySelector("input").click();
+  e.target.parentElement.querySelector("input").click();
 }
 
 function updateEndpointSrc(e) {
   let endpoint = e.target.getAttribute('endpoint');
-  let key = `endpoint:${endpoint}`;
   const reader = new FileReader();
 
   let file = e.target.files[0];
@@ -132,6 +131,9 @@ function updateEndpointSrc(e) {
     'load',
     () => {
       // convert image file to base64 string
+      let key = `source:${endpoint}`;
+      window.localStorage.setItem(key, reader.result);
+      key = `destination:${endpoint}`;
       window.localStorage.setItem(key, reader.result);
     },
     false
@@ -151,7 +153,11 @@ class Endpoint extends HTMLElement {
 
     // HACK to stop multiple constructor calls
     this.addEventListener('click', selectEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
-    this.addEventListener('contextmenu', chooseImageFile);
+//    this.addEventListener('contextmenu', chooseImageFile);
+    let fileChild = this.querySelector("input");
+    if (fileChild) {
+      fileChild.addEventListener('change', updateEndpointSrc);
+    }
     if (this.children.length > 0) {
       return;
     }
@@ -180,7 +186,7 @@ class Endpoint extends HTMLElement {
     fileInput.setAttribute('type', 'file');
     fileInput.setAttribute('endpoint', endpoint);
     fileInput.classList.add('endpoint_input');
-    fileInput.addEventListener('onchange', updateEndpointSrc);
+    fileInput.addEventListener('change', updateEndpointSrc);
 
     // Create some CSS to apply to the shadow dom
     const style = document.createElement('style');
@@ -565,8 +571,8 @@ function generateEndpoints() {
     sources: ["cash", "box", "ubs_twint", "bofa_mc", "fromOTHER"],
     destinations: ["cash", "box", "ubs_twint", "bofa_mc", "person", "toOTHER"]
   }
-  populateScroller(document.querySelector("#source"), endpoints.sources, isSource=true);
-  populateScroller(document.querySelector("#destination"), endpoints.destinations, isSource=false);
+  populateScroller(document.querySelector("#source"), endpoints.sources, true);
+  populateScroller(document.querySelector("#destination"), endpoints.destinations, false);
 }
 
 function navToEmail() {
