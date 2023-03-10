@@ -36,7 +36,6 @@
       </div>
 
     <div id="panel" class="panel">
-      <div id="converter" class="amount display_none">=0.00 CHF</div>
       <span id="amount" class="amount" class="amount_clear">0.00</span>  
       <select id="currency" name="currency" onchange="ready()">
         <option value="CHF" selected>🇨🇭Fr.</option>
@@ -45,8 +44,9 @@
         <option value="GBP">🇬🇧£</option>
         <option value="OTH">🏴‍☠️?</option>
       </select>
+      <div id="converter" class="amount display_none">=0.00 CHF</div>
     </div>
-    
+
     <sd-keypad handed="right" orientation="landscape"></sd-keypad>
     <div id="sendnow" class="send-button"><a id="sendlink" href="mailto:no_email@example.com" onclick="sendIt()" target=""_blank">📨</a> </div>
   </div>

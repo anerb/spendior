@@ -132,8 +132,8 @@ body {
 
   #amount {
     position: absolute;
-    bottom: 4dvw;
-    right: 0dvw;
+    top: 0dvw;
+    right: 54dvw;
   }
 
   .amount {
@@ -141,14 +141,7 @@ body {
     font-size: 12dvw;
     text-align: end;
   }
-  
-  #what {
-    position: absolute;
-    bottom: 1dvw;
-    left: 1dvw;
-    width: 79dvw;
-  }
-  
+    
   .endpoint_image {
     font-size: 6dvw;
     text-align: center;
@@ -215,8 +208,8 @@ body {
 
   #currency {
     position: absolute;
-    bottom: 10dvw;
-    left: 2dvw;
+    top: 4dvw;
+    right: 38dvw;
     font-size: 6dvw;
     width: calc(0.01em * 240);
     appearance: none;
@@ -287,10 +280,10 @@ a {
 
 #converter {
   position: absolute;
-  right: -21dvw;
-  transform: scale(0.5);
+  right: 0dvw;
   width: 88dvw;
-  bottom: -3dvw;
+  top: 3dvw;
+  font-size: 7dvw;
 }
 
 .display_none {
@@ -320,38 +313,14 @@ a {
 
 #panel {
   position: absolute;
-  bottom: 12dvw;
-}
-
-/* HACKY: "left" means the keypad is on the left */
-.left #panel {
-  right: 0dvw;
-}
-.right #panel {
-  left: 0dvw;
+  bottom: 2dvw;
+  left: 1dvw;
 }
 
 .panel {
-  width: 44dvw;
-  height: 64dvw;
+  width: 94dvw;
+  height: 18dvw;
 }
-
-.footer {
-  width: 100dvw;
-  height: 12dvw;
-}
-
-#footer {
-  position: absolute;
-  left: 0dvw;
-  bottom: 0dvw;
-}
-
-/* Lots of position adjustments, based on
- * .left | .right
- * .portrait | .landscape
- * .grid | .condensed
- */
 
 sd-keypad .key {
   position: absolute;
