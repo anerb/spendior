@@ -62,7 +62,7 @@ function ready() {
   body.date_first = formatDate(today);
   body.date_final = formatDate(today);
   body.source = getScrollerValue("source");
-  body.amount = document.querySelector("#amount").innerHTML;
+  body.amount = document.querySelector("#amount").value;
   body.currency = document.querySelector("#currency").value;
   body.destination = getScrollerValue("destination");
   body.description = "DESCRIPTION";
@@ -172,6 +172,119 @@ function flipCard(e) {
 }
 
 
+class PriceDisplay extends HTMLElement {
+
+  // takes a string, returns a string
+  addCommas = function(whole) {
+    let ñwhole = "";
+    // Iterate in reverse;
+    for (let d = whole.length - 1; d >= 0; d--) {
+      ñwhole = whole[d] + ñwhole;  // prepend
+      if (d % 3 == 0 && d != 0) {
+        ñwhole = ',' + ñwhole;  // prepend
+      }
+    }
+    // due to prepending, there is no need to reverse.
+    return ñwhole;
+  }
+
+  distributeValue = function() {
+    let parts = this.value_.split('.');
+/*
+    if (parts.length == 1) {
+      // There is not dot;
+      this.dot.classList.add('pending');
+      this.dimes.classList.add('pending');
+      this.pennies.classList.add('pending');
+    } else {
+      this.dot.classList.remove('pending');
+      this.dimes.classList.add('pending');
+      this.pennies.classList.add('pending');
+    }
+*/
+    if (parts[0].length == 0) {
+      this.dollars.classList.add('pending');
+      this.dot.classList.add('pending');
+      this.dimes.classList.add('pending');
+      this.pennies.classList.add('pending');
+      parts[0] += '0';
+    } else {
+      this.dollars.classList.remove('pending');
+    }
+    let withCommas = this.addCommas(parts[0]);
+    this.dollars.innerHTML = withCommas;
+
+    if (parts.length == 1) {
+      this.dot.classList.add('pending');
+      this.dimes.classList.add('pending');
+      this.pennies.classList.add('pending');
+      parts.push("");
+    } else {
+      this.dot.classList.remove('pending');
+    }
+    if (parts[1].length == 0) {
+      parts[1] += '0';
+      this.dimes.classList.add('pending');
+      this.pennies.classList.add('pending');
+    } else {
+      this.dimes.classList.remove('pending');
+    }
+    if (parts[1].length == 1) {
+      parts[1] += '0';
+      this.pennies.classList.add('pending');
+    } else {
+      this.pennies.classList.remove('pending');
+    }
+    this.dimes.innerHTML = parts[1][0];
+    this.pennies.innerHTML = parts[1][1];
+  }
+
+  constructor() {
+    // Always call super first in constructor
+    super();
+
+    this.value_ = "";
+
+    this.dollars = document.createElement('div');
+    this.dollars.classList.add('dollars');
+    this.dot = document.createElement('div');
+    this.dot.classList.add('dot');
+    this.dot.innerHTML = '.';
+    this.dimes = document.createElement('div');
+    this.dimes.classList.add('dimes');
+    this.pennies = document.createElement('div');
+    this.pennies.classList.add('pennies');
+
+    this.appendChild(this.dollars);
+    this.appendChild(this.dot);
+    this.appendChild(this.dimes);
+    this.appendChild(this.pennies);
+
+    this.distributeValue();
+  }
+
+  // emitted as a string, which is strange
+  get value() {
+    let ñdollars = this.dollars.innerHTML;
+    ñdollars = ñdollars.replace('/,/', '');
+    let renderedValue = `${ñdollars}.${this.dimes.innerHTML}${this.pennies.innerHTML}`
+  }
+
+  set value (v) {
+    if (typeof v != typeof '') {
+      throw new Error(`PriceDisplay.value can only be set to string. ${typeof v} recieved instead.`);
+    }
+    if (v != "") {
+      if (v.match(/^([1-9][0-9]*|0)([.][0-9]{0,2})?$/) == null) {
+        throw new Error(`Setting PriceDisplay.value to invalid ${v}.`);
+      }
+    }
+    this.value_ = v;
+    this.distributeValue();
+  }
+
+}
+
 /*
  *  left vs right is mostly about where the decimal/clear button goes.
  */
@@ -196,7 +309,11 @@ class Keypad extends HTMLElement {
     if (e.target.classList.contains('disabled')) {
       return;
     }
-    this.value_ += e.target.innerHTML;
+    if (e.target.classList.contains('role_clear')) {
+      this.clear();
+    } else {
+      this.value_ += e.target.innerHTML;
+    }
     this.setKeyClasses();
 
     const changeEvent = new Event("change");
@@ -478,7 +595,7 @@ function increment(obj, key, amount) {
  */
 function sortInventory(inventory) {
   if (typeof inventory != typeof {}) {
-    throw `sortInventory takes an object, but got a ${typeof inventory}`;
+    throw new Error(`sortInventory takes an object, but got a ${typeof inventory}`);
   }
   // Term-by-term comparison starting on the end
   let less_than_pairs = function(p1, p2) {
@@ -772,7 +889,7 @@ function navToEmail() {
  *   - The decimal can only be pressed once.  After that it becomes a "clear" button.
  *   - There is no indication of how to clear until pressing the decimal.
  * A visual hint is attempted where the "cleared" state uses an outline font.
- */
+ 
 function keyclick(e) {
   let amount = document.querySelector("#amount");
   let click_value = e.target.innerHTML;
@@ -798,10 +915,11 @@ function keyclick(e) {
   }
   ready();
 }
+*/
 
 function keypadChanged(e) {
   let value = e.target.value;
-  document.querySelector('#amount').innerHTML = value;
+  document.querySelector('#amount').value = value;
 }
 
 function currencykeyclick(e) {
@@ -861,6 +979,7 @@ function PWA() {
 function WebComponents() {
   customElements.define("sd-endpoint", Endpoint);
   customElements.define("sd-keypad", Keypad);
+  customElements.define("sd-price-display", PriceDisplay);
 }
 
 function BuildPage() {
@@ -921,9 +1040,6 @@ function sendIt() {
 // This puts all the scrolling/focus/orientation/animations in place to start.
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
-  while (  document.querySelector("#amount").innerHTML != "0.00") {
-    document.querySelector("#decimal_clear").click();
-  }
   scrollEndpointsToBottom();
   ready();
 }

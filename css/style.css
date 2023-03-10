@@ -422,7 +422,9 @@ sd-keypad[orientation="landscape"][handed="right"]
 
 sd-keypad
 .role_clear {
-  font: red;
+  font-size: calc(var(--radius) * 0.01 * 18);
+  -webkit-text-stroke: 1px;
+  -webkit-text-fill-color: transparent;
 }
 
 sd-keypad[orientation="portrait"] {
@@ -447,5 +449,45 @@ sd-keypad[orientation="landscape"] {
 }
 
 .disabled {
-  color: gray !important;
+  opacity: 0.5 !important;
+}
+
+
+sd-price-display {
+  position:relative;
+  font-size: 14dvw;
+}
+
+sd-price-display
+.pending {
+  -webkit-text-stroke: 1px;
+  -webkit-text-fill-color: transparent;
+}
+
+sd-price-display
+.dollars {
+  position:absolute;
+  right: 16dvw;
+  top: 0dvw;
+}
+
+sd-price-display
+.dot {
+  position:absolute;
+  right: 13dvw;
+  top: 0dvw;
+}
+
+sd-price-display
+.dimes {
+  position:absolute;
+  right: 7dvw;
+  top: 0dvw;
+}
+
+sd-price-display
+.pennies {
+  position:absolute;
+  right: 0dvw;
+  top: 0dvw;
 }
