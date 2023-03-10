@@ -188,25 +188,31 @@ class Keypad extends HTMLElement {
    */
 
   clear = function() {
-    this.value = "";
+    this.value_ = "";
     this.setKeyClasses();
   }
 
   handleClick = function(e) {
-    if (e.target.classList.includes('disabled')) {
+    if (e.target.classList.contains('disabled')) {
       return;
     }
     this.value_ += e.target.innerHTML;
     this.setKeyClasses();
+
+    const changeEvent = new Event("change");
+    this.dispatchEvent(changeEvent);
+
   }
 
   // Based on current value_, keys get their roles and disabled.
   setKeyClasses = function() {
 
-    // https://regexr.com/79vus
-    if (! (this.value_.matches(/^([1-9][0-9]*|0)([.][0-9]{0,2})?$/))) {
-      console.error(`An invalid value arose: ${this.value_}`)
-      clear();
+    if (this.value_ != "") {
+      // https://regexr.com/79vus
+      if (this.value_.match(/^([1-9][0-9]*|0)([.][0-9]{0,2})?$/) == null) {
+        console.error(`An invalid value arose: ${this.value_}`)
+        this.clear();
+      }
     }
 
     let roles = {
@@ -249,7 +255,7 @@ class Keypad extends HTMLElement {
 
     // A valid integer appears
     // Waiting for 0-9 or dot
-    if (this.value_.matches(/^[1-9][0-9]*$/)) {
+    if (this.value_.match(/^[1-9][0-9]*$/) != null) {
       // all keys are enabled.
       for (let role in roles) {
         let key = this.querySelector(`.role_${role}`);
@@ -267,7 +273,7 @@ class Keypad extends HTMLElement {
     // 123.1
     // 0.0
     // Waiting for 0-9 or clear
-    if (this.value_.matches(/[0-9]+[.][0-9]?/)) {
+    if (this.value_.match(/[0-9]+[.][0-9]?/) != null) {
       // all keys are enabled.
       for (let role in roles) {
         let key = this.querySelector(`.role_${role}`);
@@ -283,7 +289,7 @@ class Keypad extends HTMLElement {
     // 0.00
     // 1.20
     // Nothing more to type. Only clear is an option.
-    if (this.value_.matches(/[0-9]+[.][0-9][0-9]/)) {
+    if (this.value_.match(/[0-9]+[.][0-9][0-9]/) != null) {
       // all keys are enabled.
       for (let role in roles) {
         let key = this.querySelector(`.role_${role}`);
@@ -309,7 +315,7 @@ class Keypad extends HTMLElement {
 
     this.value_ = "";
 
-    this.addEventListener('click', handleClick);
+    this.addEventListener('click', this.handleClick);
 
     const handed = this.getAttribute('handed');  // left/right
     const orientation = this.getAttribute('orientation');  // portrait/landscape
@@ -336,10 +342,14 @@ class Keypad extends HTMLElement {
       key.classList.add(`role_${role}`);
       key.classList.add(`key`);
       key.innerHTML = roles[role];
+      if (role == "clear") {
+        key.classList.add('display_none');
+      }
       front.appendChild(key);
       const back = document.createElement('div');
     }
     this.appendChild(front);
+    this.setKeyClasses();
   }
 
   get value() {
@@ -789,6 +799,11 @@ function keyclick(e) {
   ready();
 }
 
+function keypadChanged(e) {
+  let value = e.target.value;
+  document.querySelector('#amount').innerHTML = value;
+}
+
 function currencykeyclick(e) {
   let currency_key_elements = document.querySelectorAll('.currency_key')
   for (let currency_key_element of currency_key_elements) {
@@ -879,15 +894,14 @@ function AddEventListeners() {
   for (let input_element of input_elements) {
     input_element.addEventListener('input', ready);
   }
-  let key_elements = document.querySelectorAll('.key')
-  for (let key_element of key_elements) {
-    key_element.addEventListener('click', keyclick);
-  }
 
   let currency_key_elements = document.querySelectorAll('.currency_key')
   for (let currency_key_element of currency_key_elements) {
     currency_key_element.addEventListener('click', currencykeyclick);
   }
+
+  let keypad = document.querySelector('sd-keypad');
+  keypad.addEventListener('change', keypadChanged);
 
   const state = document.visibilityState;
 
@@ -896,6 +910,7 @@ function AddEventListeners() {
       StartingPlaces();
     }
   });
+
 }
 
 function sendIt() {

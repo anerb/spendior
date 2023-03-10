@@ -288,10 +288,6 @@ a {
   font-size: 7dvw;
 }
 
-.display_none {
-  display: none;
-}
-
 .gear {
   width: 6dvw;
   height: 6dvw;
@@ -424,6 +420,11 @@ sd-keypad[orientation="landscape"][handed="right"]
   left: calc(3 * var(--grid-step));
 }
 
+sd-keypad
+.role_clear {
+  font: red;
+}
+
 sd-keypad[orientation="portrait"] {
   position: relative;
   width: calc(6 * var(--radius));
@@ -439,4 +440,12 @@ sd-keypad[orientation="landscape"] {
   height: calc(3 * var(--grid-step));
   left: calc((100% - (4 * var(--grid-step)))/2);
   top: 30dvw;
+}
+
+.display_none {
+  display: none !important;
+}
+
+.disabled {
+  color: gray !important;
 }
