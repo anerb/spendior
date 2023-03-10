@@ -265,14 +265,22 @@ class PriceDisplay extends HTMLElement {
     this.distributeValue();
   }
 
-  // emitted as a string, which is strange
+  // emitted as a Number
   get value() {
     let ñdollars = this.dollars.innerHTML;
-    ñdollars = ñdollars.replace('/,/', '');
+    ñdollars = ñdollars.replace(/,/g, '');
     let renderedValue = `${ñdollars}.${this.dimes.innerHTML}${this.pennies.innerHTML}`
+    return Number(renderedValue);
   }
 
   set value (v) {
+    if (typeof v != typeof '12.34') {
+      throw new Error(`PriceDisplay.value can only be set to Number. ${typeof v} recieved instead.`);
+    }
+    this.stringValue = String(v);
+  }
+
+  set stringValue (v) {
     if (typeof v != typeof '') {
       throw new Error(`PriceDisplay.value can only be set to string. ${typeof v} recieved instead.`);
     }
@@ -921,7 +929,8 @@ function keyclick(e) {
 
 function keypadChanged(e) {
   let value = e.target.value;
-  document.querySelector('#amount').value = value;
+  document.querySelector('#amount').stringValue = value;
+  ready();
 }
 
 function currencykeyclick(e) {

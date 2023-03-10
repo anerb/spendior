@@ -282,9 +282,9 @@ a {
 
 #converter {
   position: absolute;
-  right: 0dvw;
+  left: -39dvw;
   width: 88dvw;
-  top: -4dvw;
+  top: 77dvw;
   font-size: 7dvw;
   transform: rotateZ(-90deg);
 }
