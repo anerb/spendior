@@ -185,6 +185,10 @@ class Keypad extends HTMLElement {
     const front = document.createElement('div');
     front.classList.add('front');
 
+    // Helper classes for CSS selectors
+    front.classList.add(handed);
+    front.classList.add(orientation);
+
     let roles = {
       0: 0,
       1: 1,
