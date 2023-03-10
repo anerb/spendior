@@ -61,7 +61,7 @@ function ready() {
   for (let key in body) {
     let ẽkey = encodeURIComponent(key);
     let ẽvalue = encodeURIComponent(body[key]);
-    let queryParameter = `${key}=${value}`;
+    let queryParameter = `${key}=${body[key]}`;
     queryParameters.push(queryParameter);
   }
 
@@ -243,7 +243,7 @@ function increment(obj, key, amount) {
   if (!(key in obj)) {
     obj[key] = 0;
   }
-  obj[key] += count;
+  obj[key] += amount;
 }
 
 
@@ -266,7 +266,7 @@ function sortInventory(inventory) {
     return p1[1] < p2[1] ? -1 : 1;
   }
 
-  let sorted = Object.entries(inventory, array_less_than_reversed);
+  let sorted = Object.entries(inventory, less_than_pairs);
   let sorted_keys = [];
   for (let entry of sorted) {
     sorted_keys.push(entry[0]);
@@ -276,7 +276,7 @@ function sortInventory(inventory) {
 
 // in-place removal of inventory items with degenerate key or value
 function cleanupInventory(inventory) {
-  for (let key of inventory) {
+  for (let key in inventory) {
     // Use JS liberal truthiness interpretation of empty strings and zeros
     if (!key || !inventory[key]) {
       delete(inventory[key]);
@@ -343,41 +343,18 @@ function getEndpointsForEmail(arr, email_re) {
 
 }
 
-function getEndpointsCsv() {
-  let endpoints_text = window.localStorage.getItem("endpoints_csv");
-  if (!endpoints_text) {
-    endpoints_text = 
-    [
-    "source,destination,any@example.com",
-    "credit_card,store,1",
-    "credit_card,credit_card,1",
-    "bank,credit_card,11",
-    "bank,store,1",
-    "cash,store,1",
-    "bank,cash,1",
-    "cash,person,1",
-    "person,cash,1",
-  ].join("\n");
-  }
-}
-
-
-// TODO: Perhaps formalize the store/retrieve pattern separate from fetch/refetch
-function retrieveEndpointsArray() {
-  let json = window.localStorage.getItem("endpoints_array");
-  let endpoints_array = [];
-  try {
-    endpoints_array = JSON.parse(json);
-  } catch(e) {}
-  return endpoints_array;
-}
-
 function getSortedEndpoints() {
-  let email_re = getSetting("email_re");
-  let endpoints_array = retrieveEndpointsArray();
-  let endpoints = getEndpointsForEmail(endpoints_array, email_re);
+  let endpoints = {sources: [], destinations: []};
+
+  let endpoints_csv = window.localStorage.getItem("endpoints_csv");
+  if (endpoints_csv) { // != null
+    let endpoints_array = csv2array(endpoints_csv);
+    let email_re = getSetting("email_re");
+    endpoints = getEndpointsForEmail(endpoints_array, email_re);
+  }
+
   // add "OTHER" to the bottom of the list (most common)
-  modifyEndpointsOther(endpoints);
+  modifySortedEndpoints(endpoints);
   return endpoints;
 }
 
@@ -393,7 +370,21 @@ function appendEndpoint(parent, endpoint, img_src, title) {
 
 // Originally, I set "other" to be at the start (farthest from the most popular).
 // However, that made it so the most popular were pre-selected in endpoints, which means open,digits,send would erronously capture the endpoints.
-function modifyEndpointsOther(endpoints) {
+function modifySortedEndpoints(endpoints) {
+  let alwaysPresentEndpoints = window.localStorage.getItem('always_present_endpoints') || '';
+  let alwaysEndpoints = alwaysPresentEndpoints.split(',');
+  for (let alwaysEndpoint of alwaysEndpoints) {
+    // TODO: clean up a bit more
+    alwaysEndpoint = alwaysEndpoint.trim();
+    // TODO: compare normalized presence.
+    if (!(alwaysEndpoint in endpoints.sources)) {
+      endpoints.sources.unshift(alwaysEndpoint);
+    }
+    if (!(alwaysEndpoint in endpoints.destinations)) {
+      endpoints.destinations.unshift(alwaysEndpoint);
+    }
+  }
+
   let other_index = endpoints.sources.indexOf("fromOTHER");
   if (other_index >= 0) {
     endpoints.sources.splice(other_index, 1);
@@ -437,25 +428,6 @@ function tbody2array(tbody) {
   return arr;
 }
 
-// HACK: assumes all values are strings, and no complex quoting.
-// TODO: make the base setting a JSON(array) instead of csv.
-function array2csv(arr) {
-  let csv_rows = [];
-  for (let row of arr) {
-    let csv_row = row.join(",");
-    csv_rows.push(csv_row);
-  }
-  let csv = csv_rows.join("\n");
-  return csv;
-}
-
-function tbody2csv(tbody) {
-  let arr = tbody2array(tbody);
-  let csv = array2csv(arr);
-  return csv;
-}
-
-
 // FRAGILE: Based on the specific way Google Sheets published to the web.
 // FRAGILE: hardcodes the expeceted sheet_names for this program.
 // Returns a mapping from sheet_name -> gid
@@ -490,55 +462,6 @@ function memoFetch(key) {
     value = "";
   }
   return value;
-}
-
-// Inside the HTML, there is a script that has text which describes the desired body.
-// FRAGILE: Relies on the way Google Sheets generates a published spreadsheet html.
-function getDesiredBodyFromPublishedSpreadsheet() {
-  let published_spreadsheet_text = memoFetch("published_spreadsheet_text");
-  if (published_spreadsheet_text.indexOf("<body") < 0) {
-    published_spreadsheet_text = "<body></body>";
-  }
-  let desired_body_text = published_spreadsheet_text.slice(
-    published_spreadsheet_text.indexOf("<body"),
-    published_spreadsheet_text.indexOf("</body") + "</body>".length
-  );
-  let parser = new DOMParser();
-  let desired_body = parser.parseFromString(desired_body_text, "text/html");
-  return desired_body;
-}
-
-function getTbodyByName(name) {
-  let desired_body = getDesiredBodyFromPublishedSpreadsheet();
-  let sheet_names = getSheetNames(desired_body);
-  let gid = sheet_names[name];  // FRAGILE (hardcoded key)
-  if (!gid) {
-    // not necessarily an error if no images where published
-    return undefined;
-  }
-  // Everything we need is in the tbodys that each represent a published sheet.
-  let tbody = desired_body.querySelector(`div[id="${gid}"] tbody`);
-  return tbody;
-}
-
-function storeEndpointsImageMapping() {
-  let tbody = getTbodyByName("images");
-  if (tbody === undefined) {
-    return;
-  }
-  let image_mapping = tbody2imageMapping(tbody)
-  window.localStorage.setItem("endpoints_image_mapping", JSON.stringify(image_mapping));
-}
-
-// EARLIER: This was going to store the final ordering,
-// but that depends on the email_re
-function storeEndpointsArray() {
-  let tbody = getTbodyByName("endpoints");
-  if (tbody === undefined) {
-    return;
-  }
-  let endpoints_array = tbody2array(tbody);
-  window.localStorage.setItem("endpoints_array", JSON.stringify(endpoints_array));
 }
 
 // TODO: Perhaps run extraction from published html here.
@@ -591,11 +514,7 @@ function populateScroller(scroller, endpoints, isSource) {
 }
 
 function generateEndpoints() {
-  //let endpoints = getSortedEndpoints();
-  let endpoints = {
-    sources: ["cash", "box", "ubs_twint", "bofa_mc", "fromOTHER"],
-    destinations: ["cash", "box", "ubs_twint", "bofa_mc", "person", "toOTHER"]
-  }
+  let endpoints = getSortedEndpoints();
   populateScroller(document.querySelector("#source"), endpoints.sources, true);
   populateScroller(document.querySelector("#destination"), endpoints.destinations, false);
 }
@@ -657,6 +576,10 @@ function noScroll() {
 }
 
 function updateLocalStorageFromUrl(key, url) {
+  // TODO: Better error handling when the request fails.
+  if (!url) {
+    return;
+  }
   fetch(url)
     .then((response) => {
       if (response.ok) {
@@ -698,14 +621,10 @@ function BuildPage() {
 }
 
 function LoadSettings() {
-  // TESTING
-  updateLocalStorageFromUrl("foobar", 'https://script.google.com/macros/s/AKfycbzr3ruJlweNJtXmhY_8pkVs07tuZVgP3YTGQFFkrOhPpDvfnsysOxWtYbrJxJ9fb_fp/exec');
 
   // TODO: Only do these if the old ones are more than a couple of hours old.
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
-  updateLocalStorageFromUrl("published_spreadsheet_text", getSetting("published_spreadsheet_url"));
-  storeEndpointsArray();
-  storeEndpointsImageMapping();
+  updateLocalStorageFromUrl("endpoints_csv", getSetting("published_endpoints_url"));
   // TODO: Add a button in settings to refresh exchange rate and published endpoints.
 
   // TODO: Add the currency based on the locale timestamp and/or location.

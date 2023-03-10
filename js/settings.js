@@ -1,49 +1,5 @@
 'use strict';
 
-
-
-
-function previewFile() {
-  const preview = document.querySelector("#img2");
-  const file = document.querySelector("#file2").files[0];
-  const reader = new FileReader();
-
-  reader.addEventListener(
-    "load",
-    () => {
-      // convert image file to base64 string
-      preview.src = reader.result;
-    },
-    false
-  );
-
-  if (file) {
-    reader.readAsDataURL(file);
-  }
-}
-
-
-function readFiles(files) {
-  document.getElementById('count').innerHTML = files.length;
-
-  var target = document.getElementById('target');
-  target.innerHTML = '';
-
-  for (var i = 0; i < files.length; ++i) {
-    var item = document.createElement('li');
-    item.setAttribute('data-idx', i);
-    var file = files[i];
-
-    var reader = new FileReader();
-    reader.addEventListener('load', getReadFile(reader, i));
-    reader.readAsDataURL()
-    reader.readAsText(file);
-
-    item.innerHTML = '' + file.name + ', ' + file.type + ', ' + file.size + ' bytes, last modified ' + file.lastModifiedDate + '';
-    target.appendChild(item);
-  };
-}
-
 // copy-paste 
 // TODO: make a common.js work
 function snake_case2PascalCase(snake_case, delimiter = "") {
@@ -60,7 +16,8 @@ const defaults =
 {
   "server_url": "https://script.google.com/macros/s/AKfycbyJkMt-FRy2Xo8kXyqzl024XejKBAMW0AJhvHgHBlgRLwUp3RbdJIFn9fgivYhvEraO/exec",
   "sheet_name": "data",
-  "published_spreadsheet_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRMs9eegLp0nXmdSbFMKKVREhYVt6O0jBKPauV5bIvMLMIJkj65XjwkXi1WxvyqCk8DWiWBJB8Fi7_/pubhtml",
+  "published_endpoints_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRMs9eegLp0nXmdSbFMKKVREhYVt6O0jBKPauV5bIvMLMIJkj65XjwkXi1WxvyqCk8DWiWBJB8Fi7_/pub?gid=1056089378&single=true&output=csv",
+  "always_present_endpoints": "bank, credit_card, cash, person, store",
   "email_re": ".*",
   "keypad_location": "right",
 //  "background_image_shortname": "pinkdior",
