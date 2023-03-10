@@ -1,0 +1,99 @@
+<!DOCTYPE html><html><head><meta name="google" content="notranslate"><meta name="viewport" content="target-densitydpi=device-dpi,user-scalable=1,minimum-scale=1,maximum-scale=2.5,initial-scale=1,width=device-width"><meta http-equiv="X-UA-Compatible" content="IE=edge;"><meta name="referrer" content="origin"><title>Spendior - Google Drive</title><link rel="shortcut icon" href="//ssl.gstatic.com/docs/spreadsheets/favicon3.ico"><link href='/static/spreadsheets2/client/css/3016548047-waffle_k_ltr.css' type='text/css' rel='stylesheet' nonce="KwgIJuJ29KA36n8bon5vFw"><style type="text/css" nonce="KwgIJuJ29KA36n8bon5vFw">
+        html { overflow: visible; }
+        #sheets-viewport { overflow: auto; }
+        #sheets-viewport.widget-viewport { overflow: hidden; }
+        .grid-container { overflow: visible; background: white;}
+        .grid-table-container { overflow: visible; }
+        #top-bar {
+          margin: 0;
+          overflow: hidden;
+        }
+        #top-bar {
+          border-bottom: 1px solid #ccc;
+          padding: 6px 6px 0;
+        }
+        #doc-title { padding-bottom: 5px; }
+        #doc-title .name { font-size: 15px; }
+        #sheet-menu {
+          font-size: 13px;
+          margin: 6px 0 0;
+          padding: 0 0 5px;
+        }
+        #sheet-menu li {
+          display: inline;
+          list-style-type: none;
+          margin: 0;
+          padding: 5px 8px;
+        }
+        #sheet-menu li.active {
+          background-color: #fff;
+          font-weight: bold;
+          border: 1px solid #999;
+        }
+        #top-bar #sheet-menu li.active {
+          border-bottom: 0;
+        }
+        #sheet-menu a, #sheet-menu a:visited { color: #07c; }
+        #footer {
+          background: #f0f0f0;
+          border-top: 1px #ccc solid;
+          border-bottom: 1px #ccc solid;
+          font-size: 13;
+          padding: 10px 10px;
+        }
+        .dash {
+          padding: 0 6px;
+        }
+        .ritz .waffle a { color: inherit; }.ritz .waffle .s2{border-bottom:3px SOLID #8093b3;background-color:#8093b3;text-align:left;color:#ffffff;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s4{background-color:#ffffff;text-align:right;color:#000000;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s1{border-bottom:3px SOLID #8093b3;background-color:#dfe4ec;text-align:left;font-style:italic;color:#000000;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s3{border-right:1px SOLID #ffffff;background-color:#f4f6f8;text-align:left;color:#000000;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s0{background-color:#dfe4ec;text-align:left;font-style:italic;color:#000000;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}.ritz .waffle .s5{background-color:#ffffff;text-align:left;color:#000000;font-family:'Arial';font-size:10pt;vertical-align:bottom;white-space:nowrap;direction:ltr;padding:2px 3px 2px 3px;}</style><script type="text/javascript" nonce="OLoII9hCt93XftUdIFWgiQ">
+        var activeSheetId;
+
+        function switchToSheet(id) {
+          if (document.getElementById('sheet-menu')) {
+            document.getElementById('sheet-button-' + activeSheetId)
+                .className = '';
+            document.getElementById('sheet-button-' + id).className = 'active';
+          }
+
+          document.getElementById(activeSheetId).style.display = 'none';
+          document.getElementById(id).style.display = '';
+          activeSheetId = id;
+
+          // posObjs() is defined in embeddedObjectJs (see EmbeddedObjectHtmlBuilder.java)
+          posObjs();
+          return false;
+        }
+        
+        function init() {
+        var optPageSwitcher;
+        
+        function resize() {
+          var optMobileWebHeader = document.getElementById('docs-ml-header-id');
+          var optTopBar = document.getElementById('top-bar');
+          var optFooter = document.getElementById('footer');
+          var sheetsViewport = document.getElementById('sheets-viewport');
+
+          if (optMobileWebHeader) {
+            sheetsViewport.style.marginTop = optMobileWebHeader.offsetHeight +
+                (optTopBar ? optTopBar.offsetHeight : 0) + 'px';
+          }
+          var adjustedHeight = window.innerHeight -
+              (optTopBar ? optTopBar.offsetHeight : 0) -
+              (optFooter ? optFooter.offsetHeight : 0);
+          var adjustedWidth = window.innerWidth;
+          sheetsViewport.style.width = (adjustedWidth + 'px');
+          sheetsViewport.style.height = (adjustedHeight + 'px');
+          if (optPageSwitcher) {
+            optPageSwitcher.resize(adjustedWidth, adjustedHeight);
+          }
+        }
+        resize();
+        window.onresize = resize;
+        var currentUrl = window.location.href;
+        var newUrl = currentUrl.replace('?sle=true&', '?');
+        newUrl = newUrl.replace('?sle=true', '');
+        newUrl = newUrl.replace('&sle=true&', '&');
+        newUrl = newUrl.replace('&sle=true', '');
+        window.history.replaceState(null, '', newUrl);
+        }
+        </script><script nonce="OLoII9hCt93XftUdIFWgiQ">_docs_flag_initialData={"docs-daflia":true,"docs-cclt":57,"docs-mwid":false,"docs-smheo":false,"info_params":{"includes_info_params":true},"docs-emwc":true,"docs-ecci":true,"ilcm":{"eui":"ADFN-cule8uOOwmAyoyOhNtduwpwUIx_8NxRJYPoqc6dGlwqfN6qBePxtubXV3mu51d0C3lPHn1c","je":1,"sstu":1678442527398146,"si":"CIWy_NSN0f0CFRLMZwodRTcDJQ","gsc":0,"ei":[5700019,5700422,5700559,5700884,5701034,5702135,5702785,5702936,5703182,5703259,5703839,5703938,5704571,5704621,5704883,5705303,5705777,5705891,5706007,5706069,5706169,5706270,5706523,5707047,5707204,5707609,5707711,5707819,5707939,5708479,5708578,5708886,5709085,5709357,5709476,5709661,5709673,5710692,5711471,5711550,5712146,5712635,5712909,5712913,5713195,5713554,5714310,5714326,5714465,5714674,5714839,5714843,5715364,5715824,5716149,5716457,5717157,5717949,5719462,5719482,5719527,5720568,5720788,5721814,5722567,5723284,5723679,5723739,5724085,5724215,5724435,5724533,5724896,5725052,5725934,5726695,5726752,5727257,5727853,5727901,5728201,5729092,5729206,5730225,5730285,5731835,5732271,5732341,5733768,5734392,5734632,5735134,5735252,5735670,5735806,5737153,5737254,5737800,5738081,5738215,5738569,5738894,5739837,5740186,5740341,5740731,5740814,5741578,5742055,5742612,5743144,5743452,5743550,5743787,5744348,5744595,5745438,5746312,5746724,5747216,5747351,5747881,5747941,5748991,5749276,5749715,5749835,5750110,5750254,5750313,5750371,5750750,5751157,5752714,5752734,5752835,5753681,5754269,5755018,5755409,5755964,5756655,5757322,5757382,5758616,5758674,5759278,5759562,5760167,5760307,5760450,5760470,5760760,5760945,5761407,5761626,5761728,5761930,5762381,5762729,5763557,5763578,5764007,5764466,5765491,5765687,5766331,5766543,5767931,5768017,5768952,5769631,5769791,5769915,5770170,5771370,5772465,5773794,5773814,5774014,5774471,5774764,5775036,5775570,5775612,5775693,5776215,5776435,5776897,5777755,5778646,5778980,5779540,5779601,5779702,5780532,5780830,5781267,5781459,5781610,5781867,5782030,5782635,5783713,5783821,5783897,5783957,5784534,5786020,13702623,48966202,49323018,49369525,49372328,49375222,49375901,49378789,49381162,49398749,49451639,49452965,49453854,49471971,49474176,49487498,49491685,49499289,49499476,49501724,49512213,49622771,49623261,49624180,49643596,49644123,49648934,49658602,49700864,49703288,49703871,49756726,49769325,49783962,49796957,49816045,49822909,49824143,49833550,49842983,49882792,49923527,49924754,49927387,49943127,49973499,49979207,50022414,50166909,50179510,50224292,50228118,50263372,50266140,50273416,50291040,50313222,50319472,50322263,50335675,50389248,50423050],"crc":0,"cvi":[]},"drive_url":"//drive.google.com?usp\u003dsheets_web","docs-liap":"/naLogImpressions","docs-sup":"/spreadsheets"}; _docs_flag_cek=''; if (window['DOCS_timing']) {DOCS_timing['ifdld']=new Date().getTime();}</script></head><script nonce="OLoII9hCt93XftUdIFWgiQ">document.addEventListener('DOMContentLoaded', init);</script><body class="docs-gm"><div id="top-bar"><div id="doc-title"><span class="name">Spendior : endpoints</span></div></div><div id="sheets-viewport"><div id="1056089378" style="display:none;position:relative;" dir="ltr"><div class="ritz grid-container" dir="ltr"><table class="waffle no-grid" cellspacing="0" cellpadding="0"><thead><tr><th class="row-header freezebar-origin-ltr header-shim row-header-shim"></th><th id="1056089378C0" style="width:189px;" class="header-shim"></th><th id="1056089378C1" style="width:189px;" class="header-shim"></th><th id="1056089378C2" style="width:189px;" class="header-shim"></th><th id="1056089378C3" style="width:189px;" class="header-shim"></th></tr></thead><tbody><tr style="height: 20px"><th id="1056089378R0" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">1</div></th><td class="s0">COUNTA of amount</td><td class="s0"></td><td class="s0">who</td><td class="s0"></td></tr><tr style="height: 20px"><th id="1056089378R1" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">2</div></th><td class="s1">source</td><td class="s1">destination</td><td class="s2"></td><td class="s2">Aner</td></tr><tr style="height: 20px"><th id="1056089378R2" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">3</div></th><td class="s3"></td><td class="s3"></td><td class="s4">0</td><td class="s5"></td></tr><tr style="height: 20px"><th id="1056089378R3" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">4</div></th><td class="s3">fromOTHER</td><td class="s3">toOTHER</td><td class="s5"></td><td class="s4">1</td></tr><tr style="height: 20px"><th id="1056089378R4" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">5</div></th><td class="s3">other</td><td class="s3">migros</td><td class="s5"></td><td class="s4">2</td></tr><tr style="height: 20px"><th id="1056089378R5" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">6</div></th><td class="s3">other</td><td class="s3">other</td><td class="s5"></td><td class="s4">3</td></tr><tr style="height: 20px"><th id="1056089378R6" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">7</div></th><td class="s3">other</td><td class="s3">store</td><td class="s5"></td><td class="s4">1</td></tr><tr style="height: 20px"><th id="1056089378R7" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">8</div></th><td class="s3">other</td><td class="s3">unicorn</td><td class="s5"></td><td class="s4">1</td></tr><tr style="height: 20px"><th id="1056089378R8" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">9</div></th><td class="s3">ubs_visa_debit</td><td class="s3">migros</td><td class="s5"></td><td class="s4">3</td></tr><tr style="height: 20px"><th id="1056089378R9" style="height: 20px;" class="row-headers-background row-header-shim"><div class="row-header-wrapper" style="line-height: 20px">10</div></th><td class="s3">ubs_visa_debit</td><td class="s3">store</td><td class="s5"></td><td class="s4">8</td></tr></tbody></table></div></div></div><div id="footer"><span>Published by <a target="_blank" title="Learn more about Google Sheets" href="https://docs.google.com/spreadsheets/?usp=sheets_web">Google Sheets</a></span><span class="dash">&ndash;</span><a href="https://docs.google.com/abuse?id=AKkXjoyFRm8WJD19bZoib2UYbXsQX7RfVHNj8aoUaVe4O9g69ptUMEqIzmicvA59RVdVVEUOioLyfSKeOUKJ_xw:0">Misbruik rapporteren
+</a><span class="dash">&ndash;</span><span>Updated automatically every 5 minutes</span></div><script type="text/javascript" nonce="OLoII9hCt93XftUdIFWgiQ">activeSheetId = '1056089378'; switchToSheet('1056089378');</script></body></html>

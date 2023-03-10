@@ -19,6 +19,16 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
   return PascalCaseTokens.join(delimiter);
 }
 
+/*
+ * Compares two endpoints, removing space, dash, underscore.
+ * Does case-insensitive comparison.
+ */
+function areEndpointsEqual(e1, e2) {
+  e1 = e1.trim().toLowerCase().replace(/[ _-]/, '');
+  e2 = e2.trim().toLowerCase().replace(/[ _-]/, '');
+  return e1 == e2;
+}
+
 function getScrollerValue(id) {
   let id_selector = "#" + id;
   let scroller = document.querySelector(id_selector);
@@ -138,6 +148,7 @@ function updateEndpointSrc(e) {
     'load',
     () => {
       let dataUrl = reader.result;
+      // TODO: scale down image using https://imagekit.io/blog/how-to-resize-image-in-javascript/
       // convert image file to base64 string
       let key = `source:${endpoint}`;
       window.localStorage.setItem(key, dataUrl);
@@ -266,7 +277,7 @@ function sortInventory(inventory) {
     return p1[1] < p2[1] ? -1 : 1;
   }
 
-  let sorted = Object.entries(inventory, less_than_pairs);
+  let sorted = Object.entries(inventory).sort(less_than_pairs);
   let sorted_keys = [];
   for (let entry of sorted) {
     sorted_keys.push(entry[0]);
@@ -367,35 +378,46 @@ function appendEndpoint(parent, endpoint, img_src, title) {
   parent.innerHTML += html;
 }
 
+/*
+ * Adds any missing alwaysEndponts to the front.
+ * Moves "other" to the end (or adds it if missing).
+ */
+function augmentSortedEndpoints(endpoints, alwaysEndpoints, isSource) {
+  let ñendpoints = [];
+  for (let alwaysEndpoint of alwaysEndpoints) {
+    if (endpoints.find(s => areEndpointsEqual(s, alwaysEndpoint)) != undefined) {
+      // alwaysEndpoint is already in the sources, so we'll come upon it later.
+      continue;
+    }
+    ñendpoints.push(alwaysEndpoint);
+  }
+
+  let endpointOther = isSource ? "other_source" : "other_destination";
+
+  for (let endpoint of endpoints) {
+    if (areEndpointsEqual(endpoint, endpointOther)) {
+      // We skip the endpointOther, and add it at the end.
+      continue;
+    }
+    ñendpoints.push(endpoint);
+  }
+
+  ñendpoints.push(endpointOther);
+  return ñendpoints;
+}
 
 // Originally, I set "other" to be at the start (farthest from the most popular).
 // However, that made it so the most popular were pre-selected in endpoints, which means open,digits,send would erronously capture the endpoints.
 function modifySortedEndpoints(endpoints) {
+  let IS_SOURCE = true;
+
   let alwaysPresentEndpoints = window.localStorage.getItem('always_present_endpoints') || '';
-  let alwaysEndpoints = alwaysPresentEndpoints.split(',');
-  for (let alwaysEndpoint of alwaysEndpoints) {
-    // TODO: clean up a bit more
-    alwaysEndpoint = alwaysEndpoint.trim();
-    // TODO: compare normalized presence.
-    if (!(alwaysEndpoint in endpoints.sources)) {
-      endpoints.sources.unshift(alwaysEndpoint);
-    }
-    if (!(alwaysEndpoint in endpoints.destinations)) {
-      endpoints.destinations.unshift(alwaysEndpoint);
-    }
-  }
+  let alwaysEndpoints = alwaysPresentEndpoints.trim().split(/\s*,\s*/);
 
-  let other_index = endpoints.sources.indexOf("fromOTHER");
-  if (other_index >= 0) {
-    endpoints.sources.splice(other_index, 1);
-  }
-  endpoints.sources.push("fromOTHER");
-
-  other_index = endpoints.destinations.indexOf("toOTHER");
-  if (other_index >= 0) {
-    endpoints.destinations.splice(other_index, 1);
-  }
-  endpoints.destinations.push("toOTHER");
+  let ñsources = augmentSortedEndpoints(endpoints.sources, alwaysEndpoints, IS_SOURCE);
+  let ñdestinations = augmentSortedEndpoints(endpoints.destinations, alwaysEndpoints, !IS_SOURCE);
+  let ñendpoints = {sources: ñsources, destinations: ñdestinations};
+  return ñendpoints;
 }
 
 function tbody2imageMapping(tbody) {
@@ -487,15 +509,16 @@ function chooseEndpointImageSrc(endpoint, isSource) {
     endpoint,
   ]
 
-  let chosenSrc = undefined
-  try {
-    chosenSrc = window.localStorage.getItem(`${prefix}${endpoint}`);
-  } catch (e) { 
-    try {
-      chosenSrc = window.localStorage.getItem(`${unprefix}${endpoint}`);
-    } catch (e) { 
-      chosenSrc = `../images/${endpoint}.png`;
-    }
+  // The default value of getItem is null, but in JS, I think it should be undefined.
+  let chosenSrc = undefined;
+  if (chosenSrc == undefined) {
+    chosenSrc = window.localStorage.getItem(`${prefix}${endpoint}`) || undefined;
+  }
+  if (chosenSrc == undefined) {
+    chosenSrc = window.localStorage.getItem(`${unprefix}${endpoint}`) || undefined;
+  }
+  if (chosenSrc == undefined) {
+    chosenSrc = `../images/${endpoint}.png`;
   }
   return chosenSrc;
 }
@@ -577,21 +600,22 @@ function noScroll() {
 
 function updateLocalStorageFromUrl(key, url) {
   // TODO: Better error handling when the request fails.
-  if (!url) {
+  if (!url || !url.match('^https://.*')) {
     return;
   }
   fetch(url)
     .then((response) => {
-      if (response.ok) {
-        return response.text();  // A promise that provides the response as text.
-      } else {
-        console.error(["NETWORK RESPONSE ERROR", key, url]);  // is there a response.errorcode?
+      if (!response.ok) {
+        throw new Error(`Fetch response not OK for ${key}, ${url}`);
       }
+      return response.text();  // A promise that provides the response as text.
     })
     .then((data_text) => {
       window.localStorage.setItem(key, data_text);
     })
-    .catch((error) => console.error("FETCH ERROR:", error));
+    .catch((error) => {
+      console.error("ERROR calling updateLocalStorageFromUrl: ", error);
+    });
 }
 
 function PWA() {
