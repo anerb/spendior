@@ -176,9 +176,141 @@ function flipCard(e) {
  *  left vs right is mostly about where the decimal/clear button goes.
  */
 class Keypad extends HTMLElement {
+  
+  /*
+   * The dot is disabled when the value is cleared.
+   *  - You must type 0, then dot
+   *  - This is so you can press the dot key multiple times to clear.
+   * 
+   * If the value is not clear, then:
+   *  - Add a dot, and 
+   *  - change the key's role to role_clear
+   */
+
+  clear = function() {
+    this.value = "";
+    this.setKeyClasses();
+  }
+
+  handleClick = function(e) {
+    if (e.target.classList.includes('disabled')) {
+      return;
+    }
+    this.value_ += e.target.innerHTML;
+    this.setKeyClasses();
+  }
+
+  // Based on current value_, keys get their roles and disabled.
+  setKeyClasses = function() {
+
+    // https://regexr.com/79vus
+    if (! (this.value_.matches(/^([1-9][0-9]*|0)([.][0-9]{0,2})?$/))) {
+      console.error(`An invalid value arose: ${this.value_}`)
+      clear();
+    }
+
+    let roles = {
+      1: 1,
+      2: 2,
+      3: 3,
+      4: 4,
+      5: 5,
+      6: 6,
+      7: 7,
+      8: 8,
+      9: 9,
+    };
+
+    // Awaiting any digit, but not dot
+    if (this.value_ == "") {
+      for (let role in roles) {
+        let key = this.querySelector(`.role_${role}`);
+        key.classList.remove('disabled');
+      }
+      this.querySelector('.role_0').classList.remove('disabled');
+      // Show a disabled dot.  There is no need to clear a cleared value_
+      this.querySelector('.role_dot').classList.add('disabled');
+      this.querySelector('.role_dot').classList.remove('display_none');
+
+      this.querySelector('.role_clear').classList.add('display_none');
+    }
+
+    // The only valid key is '.'  (clear should not be visible)
+    if (this.value_ == "0") {
+      for (let role in roles) {
+        let key = this.querySelector(`.role_${role}`);
+        key.classList.add('disabled');
+      }
+      this.querySelector('.role_0').classList.add('disabled');
+      this.querySelector('.role_dot').classList.remove('disabled');
+      this.querySelector('.role_dot').classList.remove('display_none');
+      this.querySelector('.role_clear').classList.add('display_none');
+    }
+
+    // A valid integer appears
+    // Waiting for 0-9 or dot
+    if (this.value_.matches(/^[1-9][0-9]*$/)) {
+      // all keys are enabled.
+      for (let role in roles) {
+        let key = this.querySelector(`.role_${role}`);
+        key.classList.remove('disabled');
+      }
+      this.querySelector('.role_0').classList.remove('disabled');
+      this.querySelector('.role_dot').classList.remove('disabled');
+      this.querySelector('.role_dot').classList.remove('display_none');
+      this.querySelector('.role_clear').classList.add('display_none');
+    }
+
+    // 0.
+    // 1.
+    // 1230.
+    // 123.1
+    // 0.0
+    // Waiting for 0-9 or clear
+    if (this.value_.matches(/[0-9]+[.][0-9]?/)) {
+      // all keys are enabled.
+      for (let role in roles) {
+        let key = this.querySelector(`.role_${role}`);
+        key.classList.remove('disabled');
+      }
+      this.querySelector('.role_0').classList.remove('disabled');
+      this.querySelector('.role_dot').classList.add('disabled');
+      this.querySelector('.role_dot').classList.add('display_none');
+      this.querySelector('.role_clear').classList.remove('display_none');
+    }
+
+    // 0.12
+    // 0.00
+    // 1.20
+    // Nothing more to type. Only clear is an option.
+    if (this.value_.matches(/[0-9]+[.][0-9][0-9]/)) {
+      // all keys are enabled.
+      for (let role in roles) {
+        let key = this.querySelector(`.role_${role}`);
+        key.classList.add('disabled');
+      }
+      this.querySelector('.role_0').classList.add('disabled');
+      this.querySelector('.role_dot').classList.add('disabled');
+      this.querySelector('.role_dot').classList.add('display_none');
+      this.querySelector('.role_clear').classList.remove('display_none');
+    }
+  }
+
   constructor() {
     // Always call super first in constructor
     super();
+
+    // "" means cleared
+    // "0" means it's ready for a dot
+    // "ABC" is the value
+    // "ABC.D" means the last zero pending
+    // "ABC.D0" means all digits have been typed.
+    // "ABC." means it's ABC. (ready for the tenths)
+
+    this.value_ = "";
+
+    this.addEventListener('click', handleClick);
+
     const handed = this.getAttribute('handed');  // left/right
     const orientation = this.getAttribute('orientation');  // portrait/landscape
 
@@ -197,6 +329,7 @@ class Keypad extends HTMLElement {
       8: 8,
       9: 9,
       dot: ".",
+      clear: "0.00",
     };
     for (let role in roles) {
       const key = document.createElement('div');
@@ -208,6 +341,13 @@ class Keypad extends HTMLElement {
     }
     this.appendChild(front);
   }
+
+  get value() {
+    return this.value_;
+  }
+
+
+
 }
 /***right grid portrait******
   1 2 3

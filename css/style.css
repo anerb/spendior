@@ -404,31 +404,25 @@ sd-keypad[orientation="landscape"][handed="right"]
 }
 
 sd-keypad[orientation="portrait"][handed="right"]
-.role_dot {
+.role_dot,.role_clear {
   top: calc(3 * var(--grid-step));
   left: calc(2 * var(--grid-step));
 }
 sd-keypad[orientation="portrait"][handed="left"]
-.role_dot {
+.role_dot,.roll_clear {
   top: calc(3 * var(--grid-step));
   left: calc(0 * var(--grid-step));
 }
 sd-keypad[orientation="landscape"][handed="left"]
-.role_dot {
+.role_dot,.role_clear {
   top: calc(1 * var(--grid-step));
   left: calc(0 * var(--grid-step));
 }
 sd-keypad[orientation="landscape"][handed="right"]
-.role_dot {
+.role_dot,.role_clear {
   top: calc(1 * var(--grid-step));
   left: calc(3 * var(--grid-step));
 }
-
-
-
-
-
-
 
 sd-keypad[orientation="portrait"] {
   position: relative;
