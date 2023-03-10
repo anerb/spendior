@@ -176,13 +176,15 @@ class PriceDisplay extends HTMLElement {
 
   // takes a string, returns a string
   addCommas = function(whole) {
+    let rwhole = whole.split('').reverse().join('');
     let ñwhole = "";
     // Iterate in reverse;
-    for (let d = whole.length - 1; d >= 0; d--) {
-      ñwhole = whole[d] + ñwhole;  // prepend
-      if (d % 3 == 0 && d != 0) {
+
+    for (let d in rwhole) {
+      if (d % 3 == 0 && d > 0) {
         ñwhole = ',' + ñwhole;  // prepend
       }
+      ñwhole = rwhole[d] + ñwhole;  // prepend
     }
     // due to prepending, there is no need to reverse.
     return ñwhole;

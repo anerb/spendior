@@ -135,7 +135,7 @@ body {
   #amount {
     position: absolute;
     top: 0dvw;
-    right: 54dvw;
+    right: 21dvw;
   }
 
   .amount {
@@ -211,7 +211,7 @@ body {
   #currency {
     position: absolute;
     top: 4dvw;
-    right: 38dvw;
+    right: 4dvw;
     font-size: 6dvw;
     width: calc(0.01em * 240);
     appearance: none;
@@ -284,8 +284,9 @@ a {
   position: absolute;
   right: 0dvw;
   width: 88dvw;
-  top: 3dvw;
+  top: -4dvw;
   font-size: 7dvw;
+  transform: rotateZ(-90deg);
 }
 
 .gear {
@@ -422,7 +423,7 @@ sd-keypad[orientation="landscape"][handed="right"]
 
 sd-keypad
 .role_clear {
-  font-size: calc(var(--radius) * 0.01 * 18);
+  font-size: calc(var(--radius)* 1);
   -webkit-text-stroke: 1px;
   -webkit-text-fill-color: transparent;
 }
