@@ -171,6 +171,70 @@ function flipCard(e) {
   e.target.closest(".slot").querySelector(".endpoint_card").classList.toggle('endpoint_card_flipped');
 }
 
+
+/*
+ *  left vs right is mostly about where the decimal/clear button goes.
+ */
+class Keypad extends HTMLElement {
+  constructor() {
+    // Always call super first in constructor
+    super();
+    const handed = this.getAttribute('handed');  // left/right
+    const orientation = this.getAttribute('orientation');  // portrait/landscape
+
+    const front = document.createElement('div');
+    front.classList.add('front');
+
+    let roles = {
+      0: 0,
+      1: 1,
+      2: 2,
+      3: 3,
+      4: 4,
+      5: 5,
+      6: 6,
+      7: 7,
+      8: 8,
+      9: 9,
+      dot: ".",
+    };
+    for (let role in roles) {
+      const key = document.createElement('div');
+      key.classList.add(`role_${role}`);
+      key.classList.add(`key`);
+      key.innerHTML = roles[role];
+      front.appendChild(key);
+      const back = document.createElement('div');
+    }
+    this.appendChild(front);
+  }
+}
+/***right grid portrait******
+  1 2 3
+  4 5 6
+  7 8 9
+    0 .
+*********/
+
+/****left grid portrait*****
+  1 2 3
+  4 5 6
+  7 8 9
+  . 0 
+*********/
+
+/****right grid landscape*****
+  1 2 3
+  4 5 6 .
+  7 8 9 0
+*********/
+
+/****left grid landscape*****
+ 0 1 2 3
+ . 4 5 6 
+   7 8 9 
+*********/
+
 class Endpoint extends HTMLElement {
   constructor() {
 
@@ -637,6 +701,7 @@ function PWA() {
 
 function WebComponents() {
   customElements.define("sd-endpoint", Endpoint);
+  customElements.define("sd-keypad", Keypad);
 }
 
 function BuildPage() {

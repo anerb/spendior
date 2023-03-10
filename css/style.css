@@ -1,6 +1,8 @@
 :root {
-  --radius: 30;
-  --offset: 0;
+  --radius: 8dvw;
+  --grid-millis: 220;
+  --grid-step: calc(var(--grid-millis) * 0.01 * var(--radius));
+  --start-row: 0;
 }
 
 
@@ -232,12 +234,12 @@ body {
   display: inline-grid;
   border: black;
   border-style: solid;
-  width: calc(1dvw * (var(--radius) * 0.5 + var(--offset)));
-  height: calc(1dvw * (var(--radius) * 0.5 + var(--offset)));
+  width: calc(var(--radius) * 0.5);
+  height: calc(var(--radius) * 0.5);
   text-align: center;
   align-content: center;
   margin: 2px;
-  font-size: calc(1dvw * var(--radius) * 0.25);
+  font-size: calc(var(--radius) * 0.25);
   background: white;
   vertical-align: bottom;
 }
@@ -248,7 +250,7 @@ body {
 }
 
 .keypad_clear {
-  font-size: calc(1dvw * var(--radius) * 0.01 * 18);
+  font-size: calc(var(--radius) * 0.01 * 18);
   -webkit-text-stroke: 1px;
   -webkit-text-fill-color: transparent;
   border-radius: 30%;
@@ -343,3 +345,139 @@ a {
   bottom: 0dvw;
 }
 
+/* Lots of position adjustments, based on
+ * .left | .right
+ * .portrait | .landscape
+ * .grid | .condensed
+ */
+
+sd-keypad .key {
+  position: absolute;
+  border-radius: 50%;
+  display: grid;
+  border: 1px solid black;
+  width: calc(2 * var(--radius));
+  height: calc(2 * var(--radius));
+  text-align: center;
+  align-content: center;
+  /* margin: 2px; */
+  font-size: calc(132 * 0.01 * var(--radius));
+  background: white;
+}
+
+sd-keypad
+div:is(.Xportrait, .landscape):is(.left, .Xright) {
+  --start-row: 1;
+}
+
+
+sd-keypad
+.role_1 {
+  top: calc(0 * var(--grid-step));
+  left: calc((0 + var(--start-row)) * var(--grid-step));
+}
+sd-keypad
+.role_2 {
+  top: calc(0 * var(--grid-step));
+  left: calc((1 + var(--start-row)) * var(--grid-step));
+}
+sd-keypad
+.role_3 {
+  top: calc(0 * var(--grid-step));
+  left: calc((2 + var(--start-row)) * var(--grid-step));
+}
+sd-keypad
+.role_4 {
+  top: calc(1 * var(--grid-step));
+  left: calc((0 + var(--start-row)) * var(--grid-step));
+}
+sd-keypad
+.role_5 {
+  top: calc(1 * var(--grid-step));
+  left: calc((1 + var(--start-row)) * var(--grid-step));
+}
+sd-keypad
+.role_6 {
+  top: calc(1 * var(--grid-step));
+  left: calc((2 + var(--start-row)) * var(--grid-step));
+}
+sd-keypad
+.role_7 {
+  top: calc(2 * var(--grid-step));
+  left: calc((0 + var(--start-row)) * var(--grid-step));
+}
+sd-keypad
+.role_8 {
+  top: calc(2 * var(--grid-step));
+  left: calc((1 + var(--start-row)) * var(--grid-step));
+}
+sd-keypad
+.role_9 {
+  top: calc(2 * var(--grid-step));
+  left: calc((2 + var(--start-row)) * var(--grid-step));
+}
+/* role_0 */
+sd-keypad
+div:is(.portrait, .Xlandscape):is(.left, .right)
+.role_0 {
+  top: calc(3 * var(--grid-step));
+  left: calc(1 * var(--grid-step));
+}
+sd-keypad
+div:is(.Xportrait, .landscape):is(.left, .Xright)
+.role_0 {
+  top: calc(0 * var(--grid-step));
+  left: calc(0 * var(--grid-step));
+}
+sd-keypad
+div:is(.Xportrait, .landscape):is(.Xleft, .right)
+.role_0 {
+  top: calc(2 * var(--grid-step));
+  left: calc(3 * var(--grid-step));
+}
+
+sd-keypad
+div:is(.portrait, .Xlandscape):is(.Xleft, .right)
+.role_dot {
+  top: calc(3 * var(--grid-step));
+  left: calc(2 * var(--grid-step));
+}
+sd-keypad
+div:is(.portrait, .Xlandscape):is(.left, .Xright)
+.role_dot {
+  top: calc(3 * var(--grid-step));
+  left: calc(0 * var(--grid-step));
+}
+sd-keypad
+div:is(.Xportrait, .landscape):is(.left, .Xright)
+.role_dot {
+  top: calc(1 * var(--grid-step));
+  left: calc(0 * var(--grid-step));
+}
+sd-keypad
+div:is(.Xportrait, .landscape):is(.Xleft, .right)
+.role_dot {
+  top: calc(1 * var(--grid-step));
+  left: calc(3 * var(--grid-step));
+}
+
+
+
+
+
+
+
+sd-keypad[orientation="portrait"] .front {
+  position: relative;
+  width: calc(6 * var(--radius));
+  height: calc(7.5 * var(--radius));
+  border: 1px solid black;
+  left: 65px;
+  top: 84px;
+}
+
+sd-keypad[orientation="landscape"] .front {
+  position: relative;
+  width: calc(2.5 * var(--radius));
+  height: calc(2 * var(--radius));
+}
