@@ -518,7 +518,7 @@ function chooseEndpointImageSrc(endpoint, isSource) {
     chosenSrc = window.localStorage.getItem(`${unprefix}${endpoint}`) || undefined;
   }
   if (chosenSrc == undefined) {
-    chosenSrc = `../images/${endpoint}.png`;
+    chosenSrc = `../images/lineart/${endpoint}.png`;
   }
   return chosenSrc;
 }
