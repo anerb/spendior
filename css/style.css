@@ -229,7 +229,7 @@ body {
     right: 0dvw;
   }
   
-.key {
+.keyX {
   border-radius: 50%;
   display: inline-grid;
   border: black;
@@ -360,16 +360,13 @@ sd-keypad .key {
   height: calc(2 * var(--radius));
   text-align: center;
   align-content: center;
-  /* margin: 2px; */
   font-size: calc(132 * 0.01 * var(--radius));
   background: white;
 }
 
-sd-keypad
-div:is(.Xportrait, .landscape):is(.left, .Xright) {
+sd-keypad[orientation="landscape"][handed="left"] {
   --start-row: 1;
 }
-
 
 sd-keypad
 .role_1 {
@@ -417,45 +414,38 @@ sd-keypad
   left: calc((2 + var(--start-row)) * var(--grid-step));
 }
 /* role_0 */
-sd-keypad
-div:is(.portrait, .Xlandscape):is(.left, .right)
+sd-keypad[orientation="portrait"]
 .role_0 {
   top: calc(3 * var(--grid-step));
   left: calc(1 * var(--grid-step));
 }
-sd-keypad
-div:is(.Xportrait, .landscape):is(.left, .Xright)
+sd-keypad[orientation="landscape"][handed="left"]
 .role_0 {
   top: calc(0 * var(--grid-step));
   left: calc(0 * var(--grid-step));
 }
-sd-keypad
-div:is(.Xportrait, .landscape):is(.Xleft, .right)
+sd-keypad[orientation="landscape"][handed="right"]
 .role_0 {
   top: calc(2 * var(--grid-step));
   left: calc(3 * var(--grid-step));
 }
 
-sd-keypad
-div:is(.portrait, .Xlandscape):is(.Xleft, .right)
+sd-keypad[orientation="portrait"][handed="right"]
 .role_dot {
   top: calc(3 * var(--grid-step));
   left: calc(2 * var(--grid-step));
 }
-sd-keypad
-div:is(.portrait, .Xlandscape):is(.left, .Xright)
+sd-keypad[orientation="portrait"][handed="left"]
 .role_dot {
   top: calc(3 * var(--grid-step));
   left: calc(0 * var(--grid-step));
 }
-sd-keypad
-div:is(.Xportrait, .landscape):is(.left, .Xright)
+sd-keypad[orientation="landscape"][handed="left"]
 .role_dot {
   top: calc(1 * var(--grid-step));
   left: calc(0 * var(--grid-step));
 }
-sd-keypad
-div:is(.Xportrait, .landscape):is(.Xleft, .right)
+sd-keypad[orientation="landscape"][handed="right"]
 .role_dot {
   top: calc(1 * var(--grid-step));
   left: calc(3 * var(--grid-step));
@@ -467,7 +457,7 @@ div:is(.Xportrait, .landscape):is(.Xleft, .right)
 
 
 
-sd-keypad[orientation="portrait"] .front {
+sd-keypad[orientation="portrait"] {
   position: relative;
   width: calc(6 * var(--radius));
   height: calc(7.5 * var(--radius));
@@ -476,8 +466,10 @@ sd-keypad[orientation="portrait"] .front {
   top: 84px;
 }
 
-sd-keypad[orientation="landscape"] .front {
+sd-keypad[orientation="landscape"] {
   position: relative;
-  width: calc(2.5 * var(--radius));
-  height: calc(2 * var(--radius));
+  width: calc(4 * var(--grid-step));
+  height: calc(3 * var(--grid-step));
+  left: 10dvw;
+  top: 22dvw;
 }

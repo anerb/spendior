@@ -185,10 +185,6 @@ class Keypad extends HTMLElement {
     const front = document.createElement('div');
     front.classList.add('front');
 
-    // Helper classes for CSS selectors
-    front.classList.add(handed);
-    front.classList.add(orientation);
-
     let roles = {
       0: 0,
       1: 1,
@@ -463,6 +459,10 @@ function augmentSortedEndpoints(endpoints, alwaysEndpoints, isSource) {
   let endpointOther = isSource ? "other_source" : "other_destination";
 
   for (let endpoint of endpoints) {
+    if (!endpoint) {
+      // Skip all manner of degenerate endpoints.
+      continue;
+    }
     if (areEndpointsEqual(endpoint, endpointOther)) {
       // We skip the endpointOther, and add it at the end.
       continue;
