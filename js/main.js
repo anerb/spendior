@@ -365,8 +365,8 @@ function getSortedEndpoints() {
   }
 
   // add "OTHER" to the bottom of the list (most common)
-  modifySortedEndpoints(endpoints);
-  return endpoints;
+  let ñendpoints = modifySortedEndpoints(endpoints);
+  return ñendpoints;
 }
 
 function appendEndpoint(parent, endpoint, img_src, title) {
