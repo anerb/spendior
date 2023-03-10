@@ -1,7 +1,8 @@
 :root {
-  --radius: 8dvw;
-  --grid-millis: 220;
-  --grid-step: calc(var(--grid-millis) * 0.01 * var(--radius));
+  --radius: 9dvw;
+  --grid-millis: 210;
+  --grid-step: calc(var(
+  --grid-millis) * 0.01 * var(--radius));
   --start-row: 0;
 }
 
@@ -46,28 +47,29 @@ body {
   #static_header {
     position: fixed;
     z-index: 999;
-    bottom: 0dvw;
+    bottom: 2dvw;
+    left: 2dvw;
   }
 
   .static_header {
     display: flex;
     background-color: #ffc0cbdb;
-    padding: 10px;
-    width: 90dvw;
-    height: 95dvw;
+    /* padding: 10px; */
+    width: calc(100dvw - (4dvw + 2*3px));
+    height: 101dvw;
     border-style: solid;
     border-width: 3px;
     border-color: white;
-    margin: 5px;
+    /* margin: 5px; */
     border-top-color: transparent;
   }
   
   .top_only {
     border-bottom-color: transparent;
     border-top-color: white;
-    height: 0.2dvw;
-    bottom: 100dvw;
-    left: -2.5dvw;
+    height: 3dvw;
+    top: -3dvw;
+    left: calc(0dvw - 3px);
     border-bottom-width: 0px;
     border-top-color: white;
     position: absolute;
@@ -137,7 +139,7 @@ body {
   }
 
   .amount {
-    width: 43dvw;
+    width: calc(100% - 54dvw);
     font-size: 12dvw;
     text-align: end;
   }
@@ -261,16 +263,16 @@ form {
   opacity: 0.0;
 }
 
-.send-button {
-  width: 20dvw;
-  height: 12dvw;
-  font-size: 12dvw;
+.sendnow {
+  width: 24dvw;
+  height: 13dvw;
+  font-size: 18dvw;
 }
 
 #sendnow {
   position: absolute;
-  bottom: 0dvw;
-  right: 0dvw;
+  top: 26dvw;
+  right: 1dvw;
 }
 
 a {
@@ -314,17 +316,17 @@ a {
 #panel {
   position: absolute;
   bottom: 2dvw;
-  left: 1dvw;
+  left: 0dvw;
 }
 
 .panel {
-  width: 94dvw;
-  height: 18dvw;
+  width: 100%;
+  height: 12dvw;
 }
 
 sd-keypad .key {
   position: absolute;
-  border-radius: 50%;
+  border-radius: 40%;
   display: grid;
   border: 1px solid black;
   width: calc(2 * var(--radius));
@@ -441,6 +443,6 @@ sd-keypad[orientation="landscape"] {
   position: relative;
   width: calc(4 * var(--grid-step));
   height: calc(3 * var(--grid-step));
-  left: 10dvw;
-  top: 22dvw;
+  left: calc((100% - (4 * var(--grid-step)))/2);
+  top: 30dvw;
 }
