@@ -106,8 +106,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: white;
     border-radius: 3dvw;
+    perspective: 50dvw;
   }
 
   .frame {
@@ -191,6 +191,8 @@ body {
   
   .endpoint_back {
     transform: rotateY( 180deg );
+    background: white;
+    border: 2px solid magenta;
   }
 
   .endpoint_card_flipped {
