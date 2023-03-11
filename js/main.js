@@ -55,7 +55,7 @@ function formatDate(date) {
   return formattedDate;
 }
 
-function ready() {
+function buildSendUrl() {
   let body = {};
   let today = new Date();
   body.sheet_name = getSetting("sheet_name");
@@ -78,19 +78,25 @@ function ready() {
   let href = getSetting("server_url");
   href += '?';
   href += queryParameters.join('&');
-  document.querySelector("#sendlink").href = href;
+  return href;
+}
+
+function ready() {
+
+  let currency = document.querySelector("#currency").value;
+  let amount = document.querySelector("#amount").value;
 
   // Update exchange rate
   let converter = document.querySelector("#converter");
-  if (body.currency == "CHF" || body.currency == "OTH") {
+  if (currency == "CHF" || currency == "OTH") {
     converter.classList.add("display_none");
   }
-  if (body.currency != "CHF") {
+  if (currency != "CHF") {
     let chf = window.localStorage.getItem('CHF');
     if (chf) {
       chf = JSON.parse(chf);
-      let rate = chf.conversion_rates[body.currency];
-      let chf_value = body.amount / rate;
+      let rate = chf.conversion_rates[currency];
+      let chf_value = amount / rate;
       chf_value = Math.round(chf_value * 100) / 100;
       converter.innerHTML = "= " + chf_value + " CHF";
       converter.classList.remove("display_none");
@@ -110,7 +116,7 @@ function updateDestination() {
 }
 
 function selectEndpoint(e) {
-  let card = e.closest(".endpoint_card");
+  let card = e.target.closest(".endpoint_card");
   if ('endpoint_card_flipped' in card.classList) {
     return;
   }
@@ -134,6 +140,12 @@ function chooseImageFile(e) {
   e.preventDefault();
   e.target.parentElement.querySelector("input").click();
 }
+
+function updateEndpointText(e) {
+  let name = e.value;
+  let sdEndpoint = e.target.closest("sd-endpoint");
+  let endpoint = sdEndpoint.setAttribute('endpoint', name);
+};
 
 function updateEndpointSrc(e) {
   let sdEndpoint = e.target.closest("sd-endpoint");
@@ -274,7 +286,7 @@ class PriceDisplay extends HTMLElement {
   }
 
   set value (v) {
-    if (typeof v != typeof '12.34') {
+    if (typeof v != typeof 12.34) {
       throw new Error(`PriceDisplay.value can only be set to Number. ${typeof v} recieved instead.`);
     }
     this.stringValue = String(v);
@@ -313,6 +325,7 @@ class Keypad extends HTMLElement {
   clear = function() {
     this.value_ = "";
     this.setKeyClasses();
+    this.dispatchEvent(new Event("change"));
   }
 
   handleClick = function(e) {
@@ -328,7 +341,6 @@ class Keypad extends HTMLElement {
 
     const changeEvent = new Event("change");
     this.dispatchEvent(changeEvent);
-
   }
 
   // Based on current value_, keys get their roles and disabled.
@@ -569,7 +581,13 @@ class Endpoint extends HTMLElement {
 
     fileButton.appendChild(fileInput);
 
+    const textInput = document.createElement('input');
+    textInput.setAttribute('type', 'text');
+    textInput.classList.add('endpoint_text_input');
+    textInput.addEventListener('change', updateEndpointText);
+
     back.appendChild(fileButton);
+    back.appendChild(textInput);
 
 //    front.innerHTML = "FRONT";
 //    back.innerHTML = "back";
@@ -950,24 +968,28 @@ function noScroll() {
   window.scrollTo(0, 0);
 }
 
-function updateLocalStorageFromUrl(key, url) {
+function httpsGet(url, func, noCORS) {
   // TODO: Better error handling when the request fails.
   if (!url || !url.match('^https://.*')) {
     return;
   }
-  fetch(url)
+  fetch(url, {mode: noCORS ? 'no-cors' : 'cors'})
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`Fetch response not OK for ${key}, ${url}`);
+        throw new Error(`Fetch response not OK for ${url}`);
       }
       return response.text();  // A promise that provides the response as text.
     })
-    .then((data_text) => {
-      window.localStorage.setItem(key, data_text);
-    })
+    .then(func)
     .catch((error) => {
-      console.error("ERROR calling updateLocalStorageFromUrl: ", error);
+      console.error("ERROR calling httpsGet: ", error);
     });
+}
+
+function updateLocalStorageFromUrl(key, url) {
+  httpsGet(url, (data_text) => {
+    window.localStorage.setItem(key, data_text);
+  });
 }
 
 function PWA() {
@@ -1044,7 +1066,10 @@ function AddEventListeners() {
 }
 
 function sendIt() {
-
+  let noCORS = true;
+  let sendUrl = buildSendUrl();
+  httpsGet(sendUrl, (x) => {}, noCORS);
+  StartingPlaces();
 }
 
 // HACKY: Find a better name.
@@ -1052,6 +1077,7 @@ function sendIt() {
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
   scrollEndpointsToBottom();
+  document.querySelector("#keypad").clear();
   ready();
 }
 
