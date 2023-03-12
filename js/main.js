@@ -138,7 +138,7 @@ function showPrompt(e) {
 
 // SUPER HACKY: need to better handle the different possible targets for click events.
 function selectOrChangeEndpoint(e) {
-  if (e.target.classList.includes('text_input')) {
+  if (e.target.classList.contains('text_input')) {
     showPrompt(e);
     return;
   }
@@ -603,6 +603,7 @@ class Endpoint extends HTMLElement {
 
   defineFileButton = function() {
     let fileButtonEl = this.prepareWard('file_button', 'div', this.$('.back'));
+    fileButtonEl.classList.add('button');
     fileButtonEl.innerHTML = 'Choose an Image';  
   }
 
@@ -613,6 +614,7 @@ class Endpoint extends HTMLElement {
   
   defineTextInput = function() {
     let textInputEl = this.prepareWard('text_input', 'div', this.$('.back'));
+    textInputEl.classList.add('button');
     textInputEl.innerHTML = this.attr('endpoint');
   }
 
@@ -670,6 +672,7 @@ class Endpoint extends HTMLElement {
 
     // Populate the back
     this.defineFileButton();
+    this.defineFileInput();
     this.defineTextInput();
  
   }
