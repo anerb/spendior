@@ -571,6 +571,7 @@ class Endpoint extends HTMLElement {
       // Note: 2 ways to be "smart" about updates.
       // 1 (chosen): only call the items that need updating
       // 2 (more robust): call everyone, and each one knows how to return early if nothing to do.
+      console.log([`attributeChangedCallback: ${newValue}`, this])
       this.defineImage();
       this.defineLabel();
       this.defineTextInput();
@@ -584,6 +585,7 @@ class Endpoint extends HTMLElement {
 
   // TODO: Maybe use oldValue and reference counting to delete image storage
   defineImage = function() {
+    console.log(`defineImage calling prepareWard: ${this.attr('endpoint')} , ${this.attr('role')}`);
     const imgEl = this.prepareWard('image', 'img', this.$('.front'));
 
     let img_src = chooseEndpointImageSrc(this.attr('endpoint'), this.attr('role'));
@@ -616,12 +618,11 @@ class Endpoint extends HTMLElement {
 
   // TODO: figure out the name for this pattern of "retreive or create".
   prepareWard = function(wardName, tag, parentEl) {
-    let wardEl = this.wards[wardName];
+    let wardEl = this.$(`.${wardName}`) || undefined;
     if (wardEl === undefined) {
+      console.log(`prepareWard creating ${tag}`);
       wardEl = document.createElement(tag);
-      wardEl.setAttribute('class', wardName);
-      this.wards[wardName] = wardEl;
-    
+      wardEl.setAttribute('class', wardName);    
       parentEl.appendChild(wardEl);
     }
     return wardEl;
@@ -633,14 +634,11 @@ class Endpoint extends HTMLElement {
     // Always call super first in constructor
     super();
 
-    this.wards = {};
-
     // HACK to stop multiple constructor calls
     this.addEventListener('click', selectOrChangeEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
     this.addEventListener('contextmenu', flipCard);
     this.addEventListener('change', updateEndpointSrc);
 
-    // Can probably get rid of this once wards are in place, and don't get recreated.
     if (this.children.length > 0) {
       return;
     }
@@ -662,10 +660,18 @@ class Endpoint extends HTMLElement {
     backEl.classList.add('card_face');
     backEl.classList.add('back');
 
+    console.log(`Endpoint.constructor() ${this.attr('endpoint')}`)
+
     // Populate the front
     // Some work to do: At the moment, this will create and insert, and update per attributes
     this.defineImage();
     this.defineLabel();
+
+
+    // Populate the back
+    this.defineFileButton();
+    this.defineTextInput();
+ 
   }
 }
 
@@ -973,6 +979,7 @@ function generateEndpoints() {
     endpoints.sources,
     'source'
   );
+
   populateScroller(
     document.$("#destination"),
     endpoints.destinations,
