@@ -133,7 +133,7 @@ function showPrompt(e) {
   endpoint.setAttribute('endpoint', newValue);
 
   // since taking this action is a final setting mod, flip back
-  endpoint.$('.endpoint_card').classList.remove('endpoint_card_flipped');
+  endpoint.$('.card').classList.remove('flipped');
 }
 
 // SUPER HACKY: need to better handle the different possible targets for click events.
@@ -142,9 +142,9 @@ function selectOrChangeEndpoint(e) {
     showPrompt(e);
     return;
   }
-  let card = e.target.closest(".endpoint_card");
+  let card = e.target.closest('.card');
   let initial_bottom = e.target.getBoundingClientRect().bottom;
-  let parentElement = e.target.closest(".y-scroller");
+  let parentElement = e.target.closest('.y-scroller');
   let parent_bottom = parentElement.getBoundingClientRect().bottom;
   let scroll_needed = initial_bottom - parent_bottom;
   let initial_scroll = parentElement.scrollTop;
@@ -169,9 +169,9 @@ function updateEndpointSrc(e) {
   if (e.target != document.$('input[type="file"]')) {
     return;
   }
-  let sdEndpoint = e.target.closest("sd-endpoint");
+  let sdEndpoint = e.target.closest('sd-endpoint');
   let endpoint = sdEndpoint.getAttribute('endpoint');
-  let card = sdEndpoint.$('.endpoint_card');
+  let card = sdEndpoint.$('.card');
   let img = sdEndpoint.$("img");  //  TODO:change to a class
   const reader = new FileReader();
 
@@ -188,7 +188,7 @@ function updateEndpointSrc(e) {
       key = `destination:${endpoint}`;
       window.localStorage.setItem(key, dataUrl);
       img.src = dataUrl;
-      card.classList.remove('endpoint_card_flipped');
+      card.classList.remove('flipped');
     },
     false
   );
@@ -201,7 +201,7 @@ function updateEndpointSrc(e) {
 
 function flipCard(e) {
   e.preventDefault();
-  e.target.closest(".slot").$(".endpoint_card").classList.toggle('endpoint_card_flipped');
+  e.target.closest('sd-endpoint').$('.card').classList.toggle('flipped');
 }
 
 
@@ -650,17 +650,17 @@ class Endpoint extends HTMLElement {
     // Build up the basic scaffolding of this Element
     const cardEl = document.createElement('div');
     this.appendChild(cardEl);
-    cardEl.classList.add('endpoint_card', 'card');
+    cardEl.classList.add('card');
 
     const frontEl = document.createElement('div');
     cardEl.appendChild(frontEl);
-    frontEl.classList.add('endpoint_card_face');
-    frontEl.classList.add('endpoint_front', 'front');
+    frontEl.classList.add('card_face');
+    frontEl.classList.add('front');
 
     const backEl = document.createElement('div');
     cardEl.appendChild(backEl);
-    backEl.classList.add('endpoint_card_face');
-    backEl.classList.add('endpoint_back', 'back');
+    backEl.classList.add('card_face');
+    backEl.classList.add('back');
 
     // Populate the front
     // Some work to do: At the moment, this will create and insert, and update per attributes
@@ -1141,7 +1141,6 @@ function AddEventListeners() {
       StartingPlaces();
     }
   });
-
 }
 
 function sendIt() {
@@ -1161,7 +1160,6 @@ function StartingPlaces() {
 }
 
 window.onload = () => {
-  console.log(document.$('body'));
   console.log("onload");
   PWA();
   WebComponents();
