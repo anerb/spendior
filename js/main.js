@@ -1,8 +1,11 @@
 'use strict';
 
 
-HTMLElement.prototype.$ = HTMLElement.prototype.querySelector;
-HTMLElement.prototype.$$ = HTMLElement.prototype.querySelectorAll;
+Element.prototype.$ = HTMLElement.prototype.querySelector;
+Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
+Document.prototype.$ = Document.prototype.querySelector;
+Document.prototype.$$ = Document.prototype.querySelectorAll;
+
 
 // @import url("./currency.js");
 
@@ -35,9 +38,9 @@ function areEndpointsEqual(e1, e2) {
 
 function getScrollerValue(id) {
   let id_selector = "#" + id;
-  let scroller = document.querySelector(id_selector);
+  let scroller = document.$(id_selector);
   let parent_bottom = source.getBoundingClientRect().bottom;
-  let source_endpoints = document.querySelectorAll(id_selector + " sd-endpoint");
+  let source_endpoints = document.$$(id_selector + " sd-endpoint");
   let min_diff = 999999999;  // ARBITRARY
   let value = undefined;
   for (let c of source_endpoints) {
@@ -66,8 +69,8 @@ function buildSendUrl() {
   body.date_first = formatDate(today);
   body.date_final = formatDate(today);
   body.source = getScrollerValue("source");
-  body.amount = document.querySelector("#amount").value;
-  body.currency = document.querySelector("#currency").value;
+  body.amount = document.$("#amount").value;
+  body.currency = document.$("#currency").value;
   body.destination = getScrollerValue("destination");
   body.description = "DESCRIPTION";
   
@@ -87,11 +90,11 @@ function buildSendUrl() {
 
 function ready() {
 
-  let currency = document.querySelector("#currency").value;
-  let amount = document.querySelector("#amount").value;
+  let currency = document.$("#currency").value;
+  let amount = document.$("#amount").value;
 
   // Update exchange rate
-  let converter = document.querySelector("#converter");
+  let converter = document.$("#converter");
   if (currency == "CHF" || currency == "OTH") {
     converter.classList.add("display_none");
   }
@@ -109,14 +112,14 @@ function ready() {
 }
 
 function updateSource() {
-  source_value = document.querySelector('input[name="source"]:checked').value;
-  document.querySelector("#source_text").value = source_value;
+  source_value = document.$('input[name="source"]:checked').value;
+  document.$("#source_text").value = source_value;
 }
 
 
 function updateDestination() {
-  destination_value = document.querySelector('input[name="destination"]:checked').value;
-  document.querySelector("#destination_text").value = destination_value;
+  destination_value = document.$('input[name="destination"]:checked').value;
+  document.$("#destination_text").value = destination_value;
 }
 
 // TODO: encapsulate this in the Endpoint class and name it better.
@@ -130,7 +133,7 @@ function showPrompt(e) {
   endpoint.setAttribute('endpoint', newValue);
 
   // since taking this action is a final setting mod, flip back
-  endpoint.querySelector('.endpoint_card').classList.remove('endpoint_card_flipped');
+  endpoint.$('.endpoint_card').classList.remove('endpoint_card_flipped');
 }
 
 // SUPER HACKY: need to better handle the different possible targets for click events.
@@ -150,26 +153,26 @@ function selectOrChangeEndpoint(e) {
 }
 
 function scrollEndpointsToBottom() {
-  let source = document.querySelector("#source");
+  let source = document.$("#source");
   source.scrollTo({top: source.scrollHeight, behavior: 'smooth' });
-  let destination = document.querySelector("#destination");
+  let destination = document.$("#destination");
   destination.scrollTo({top: destination.scrollHeight, behavior: 'smooth' });
 }
 
 function chooseImageFile(e) {
   e.preventDefault();
-  e.target.parentElement.querySelector("input").click();
+  e.target.parentElement.$("input").click();
 }
 
 function updateEndpointSrc(e) {
   // SUPER HACKY: Finding out if we should listen to this change event at the sd-endpoint level.
-  if (e.target != document.querySelector('input[type="file"]')) {
+  if (e.target != document.$('input[type="file"]')) {
     return;
   }
   let sdEndpoint = e.target.closest("sd-endpoint");
   let endpoint = sdEndpoint.getAttribute('endpoint');
-  let card = sdEndpoint.querySelector('.endpoint_card');
-  let img = sdEndpoint.querySelector("img");  //  TODO:change to a class
+  let card = sdEndpoint.$('.endpoint_card');
+  let img = sdEndpoint.$("img");  //  TODO:change to a class
   const reader = new FileReader();
 
   let file = e.target.files[0];
@@ -198,7 +201,7 @@ function updateEndpointSrc(e) {
 
 function flipCard(e) {
   e.preventDefault();
-  e.target.closest(".slot").querySelector(".endpoint_card").classList.toggle('endpoint_card_flipped');
+  e.target.closest(".slot").$(".endpoint_card").classList.toggle('endpoint_card_flipped');
 }
 
 
@@ -387,27 +390,27 @@ class Keypad extends HTMLElement {
     // Awaiting any digit, but not dot
     if (this.value_ == "") {
       for (let role in roles) {
-        let key = this.querySelector(`.role_${role}`);
+        let key = this.$(`.role_${role}`);
         key.classList.remove('disabled');
       }
-      this.querySelector('.role_0').classList.remove('disabled');
+      this.$('.role_0').classList.remove('disabled');
       // Show a disabled dot.  There is no need to clear a cleared value_
-      this.querySelector('.role_dot').classList.add('disabled');
-      this.querySelector('.role_dot').classList.remove('display_none');
+      this.$('.role_dot').classList.add('disabled');
+      this.$('.role_dot').classList.remove('display_none');
 
-      this.querySelector('.role_clear').classList.add('display_none');
+      this.$('.role_clear').classList.add('display_none');
     }
 
     // The only valid key is '.'  (clear should not be visible)
     if (this.value_ == "0") {
       for (let role in roles) {
-        let key = this.querySelector(`.role_${role}`);
+        let key = this.$(`.role_${role}`);
         key.classList.add('disabled');
       }
-      this.querySelector('.role_0').classList.add('disabled');
-      this.querySelector('.role_dot').classList.remove('disabled');
-      this.querySelector('.role_dot').classList.remove('display_none');
-      this.querySelector('.role_clear').classList.add('display_none');
+      this.$('.role_0').classList.add('disabled');
+      this.$('.role_dot').classList.remove('disabled');
+      this.$('.role_dot').classList.remove('display_none');
+      this.$('.role_clear').classList.add('display_none');
     }
 
     // A valid integer appears
@@ -415,13 +418,13 @@ class Keypad extends HTMLElement {
     if (this.value_.match(/^[1-9][0-9]*$/) != null) {
       // all keys are enabled.
       for (let role in roles) {
-        let key = this.querySelector(`.role_${role}`);
+        let key = this.$(`.role_${role}`);
         key.classList.remove('disabled');
       }
-      this.querySelector('.role_0').classList.remove('disabled');
-      this.querySelector('.role_dot').classList.remove('disabled');
-      this.querySelector('.role_dot').classList.remove('display_none');
-      this.querySelector('.role_clear').classList.add('display_none');
+      this.$('.role_0').classList.remove('disabled');
+      this.$('.role_dot').classList.remove('disabled');
+      this.$('.role_dot').classList.remove('display_none');
+      this.$('.role_clear').classList.add('display_none');
     }
 
     // 0.
@@ -433,13 +436,13 @@ class Keypad extends HTMLElement {
     if (this.value_.match(/[0-9]+[.][0-9]?/) != null) {
       // all keys are enabled.
       for (let role in roles) {
-        let key = this.querySelector(`.role_${role}`);
+        let key = this.$(`.role_${role}`);
         key.classList.remove('disabled');
       }
-      this.querySelector('.role_0').classList.remove('disabled');
-      this.querySelector('.role_dot').classList.add('disabled');
-      this.querySelector('.role_dot').classList.add('display_none');
-      this.querySelector('.role_clear').classList.remove('display_none');
+      this.$('.role_0').classList.remove('disabled');
+      this.$('.role_dot').classList.add('disabled');
+      this.$('.role_dot').classList.add('display_none');
+      this.$('.role_clear').classList.remove('display_none');
     }
 
     // 0.12
@@ -449,13 +452,13 @@ class Keypad extends HTMLElement {
     if (this.value_.match(/[0-9]+[.][0-9][0-9]/) != null) {
       // all keys are enabled.
       for (let role in roles) {
-        let key = this.querySelector(`.role_${role}`);
+        let key = this.$(`.role_${role}`);
         key.classList.add('disabled');
       }
-      this.querySelector('.role_0').classList.add('disabled');
-      this.querySelector('.role_dot').classList.add('disabled');
-      this.querySelector('.role_dot').classList.add('display_none');
-      this.querySelector('.role_clear').classList.remove('display_none');
+      this.$('.role_0').classList.add('disabled');
+      this.$('.role_dot').classList.add('disabled');
+      this.$('.role_dot').classList.add('display_none');
+      this.$('.role_clear').classList.remove('display_none');
     }
   }
 
@@ -590,24 +593,24 @@ class Endpoint extends HTMLElement {
   }
 
   defineLabel = function() {
-    const labelEl = this.prepareWard('label', 'div', this.querySelector('.front'));
+    const labelEl = this.prepareWard('label', 'div', this.$('.front'));
 
     let title = snake_case2PascalCase(this.attr('endpoint'));
     labelEl.innerHTML = title;
   }
 
   defineFileButton = function() {
-    let fileButtonEl = this.prepareWard('file_button', 'div', this.querySelector('.back'));
+    let fileButtonEl = this.prepareWard('file_button', 'div', this.$('.back'));
     fileButtonEl.innerHTML = 'Choose an Image';  
   }
 
   defineFileInput = function() {
-    let fileInputEl = this.prepareWard('file_input', 'input', this.querySelector('.back'));
+    let fileInputEl = this.prepareWard('file_input', 'input', this.$('.back'));
     fileInputEl.setAttribute('type', 'file');
   }
   
   defineTextInput = function() {
-    let textInputEl = this.prepareWard('text_input', 'div', this.querySelector('.back'));
+    let textInputEl = this.prepareWard('text_input', 'div', this.$('.back'));
     textInputEl.innerHTML = this.attr('endpoint');
   }
 
@@ -860,7 +863,7 @@ function modifySortedEndpoints(endpoints) {
 }
 
 function tbody2imageMapping(tbody) {
-  let images = tbody.querySelectorAll("img");
+  let images = tbody.$$("img");
   let image_mapping = {};
   for (let image of images) {
     image_mapping[image.title] = image.src;
@@ -873,10 +876,10 @@ function tbody2imageMapping(tbody) {
 // HACK: assumes rectangular table
 function tbody2array(tbody) {
   let arr = [];
-  let trs = tbody.querySelectorAll("tr");
+  let trs = tbody.$$("tr");
   for (let tr of trs) {
     let row = [];
-    let tds = tr.querySelectorAll("td");
+    let tds = tr.$$("td");
     for (let td of tds) {
       let value = td.innerHTML;
       let colspan = td.getAttribute('colspan') || 1;
@@ -898,7 +901,7 @@ function getSheetNames(desired_body) {
     endpoints: null,
   };
 
-  let lis = desired_body.querySelectorAll('li[id*="sheet-button-"]');
+  let lis = desired_body.$$('li[id*="sheet-button-"]');
   for (let li of lis) {
     let innerHTML = li.innerHTML;
     // By the nature of this loop, if multiple sheet_names match, the final one is retained.
@@ -966,12 +969,12 @@ function populateScroller(scroller, endpoints, role) {
 function generateEndpoints() {
   let endpoints = getSortedEndpoints();
   populateScroller(
-    document.querySelector("#source"),
+    document.$("#source"),
     endpoints.sources,
     'source'
   );
   populateScroller(
-    document.querySelector("#destination"),
+    document.$("#destination"),
     endpoints.destinations,
     'destination'
   );
@@ -979,7 +982,7 @@ function generateEndpoints() {
 
 function navToEmail() {
 //  window.open("mailto:anerbenartzi@gmail.com?subject=Howdy&Body=Pardner", "_blank");
-  document.querySelector("#sendlink").click();
+  document.$("#sendlink").click();
 }
 
 
@@ -991,9 +994,9 @@ function navToEmail() {
  * A visual hint is attempted where the "cleared" state uses an outline font.
  
 function keyclick(e) {
-  let amount = document.querySelector("#amount");
+  let amount = document.$("#amount");
   let click_value = e.target.innerHTML;
-  let decimal_clear = document.querySelector("#decimal_clear");
+  let decimal_clear = document.$("#decimal_clear");
   if (click_value == "0.00") {
     amount.innerHTML = "0.00";
     amount.classList.add("amount_clear");
@@ -1019,12 +1022,12 @@ function keyclick(e) {
 
 function keypadChanged(e) {
   let value = e.target.value;
-  document.querySelector('#amount').stringValue = value;
+  document.$('#amount').stringValue = value;
   ready();
 }
 
 function currencykeyclick(e) {
-  let currency_key_elements = document.querySelectorAll('.currency_key')
+  let currency_key_elements = document.$$('.currency_key')
   for (let currency_key_element of currency_key_elements) {
     currency_key_element.classList.remove('selected');
   }
@@ -1108,27 +1111,27 @@ function LoadSettings(ttl_s = 6*60*60) {
 
 function ApplySettings() {
   // Applying the settings at startup.  This is why a refresh is needed when settings change.
-  document.querySelector("#static_header").classList.add(getSetting("keypad_location"));
+  document.$("#static_header").classList.add(getSetting("keypad_location"));
   document.body.style.backgroundColor = getSetting("background_color");
 }
 
 function AddEventListeners() {
   window.onscroll = noScroll;
-  for (let element of document.querySelectorAll('.y-scroller')) {
+  for (let element of document.$$('.y-scroller')) {
     element.addEventListener('scroll', ready);
   }
 
-  let input_elements = document.querySelectorAll('input')
+  let input_elements = document.$$('input')
   for (let input_element of input_elements) {
     input_element.addEventListener('input', ready);
   }
 
-  let currency_key_elements = document.querySelectorAll('.currency_key')
+  let currency_key_elements = document.$$('.currency_key')
   for (let currency_key_element of currency_key_elements) {
     currency_key_element.addEventListener('click', currencykeyclick);
   }
 
-  let keypad = document.querySelector('sd-keypad');
+  let keypad = document.$('sd-keypad');
   keypad.addEventListener('change', keypadChanged);
 
   const state = document.visibilityState;
@@ -1153,11 +1156,12 @@ function sendIt() {
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
   scrollEndpointsToBottom();
-  document.querySelector("#keypad").clear();
+  document.$("#keypad").clear();
   ready();
 }
 
 window.onload = () => {
+  console.log(document.$('body'));
   console.log("onload");
   PWA();
   WebComponents();
