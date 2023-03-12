@@ -141,12 +141,6 @@ function chooseImageFile(e) {
   e.target.parentElement.querySelector("input").click();
 }
 
-function updateEndpointText(e) {
-  let name = e.value;
-  let sdEndpoint = e.target.closest("sd-endpoint");
-  let endpoint = sdEndpoint.setAttribute('endpoint', name);
-};
-
 function updateEndpointSrc(e) {
   let sdEndpoint = e.target.closest("sd-endpoint");
   let endpoint = sdEndpoint.getAttribute('endpoint');
@@ -524,12 +518,80 @@ class Keypad extends HTMLElement {
    7 8 9 
 *********/
 
+function endpointNamePrompt(e) {
+  let role = e.target.getAttribute('role');
+  let endpoint = e.target.getAttribute('endpoint');
+  let name = window.prompt(`Choose a name for this ${role}:`, endpoint);
+  if (name) {
+    e.target.setAttribute('endpoint', name);
+  }
+}
+
+
+// TODO: Maybe I can get rid of img_src and only store the b64 on img.src.
 class Endpoint extends HTMLElement {
+
+  static get observedAttributes() {
+    return ['endpoint', 'direction'];
+  }
+  attributeChangedCallback(attribute, oldValue, newValue) {
+    if (attribute === 'endpoint') {
+      endpointChangedCallback(newValue);
+    }
+  }
+
+  // Should be in parent calss
+  attr = function(attribute) {
+    return this.getAttribute(attribute);
+  }
+
+  // TODO: Maybe use oldValue and reference counting to delete image storage
+  endpointChangedCallback(newValue) {
+    this.endpoint = newValue;
+    this.img.setAttribute('alt', this.endpoint);
+    this.textInput.innerHTML = this.endpoint;
+    let img_src = chooseEndpointImageSrc(endpoint, role == 'source');
+    this.img.src = img_src;
+  }
+
+  // TODO: Maybe use oldValue and reference counting to delete image storage
+  defineImage = function() {
+    const img = prepareWard('image', 'img', 'front');
+
+    let img_src = chooseEndpointImageSrc(attr('endpoint'), attr('role');
+    img.scr = img_src;
+    img.setAttribute('alt', attr('endpoint'));
+    img.setAttribute('title', attr('title'))
+  }
+
+  defineLabel = function() {
+    const label = prepareWard('label', 'div', 'front');
+
+    let title = snake_case2PascalCase(this.endpoint);
+    label.innerHTML = title;
+  }
+
+  prepareWard = function(wardName, tag, parentName) {
+    let ward = this.wards[wardName];
+    if (ward === undefined) {
+      ward = document.createElement(tag);
+      ward.setAttribute('class', wardName);
+      this.wards[wardName] = ward;
+    
+      let wardParent = this.wards[parentName];
+      if (wardParent === undefined) {
+        throw new Error(`Endpoint.upsertWard:  parentName=${parentName} not found in this.wards.`);
+      }
+      wardParent.appendChild(ward);
+    }
+  }
+
   constructor() {
 
     // Always call super first in constructor
     super();
 
+    this.wards = {};
 
     // HACK to stop multiple constructor calls
     this.addEventListener('click', selectEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
@@ -542,8 +604,8 @@ class Endpoint extends HTMLElement {
       return;
     }
 
-    const endpoint = this.getAttribute('endpoint');
-    const title = this.getAttribute('title');
+    this.endpoint = this.getAttribute('endpoint');
+    this.direction = this.getAttribute('direction');
     const img_src = this.getAttribute('img_src');
 
     const card = document.createElement('div');
@@ -553,15 +615,7 @@ class Endpoint extends HTMLElement {
     front.classList.add('endpoint_front');
     front.classList.add('endpoint_card_face');
 
-    const img = document.createElement('img');
-    img.setAttribute('class', 'endpoint_image');
-    img.src = img_src;
-    img.setAttribute('alt', endpoint);
-    img.setAttribute('title', title)
-
-    const label = document.createElement('div');
-    label.innerHTML = title;
-    label.setAttribute('class', 'endpoint_label');
+    const label = this.upsertLabel(); // endpoint
 
     front.appendChild(img);
     front.appendChild(label);
@@ -581,10 +635,10 @@ class Endpoint extends HTMLElement {
 
     fileButton.appendChild(fileInput);
 
-    const textInput = document.createElement('input');
-    textInput.setAttribute('type', 'text');
-    textInput.classList.add('endpoint_text_input');
-    textInput.addEventListener('change', updateEndpointText);
+    const textInput = document.createElement('div');
+    textInput.classList.add('endpoint_name_prompt');
+    textInput.innerHTML = endpoint;
+    textInput.addEventListener('click', endpointNamePrompt);
 
     back.appendChild(fileButton);
     back.appendChild(textInput);
@@ -706,10 +760,12 @@ function getEndpointsForEmail(arr, email_re) {
   cleanupInventory(ĩsources);
   cleanupInventory(ĩdestinations);
 
-  return {
+  let endpoints = {
     sources: sortInventory(ĩsources),
     destinations: sortInventory(ĩdestinations),
   }
+
+  return endpoints
 
 }
 
@@ -728,12 +784,12 @@ function getSortedEndpoints() {
   return ñendpoints;
 }
 
-function appendEndpoint(parent, endpoint, img_src, title) {
+function appendEndpoint(parent, endpoint, img_src, title, role) {
   // TODO: check against a less permissive regexp
   if (endpoint == "") {
     return;
   }
-  let html = `<sd-endpoint class="slot" endpoint="${endpoint}" img_src="${img_src}" title="${title}"></sd-endpoint>`;
+  let html = `<sd-endpoint class="slot" endpoint="${endpoint}" img_src="${img_src}" title="${title}" role="source"></sd-endpoint>`;
   parent.innerHTML += html;
 }
 
@@ -863,12 +919,10 @@ function retrieveEndpointsImageMapping() {
  * For isSource,
  * Try source:endpoint, then destination:endpoint, then the hardcoded ../images/endpoint.png
  */
-function chooseEndpointImageSrc(endpoint, isSource) {
-  let prefix = isSource ? `source:` : `destination:`;
-  let unprefix = isSource ? `destination:` : `source:`;
+function chooseEndpointImageSrc(endpoint, role) {
   let candidateKeys = [
-    `${prefix}${endpoint}`,
-    `${unprefix}${endpoint}`,
+    `${role}:${endpoint}`,
+    `any_role:${endpoint}`,
     endpoint,
   ]
 
@@ -889,20 +943,26 @@ function chooseEndpointImageSrc(endpoint, isSource) {
 /*
  * isSource (if not is_source, tha assumed is_destination)
  */
-function populateScroller(scroller, endpoints, isSource) {
+function populateScroller(scroller, endpoints, role) {
   let image_mapping = retrieveEndpointsImageMapping();
 
   for (let endpoint of endpoints) {
-    let img_src = chooseEndpointImageSrc(endpoint, isSource);
-    let title = snake_case2PascalCase(endpoint);
-    appendEndpoint(scroller, endpoint, img_src, title);
+    appendEndpoint(scroller, endpoint, role);
   }
 }
 
 function generateEndpoints() {
   let endpoints = getSortedEndpoints();
-  populateScroller(document.querySelector("#source"), endpoints.sources, true);
-  populateScroller(document.querySelector("#destination"), endpoints.destinations, false);
+  populateScroller(
+    document.querySelector("#source"),
+    endpoints.sources,
+    'source
+  );
+  populateScroller(
+    document.querySelector("#destination"),
+    endpoints.destinations,
+    'destination'
+  );
 }
 
 function navToEmail() {
@@ -986,7 +1046,11 @@ function httpsGet(url, func, noCORS) {
     });
 }
 
-function updateLocalStorageFromUrl(key, url) {
+function updateLocalStorageFromUrl(key, url, ttl_s) {
+  let item = window.localStorage.getItem(key);
+  if (!!item && ttl_s > 0) {  // DEVELOPMENT: use ttl_s as a boolean for now.
+    return;
+  }
   httpsGet(url, (data_text) => {
     window.localStorage.setItem(key, data_text);
   });
@@ -1020,11 +1084,11 @@ function BuildPage() {
   generateEndpoints();
 }
 
-function LoadSettings() {
+// Default to updating after a minimum of 6 hours.
+function LoadSettings(ttl_s = 6*60*60) {
 
-  // TODO: Only do these if the old ones are more than a couple of hours old.
-  updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF");
-  updateLocalStorageFromUrl("endpoints_csv", getSetting("published_endpoints_url"));
+  updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF", ttl_s);
+  updateLocalStorageFromUrl("endpoints_csv", getSetting("published_endpoints_url"), ttl_s);
   // TODO: Add a button in settings to refresh exchange rate and published endpoints.
 
   // TODO: Add the currency based on the locale timestamp and/or location.
