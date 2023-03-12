@@ -115,11 +115,27 @@ function updateDestination() {
   document.querySelector("#destination_text").value = destination_value;
 }
 
-function selectEndpoint(e) {
-  let card = e.target.closest(".endpoint_card");
-  if ('endpoint_card_flipped' in card.classList) {
+// TODO: encapsulate this in the Endpoint class and name it better.
+function showPrompt(e) {
+  let endpoint = e.target.closest("sd-endpoint");
+  let newValue = window.prompt('Choose an endpoint:', endpoint.attr('endpoint'));
+  if (!newValue) {  // all manner of degenerate endpoint values.
     return;
   }
+  // This should trigger the right changes on attribute update.
+  endpoint.setAttribute('endpoint', newValue);
+
+  // since taking this action is a final setting mod, flip back
+  endpoint.querySelector('.endpoint_card').classList.remove('endpoint_card_flipped');
+}
+
+// SUPER HACKY: need to better handle the different possible targets for click events.
+function selectOrChangeEndpoint(e) {
+  if (e.target.classList.includes('text_input')) {
+    showPrompt(e);
+    return;
+  }
+  let card = e.target.closest(".endpoint_card");
   let initial_bottom = e.target.getBoundingClientRect().bottom;
   let parentElement = e.target.closest(".y-scroller");
   let parent_bottom = parentElement.getBoundingClientRect().bottom;
@@ -142,6 +158,10 @@ function chooseImageFile(e) {
 }
 
 function updateEndpointSrc(e) {
+  // SUPER HACKY: Finding out if we should listen to this change event at the sd-endpoint level.
+  if (e.target != document.querySelector('input[type="file"]')) {
+    return;
+  }
   let sdEndpoint = e.target.closest("sd-endpoint");
   let endpoint = sdEndpoint.getAttribute('endpoint');
   let card = sdEndpoint.querySelector('.endpoint_card');
@@ -536,7 +556,17 @@ class Endpoint extends HTMLElement {
   }
   attributeChangedCallback(attribute, oldValue, newValue) {
     if (attribute === 'endpoint') {
-      endpointChangedCallback(newValue);
+      // IDEA: this can compare normalized values in case capitalization, etc. doesn't matter
+      if (oldValue == newValue) {
+        return;
+      }
+
+      // Note: 2 ways to be "smart" about updates.
+      // 1 (chosen): only call the items that need updating
+      // 2 (more robust): call everyone, and each one knows how to return early if nothing to do.
+      this.defineImage();
+      this.defineLabel();
+      this.defineTextInput();
     }
   }
 
@@ -556,7 +586,7 @@ class Endpoint extends HTMLElement {
 
   // TODO: Maybe use oldValue and reference counting to delete image storage
   defineImage = function() {
-    const img = prepareWard('image', 'img', 'front');
+    const img = this.prepareWard('image', 'img', 'front');
 
     let img_src = chooseEndpointImageSrc(attr('endpoint'), attr('role');
     img.scr = img_src;
@@ -565,10 +595,25 @@ class Endpoint extends HTMLElement {
   }
 
   defineLabel = function() {
-    const label = prepareWard('label', 'div', 'front');
+    const label = this.prepareWard('label', 'div', 'front');
 
     let title = snake_case2PascalCase(this.endpoint);
     label.innerHTML = title;
+  }
+
+  defineFileButton = function() {
+    let fileButton = this.prepareWard('file_button', 'div', 'back');
+    fileButton.innerHTML = 'Choose an Image';  
+  }
+
+  defineFileInput = function() {
+    let fileInput = this.prepareWard('file_input', 'input', 'back');
+    fileInput.setAttribute('type', 'file');
+  }
+  
+  defineTextInput = function() {
+    let textInput = this.prepareWard('text_input', 'div', 'back');
+    textInput.innerHTML = this.attr('endpoint');
   }
 
   prepareWard = function(wardName, tag, parentName) {
@@ -594,57 +639,33 @@ class Endpoint extends HTMLElement {
     this.wards = {};
 
     // HACK to stop multiple constructor calls
-    this.addEventListener('click', selectEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
+    this.addEventListener('click', selectOrChangeEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
     this.addEventListener('contextmenu', flipCard);
-    let fileChild = this.querySelector("input");
-    if (fileChild) {
-      fileChild.addEventListener('change', updateEndpointSrc);
-    }
+    this.addEventListener('change', updateEndpointSrc);
+
+    // Can probably get rid of this once wards are in place, and don't get recreated.
     if (this.children.length > 0) {
       return;
     }
 
-    this.endpoint = this.getAttribute('endpoint');
-    this.direction = this.getAttribute('direction');
-    const img_src = this.getAttribute('img_src');
-
+    // Build up the basic scaffolding of this Element
     const card = document.createElement('div');
     card.classList.add('endpoint_card');
 
     const front = document.createElement('div');
-    front.classList.add('endpoint_front');
     front.classList.add('endpoint_card_face');
-
-    const label = this.upsertLabel(); // endpoint
-
-    front.appendChild(img);
-    front.appendChild(label);
+    front.classList.add('endpoint_front');
 
     const back = document.createElement('div');
-    back.classList.add('endpoint_back');
     back.classList.add('endpoint_card_face');
+    back.classList.add('endpoint_back');
 
-    const fileButton = document.createElement('div');
-    fileButton.classList.add('endpoint_file_button');
-    fileButton.innerHTML = 'Choose an Image';
+    // Populate the front
+    // Some work to do: At the moment, this will create and insert, and update per attributes
+    this.defineImage();
+    this.defineLabel();
 
-    const fileInput = document.createElement('input');
-    fileInput.setAttribute('type', 'file');
-    fileInput.classList.add('endpoint_input');
-    fileInput.addEventListener('change', updateEndpointSrc);
-
-    fileButton.appendChild(fileInput);
-
-    const textInput = document.createElement('div');
-    textInput.classList.add('endpoint_name_prompt');
-    textInput.innerHTML = endpoint;
-    textInput.addEventListener('click', endpointNamePrompt);
-
-    back.appendChild(fileButton);
-    back.appendChild(textInput);
-
-//    front.innerHTML = "FRONT";
-//    back.innerHTML = "back";
+    // Populate the back
 
     card.appendChild(front);
     card.appendChild(back);
