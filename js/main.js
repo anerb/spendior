@@ -1,5 +1,9 @@
 'use strict';
 
+
+HTMLElement.prototype.$ = HTMLElement.prototype.querySelector;
+HTMLElement.prototype.$$ = HTMLElement.prototype.querySelectorAll;
+
 // @import url("./currency.js");
 
 function getSetting(key) {
@@ -576,61 +580,51 @@ class Endpoint extends HTMLElement {
   }
 
   // TODO: Maybe use oldValue and reference counting to delete image storage
-  endpointChangedCallback(newValue) {
-    this.endpoint = newValue;
-    this.img.setAttribute('alt', this.endpoint);
-    this.textInput.innerHTML = this.endpoint;
-    let img_src = chooseEndpointImageSrc(endpoint, role == 'source');
-    this.img.src = img_src;
-  }
-
-  // TODO: Maybe use oldValue and reference counting to delete image storage
   defineImage = function() {
-    const img = this.prepareWard('image', 'img', 'front');
+    const imgEl = this.prepareWard('image', 'img', this.$('.front'));
 
-    let img_src = chooseEndpointImageSrc(attr('endpoint'), attr('role');
-    img.scr = img_src;
-    img.setAttribute('alt', attr('endpoint'));
-    img.setAttribute('title', attr('title'))
+    let img_src = chooseEndpointImageSrc(this.attr('endpoint'), this.attr('role'));
+    imgEl.setAttribute('src', img_src);
+    imgEl.setAttribute('alt', this.attr('endpoint'));
+    imgEl.setAttribute('title', this.attr('title'))
   }
 
   defineLabel = function() {
-    const label = this.prepareWard('label', 'div', 'front');
+    const labelEl = this.prepareWard('label', 'div', this.querySelector('.front'));
 
-    let title = snake_case2PascalCase(this.endpoint);
-    label.innerHTML = title;
+    let title = snake_case2PascalCase(this.attr('endpoint'));
+    labelEl.innerHTML = title;
   }
 
   defineFileButton = function() {
-    let fileButton = this.prepareWard('file_button', 'div', 'back');
-    fileButton.innerHTML = 'Choose an Image';  
+    let fileButtonEl = this.prepareWard('file_button', 'div', this.querySelector('.back'));
+    fileButtonEl.innerHTML = 'Choose an Image';  
   }
 
   defineFileInput = function() {
-    let fileInput = this.prepareWard('file_input', 'input', 'back');
-    fileInput.setAttribute('type', 'file');
+    let fileInputEl = this.prepareWard('file_input', 'input', this.querySelector('.back'));
+    fileInputEl.setAttribute('type', 'file');
   }
   
   defineTextInput = function() {
-    let textInput = this.prepareWard('text_input', 'div', 'back');
-    textInput.innerHTML = this.attr('endpoint');
+    let textInputEl = this.prepareWard('text_input', 'div', this.querySelector('.back'));
+    textInputEl.innerHTML = this.attr('endpoint');
   }
 
-  prepareWard = function(wardName, tag, parentName) {
-    let ward = this.wards[wardName];
-    if (ward === undefined) {
-      ward = document.createElement(tag);
-      ward.setAttribute('class', wardName);
-      this.wards[wardName] = ward;
+  // TODO: figure out the name for this pattern of "retreive or create".
+  prepareWard = function(wardName, tag, parentEl) {
+    let wardEl = this.wards[wardName];
+    if (wardEl === undefined) {
+      wardEl = document.createElement(tag);
+      wardEl.setAttribute('class', wardName);
+      this.wards[wardName] = wardEl;
     
-      let wardParent = this.wards[parentName];
-      if (wardParent === undefined) {
-        throw new Error(`Endpoint.upsertWard:  parentName=${parentName} not found in this.wards.`);
-      }
-      wardParent.appendChild(ward);
+      parentEl.appendChild(wardEl);
     }
+    return wardEl;
   }
 
+  // The constructor is called before the Element is attached to the DOM
   constructor() {
 
     // Always call super first in constructor
@@ -648,29 +642,27 @@ class Endpoint extends HTMLElement {
       return;
     }
 
+   ////// TODO : **** use hierarchical selectors instead of prepended class names.
+
     // Build up the basic scaffolding of this Element
-    const card = document.createElement('div');
-    card.classList.add('endpoint_card');
+    const cardEl = document.createElement('div');
+    this.appendChild(cardEl);
+    cardEl.classList.add('endpoint_card', 'card');
 
-    const front = document.createElement('div');
-    front.classList.add('endpoint_card_face');
-    front.classList.add('endpoint_front');
+    const frontEl = document.createElement('div');
+    cardEl.appendChild(frontEl);
+    frontEl.classList.add('endpoint_card_face');
+    frontEl.classList.add('endpoint_front', 'front');
 
-    const back = document.createElement('div');
-    back.classList.add('endpoint_card_face');
-    back.classList.add('endpoint_back');
+    const backEl = document.createElement('div');
+    cardEl.appendChild(backEl);
+    backEl.classList.add('endpoint_card_face');
+    backEl.classList.add('endpoint_back', 'back');
 
     // Populate the front
     // Some work to do: At the moment, this will create and insert, and update per attributes
     this.defineImage();
     this.defineLabel();
-
-    // Populate the back
-
-    card.appendChild(front);
-    card.appendChild(back);
-
-    this.appendChild(card);
   }
 }
 
@@ -805,12 +797,19 @@ function getSortedEndpoints() {
   return ñendpoints;
 }
 
-function appendEndpoint(parent, endpoint, img_src, title, role) {
+// TODO create element and use appendChild instead of HTML manipulation.
+
+function appendEndpointFiller(parent, role) {
+  let html = `<sd-endpoint class="slot filler" endpoint="filler" role="source"></sd-endpoint>`;
+  parent.innerHTML += html;
+}
+
+function appendEndpoint(parent, endpoint, role) {
   // TODO: check against a less permissive regexp
   if (endpoint == "") {
     return;
   }
-  let html = `<sd-endpoint class="slot" endpoint="${endpoint}" img_src="${img_src}" title="${title}" role="source"></sd-endpoint>`;
+  let html = `<sd-endpoint class="slot" endpoint="${endpoint}" role="source"></sd-endpoint>`;
   parent.innerHTML += html;
 }
 
@@ -937,24 +936,12 @@ function retrieveEndpointsImageMapping() {
 }
 
 /*
- * For isSource,
- * Try source:endpoint, then destination:endpoint, then the hardcoded ../images/endpoint.png
+ * TODO: Consider different images based on role... I tried that and it got complicated.
  */
-function chooseEndpointImageSrc(endpoint, role) {
-  let candidateKeys = [
-    `${role}:${endpoint}`,
-    `any_role:${endpoint}`,
-    endpoint,
-  ]
-
-  // The default value of getItem is null, but in JS, I think it should be undefined.
+function chooseEndpointImageSrc(endpoint) {
   let chosenSrc = undefined;
-  if (chosenSrc == undefined) {
-    chosenSrc = window.localStorage.getItem(`${prefix}${endpoint}`) || undefined;
-  }
-  if (chosenSrc == undefined) {
-    chosenSrc = window.localStorage.getItem(`${unprefix}${endpoint}`) || undefined;
-  }
+  // The default value of getItem is null, but it should have been in JS, I think it should be undefined.
+  chosenSrc = window.localStorage.getItem(endpoint) || undefined;
   if (chosenSrc == undefined) {
     chosenSrc = `../images/lineart/${endpoint}.png`;
   }
@@ -967,6 +954,10 @@ function chooseEndpointImageSrc(endpoint, role) {
 function populateScroller(scroller, endpoints, role) {
   let image_mapping = retrieveEndpointsImageMapping();
 
+  for (let f in [1, 2, 3, 4]) {
+    appendEndpointFiller(scroller, role);
+  }
+
   for (let endpoint of endpoints) {
     appendEndpoint(scroller, endpoint, role);
   }
@@ -977,7 +968,7 @@ function generateEndpoints() {
   populateScroller(
     document.querySelector("#source"),
     endpoints.sources,
-    'source
+    'source'
   );
   populateScroller(
     document.querySelector("#destination"),
