@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+600:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+500:wght@500&display=swap');
+
 :root {
   --radius: 9dvw;
   --grid-millis: 210;
@@ -13,7 +16,7 @@ html {
 
 body {
     font-size:12dvw;
-    font-family: serif, 'Playfair Display';
+    font-family: 'Playfair Display 500', serif;
   }
   
   .fullscreen {
@@ -142,6 +145,12 @@ body {
     width: calc(100% - 54dvw);
     font-size: 12dvw;
     text-align: end;
+  }
+
+  sd-endpoint {
+    font-family: 'Playfair Display 500', serif;
+    -webkit-text-stroke: 1px;
+    -webkit-text-fill-color: white;
   }
   
   sd-endpoint

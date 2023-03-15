@@ -947,6 +947,27 @@ function retrieveEndpointsImageMapping() {
   return image_mapping;
 }
 
+function isNonEmptyString(s) {
+  let isString = typeof s == typeof '';
+  let nonEmpty = s.length > 0;
+  return isString && nonEmpty;  
+}
+
+/*
+ * Tests if a url can return non-empty text data
+ */
+function testUrl(url) {
+  let noCORS = true;
+  try {
+    let success = false;
+    httpsGet(url, (d) => {success = isNonEmptyString(d)}, !noCORS);
+    return success;
+  } catch(e) {
+    return false;
+  }
+  return false;  // How did I get here?
+}
+
 /*
  * TODO: Consider different images based on role... I tried that and it got complicated.
  */
@@ -956,7 +977,12 @@ function chooseEndpointImageSrc(endpoint) {
   chosenSrc = window.localStorage.getItem(endpoint) || undefined;
   if (chosenSrc == undefined) {
     chosenSrc = `../images/lineart/${endpoint}.png`;
+    let urlWorks = testUrl(chosenSrc);
+    if (!urlWorks) {
+      chosenSrc = `../images/lineart/no_image.png`;
+    }
   }
+  window.localStorage.setItem(endpoint, chosenSrc);
   return chosenSrc;
 }
 
@@ -1053,6 +1079,10 @@ function noScroll() {
   window.scrollTo(0, 0);
 }
 
+/*
+ * Tries to fetch from url anc call func(restult.text).
+ * An error in fetching or in calling func() will cause a throw.
+ */
 function httpsGet(url, func, noCORS) {
   // TODO: Better error handling when the request fails.
   if (!url || !url.match('^https://.*')) {
@@ -1068,6 +1098,7 @@ function httpsGet(url, func, noCORS) {
     .then(func)
     .catch((error) => {
       console.error("ERROR calling httpsGet: ", error);
+      throw error;
     });
 }
 
