@@ -204,6 +204,9 @@ function flipCard(e) {
   e.target.closest('sd-endpoint').$('.card').classList.toggle('flipped');
 }
 
+function imageLoadError(e) {
+  
+}
 
 class PriceDisplay extends HTMLElement {
 
@@ -585,13 +588,17 @@ class Endpoint extends HTMLElement {
 
   // TODO: Maybe use oldValue and reference counting to delete image storage
   defineImage = function() {
-    console.log(`defineImage calling prepareWard: ${this.attr('endpoint')} , ${this.attr('role')}`);
+    let endpoint = this.attr('endpoint');
+    console.log(`defineImage calling prepareWard: ${endpoint} , ${this.attr('role')}`);
     const imgEl = this.prepareWard('image', 'img', this.$('.front'));
 
-    let img_src = chooseEndpointImageSrc(this.attr('endpoint'), this.attr('role'));
-    imgEl.setAttribute('src', img_src);
-    imgEl.setAttribute('alt', this.attr('endpoint'));
+    let img_src = window.localStorage.getItem(endpoint) || undefined;
+    if (img_src != undefined) {
+      imgEl.setAttribute('src', img_src);
+    }
+    imgEl.setAttribute('alt', endpoint);
     imgEl.setAttribute('title', this.attr('title'))
+    imgEl.setAttribute('srcset', `../images/lineart/${endpoint}.png, ../images/lineart/no_image.png`);
   }
 
   defineLabel = function() {
@@ -640,6 +647,7 @@ class Endpoint extends HTMLElement {
     this.addEventListener('click', selectOrChangeEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
     this.addEventListener('contextmenu', flipCard);
     this.addEventListener('change', updateEndpointSrc);
+    this.addEventListener('error', imageLoadError);
 
     if (this.children.length > 0) {
       return;
@@ -950,6 +958,7 @@ function retrieveEndpointsImageMapping() {
 function isNonEmptyString(s) {
   let isString = typeof s == typeof '';
   let nonEmpty = s.length > 0;
+  console.log([s, isString, nonEmpty]);
   return isString && nonEmpty;  
 }
 
@@ -960,7 +969,9 @@ function testUrl(url) {
   let noCORS = true;
   try {
     let success = false;
-    httpsGet(url, (d) => {success = isNonEmptyString(d)}, !noCORS);
+    httpsGet(url, (d) => {
+      success = isNonEmptyString(d);
+    }, !noCORS);
     return success;
   } catch(e) {
     return false;
@@ -993,7 +1004,7 @@ function populateScroller(scroller, endpoints, role) {
   let image_mapping = retrieveEndpointsImageMapping();
 
   for (let f in [1, 2, 3, 4]) {
-    appendEndpointFiller(scroller, role);
+//    appendEndpointFiller(scroller, role);
   }
 
   for (let endpoint of endpoints) {
@@ -1085,7 +1096,7 @@ function noScroll() {
  */
 function httpsGet(url, func, noCORS) {
   // TODO: Better error handling when the request fails.
-  if (!url || !url.match('^https://.*')) {
+  if (!url || !(url.match('^https://.*') || url.match('^[.]{1,2}/.*'))) {
     return;
   }
   fetch(url, {mode: noCORS ? 'no-cors' : 'cors'})
