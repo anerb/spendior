@@ -204,10 +204,6 @@ function flipCard(e) {
   e.target.closest('sd-endpoint').$('.card').classList.toggle('flipped');
 }
 
-function imageLoadError(e) {
-  
-}
-
 class PriceDisplay extends HTMLElement {
 
   // takes a string, returns a string
@@ -588,17 +584,35 @@ class Endpoint extends HTMLElement {
 
   // TODO: Maybe use oldValue and reference counting to delete image storage
   defineImage = function() {
+    // TODO: make knownImages more dynamic, and a function of "theme" (when eventually there is a theme).
+    let knownImages = {
+      bank: `bank`,
+      cash: `cash`,
+      credit_card: `credit_card`,
+      no_image: `no_image`,
+      other_destination: `other_destination`,
+      other_source: `other_source`,
+      person: `person`,
+      store: `store`,
+    };
+
     let endpoint = this.attr('endpoint');
     console.log(`defineImage calling prepareWard: ${endpoint} , ${this.attr('role')}`);
     const imgEl = this.prepareWard('image', 'img', this.$('.front'));
 
+    // Interesting pattern: instead of falling back to more basic backups, it ratchets up to better options.
+    let chosenSrc = `../images/lineart/no_image.png`;
+    if (endpoint in knownImages) {
+      chosenSrc = `../images/lineart/${knownImages[endpoint]}.png`;
+    }
     let img_src = window.localStorage.getItem(endpoint) || undefined;
     if (img_src != undefined) {
-      imgEl.setAttribute('src', img_src);
+      chosenSrc = img_src;
     }
+    imgEl.setAttribute('src', chosenSrc);
+
     imgEl.setAttribute('alt', endpoint);
     imgEl.setAttribute('title', this.attr('title'))
-    imgEl.setAttribute('srcset', `../images/lineart/${endpoint}.png, ../images/lineart/no_image.png`);
   }
 
   defineLabel = function() {
@@ -647,7 +661,6 @@ class Endpoint extends HTMLElement {
     this.addEventListener('click', selectOrChangeEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
     this.addEventListener('contextmenu', flipCard);
     this.addEventListener('change', updateEndpointSrc);
-    this.addEventListener('error', imageLoadError);
 
     if (this.children.length > 0) {
       return;
@@ -945,66 +958,12 @@ function memoFetch(key) {
   return value;
 }
 
-// TODO: Perhaps run extraction from published html here.
-function retrieveEndpointsImageMapping() {
-  let json = window.localStorage.getItem("endpoints_image_mapping");
-  let image_mapping = {};
-  try {
-    image_mapping = JSON.parse(json);
-  } catch(e) {}
-  return image_mapping;
-}
-
-function isNonEmptyString(s) {
-  let isString = typeof s == typeof '';
-  let nonEmpty = s.length > 0;
-  console.log([s, isString, nonEmpty]);
-  return isString && nonEmpty;  
-}
-
-/*
- * Tests if a url can return non-empty text data
- */
-function testUrl(url) {
-  let noCORS = true;
-  try {
-    let success = false;
-    httpsGet(url, (d) => {
-      success = isNonEmptyString(d);
-    }, !noCORS);
-    return success;
-  } catch(e) {
-    return false;
-  }
-  return false;  // How did I get here?
-}
-
-/*
- * TODO: Consider different images based on role... I tried that and it got complicated.
- */
-function chooseEndpointImageSrc(endpoint) {
-  let chosenSrc = undefined;
-  // The default value of getItem is null, but it should have been in JS, I think it should be undefined.
-  chosenSrc = window.localStorage.getItem(endpoint) || undefined;
-  if (chosenSrc == undefined) {
-    chosenSrc = `../images/lineart/${endpoint}.png`;
-    let urlWorks = testUrl(chosenSrc);
-    if (!urlWorks) {
-      chosenSrc = `../images/lineart/no_image.png`;
-    }
-  }
-  window.localStorage.setItem(endpoint, chosenSrc);
-  return chosenSrc;
-}
-
 /*
  * isSource (if not is_source, tha assumed is_destination)
  */
 function populateScroller(scroller, endpoints, role) {
-  let image_mapping = retrieveEndpointsImageMapping();
-
   for (let f in [1, 2, 3, 4]) {
-//    appendEndpointFiller(scroller, role);
+    appendEndpointFiller(scroller, role);
   }
 
   for (let endpoint of endpoints) {
