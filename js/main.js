@@ -574,6 +574,7 @@ class Endpoint extends HTMLElement {
       this.defineImage();
       this.defineLabel();
       this.defineTextInput();
+      this.defineShowLabel();
     }
   }
 
@@ -600,23 +601,39 @@ class Endpoint extends HTMLElement {
     console.log(`defineImage calling prepareWard: ${endpoint} , ${this.attr('role')}`);
     const imgEl = this.prepareWard('image', 'img', this.$('.front'));
 
-    // Interesting pattern: instead of falling back to more basic backups, it ratchets up to better options.
-    let chosenSrc = `../images/lineart/no_image.png`;
-    if (endpoint in knownImages) {
-      chosenSrc = `../images/lineart/${knownImages[endpoint]}.png`;
+    // Previously, I hadthe defaults in reverse, where it started with the most basic, and kept changing it while it could.
+    // That doesn't turn out to work because I need to do more work for some (but not others).
+    // Temporarily setting each one means that would would have to be undone.
+    let chosenSrc = undefined;
+    if (chosenSrc == undefined) {
+      let img_src = window.localStorage.getItem(endpoint) || undefined;
+      if (img_src != undefined) {
+        chosenSrc = img_src;
+      }
     }
-    let img_src = window.localStorage.getItem(endpoint) || undefined;
-    if (img_src != undefined) {
-      chosenSrc = img_src;
+    if (chosenSrc == undefined) {
+      if (endpoint in knownImages) {
+        chosenSrc = `../images/lineart/${knownImages[endpoint]}.png`;
+      }
     }
-    imgEl.setAttribute('src', chosenSrc);
+    if (chosenSrc == undefined) {
+      let chosenSrc = `../images/lineart/no_image.png`;
+      // This will trigger another attributeChangedCallback.  I'm not yet sure how to avoid loops.
+      this.setAttribute('show_lable', 'true');
+    }
 
+    imgEl.setAttribute('src', chosenSrc);
     imgEl.setAttribute('alt', endpoint);
     imgEl.setAttribute('title', this.attr('title'))
   }
 
   defineLabel = function() {
     const labelEl = this.prepareWard('label', 'div', this.$('.front'));
+    if (!this.attr('show_label')) {
+      labelEl.classList.add('display_none');
+    } else {
+      labelEl.classList.remove('display_none');
+    }
 
     let title = snake_case2PascalCase(this.attr('endpoint'));
     labelEl.innerHTML = title;
@@ -637,6 +654,11 @@ class Endpoint extends HTMLElement {
     let textInputEl = this.prepareWard('text_input', 'div', this.$('.back'));
     textInputEl.classList.add('button');
     textInputEl.innerHTML = this.attr('endpoint');
+  }
+
+  defineShowLabel = function() {
+    let showLabelEl = this.prepareWard('show_label', 'checkbok', this.$('back'));
+    showLabelEl.checked = this.attr('show_label') == 'true';  // TODO: Case insensitive
   }
 
   // TODO: figure out the name for this pattern of "retreive or create".
@@ -695,6 +717,7 @@ class Endpoint extends HTMLElement {
     this.defineFileButton();
     this.defineFileInput();
     this.defineTextInput();
+    this.defineShowLabel();
  
   }
 }

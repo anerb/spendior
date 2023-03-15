@@ -187,6 +187,13 @@ body {
     opacity: 0;
     font-size: 3dvw;
   }
+
+  sd-endpoint
+  .show_label {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
   
   sd-endpoint
   .card {
