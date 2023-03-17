@@ -114,12 +114,13 @@ function BuildPage() {
 
 function resetStorage() {
   window.localStorage.clear();
+  document.$('#reset_storage').innerHTML += '*';
   // After clearing, write back what is already in the settings screen.
   updateSettings();
 }
 
 function AddEventListeners() {
-  document.$('reset_storage').addEventListener('click', 'resetStorage');
+  document.$('#reset_storage').addEventListener('click', resetStorage);
 }
 
 window.onload = function() {
