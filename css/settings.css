@@ -1,19 +1,31 @@
 .settings {
-    background: white;
-    font-size: 4dvw;
-    width: 90dvw;
-    height: 96dvw;
-    z-index: 99999;
-    padding: 2dvw;
-    border: 2px solid black;
-  }
+  background: white;
+  font-size: 4dvw;
+  width: 90dvw;
+  height: 96dvw;
+  z-index: 99999;
+  padding: 2dvw;
+  border: 2px solid black;
+}
   
-  #settings input {
-    font-size: 4dvw;
-    width: 80dvw;
-    margin: 0dvw 0dvw 2dvw 0dvw;
-  }
-  
-  #background_color {
-    position: absolute;
-  }
+#settings input {
+  font-size: 4dvw;
+  width: 80dvw;
+  margin: 0dvw 0dvw 2dvw 0dvw;
+}
+
+#background_color {
+  position: absolute;
+}
+
+
+/* TODO: COPY-PASTEd, so find a way to share. */
+.button {
+  text-align: center;
+  font-size: 4dvw;
+  width: calc(100% - 4dvw - 5px);
+  height:  6dvw;
+  border-radius: 3dvw;
+  border:  2px solid black;
+  margin: 3px;
+}
