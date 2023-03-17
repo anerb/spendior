@@ -170,8 +170,10 @@ function chooseImageFile(e) {
 }
 
 function updateEndpointSrc(e) {
+  let endpointEl = e.target.closest('sd-endpoint');
+  let expectedTargetEl = endpointEl.$('.file_input');
   // SUPER HACKY: Finding out if we should listen to this change event at the sd-endpoint level.
-  if (e.target != document.$('input[type="file"]')) {
+  if (e.target !== expectedTargetEl) {
     return;
   }
   let sdEndpoint = e.target.closest('sd-endpoint');
