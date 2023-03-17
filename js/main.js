@@ -9,8 +9,12 @@ Document.prototype.$$ = Document.prototype.querySelectorAll;
 
 // @import url("./currency.js");
 
-function getSetting(key) {
-  return window.localStorage.getItem(key);
+function get(key) {
+  return window.localStorage.getItem(key) || undefined;
+}
+
+function set(key, value) {
+  return window.localStorage.setItem(key, value);
 }
 
 function selectItem(item) {
@@ -65,7 +69,7 @@ function formatDate(date) {
 function buildSendUrl() {
   let body = {};
   let today = new Date();
-  body.sheet_name = getSetting("sheet_name");
+  body.sheet_name = get("sheet_name");
   body.date_first = formatDate(today);
   body.date_final = formatDate(today);
   body.source = getScrollerValue("source");
@@ -82,7 +86,7 @@ function buildSendUrl() {
     queryParameters.push(queryParameter);
   }
 
-  let href = getSetting("server_url");
+  let href = get("server_url");
   href += '?';
   href += queryParameters.join('&');
   return href;
@@ -124,24 +128,20 @@ function updateDestination() {
 
 // TODO: encapsulate this in the Endpoint class and name it better.
 function showPrompt(e) {
-  let endpoint = e.target.closest("sd-endpoint");
-  let newValue = window.prompt('Choose an endpoint:', endpoint.attr('endpoint'));
+  let endpointEl = e.target.closest("sd-endpoint");
+  let newValue = window.prompt('Choose an endpoint:', endpointEl.attr('endpoint'));
   if (!newValue) {  // all manner of degenerate endpoint values.
     return;
   }
   // This should trigger the right changes on attribute update.
-  endpoint.setAttribute('endpoint', newValue);
+  endpointEl.setAttribute('endpoint', newValue);
 
   // since taking this action is a final setting mod, flip back
-  endpoint.$('.card').classList.remove('flipped');
+  endpointEl.$('.card').classList.remove('flipped');
 }
 
 // SUPER HACKY: need to better handle the different possible targets for click events.
-function selectOrChangeEndpoint(e) {
-  if (e.target.classList.contains('text_input')) {
-    showPrompt(e);
-    return;
-  }
+function selectEndpoint(e) {
   let endpointEl = e.target.closest('sd-endpoint');
   let flippedEls = endpointEl.$$('.flipped');
   if (flippedEls.length > 0) {
@@ -156,6 +156,14 @@ function selectOrChangeEndpoint(e) {
   parentEl.scrollTo({ top: initial_scroll + scroll_needed, behavior: 'smooth' });
   ready();
 }
+
+function changeEndpoint(e) {
+  if (e.target.classList.contains('text_input')) {
+    showPrompt(e);
+    return;
+  }
+}
+
 
 function scrollEndpointsToBottom() {
   let source = document.$("#source");
@@ -565,29 +573,112 @@ function endpointNamePrompt(e) {
 class Endpoint extends HTMLElement {
 
   static get observedAttributes() {
-    return ['endpoint', 'direction'];
+    return ['endpoint', 'role', 'id', 'show_label', 'is_staged'];
   }
   attributeChangedCallback(attribute, oldValue, newValue) {
-    if (attribute === 'endpoint') {
-      // IDEA: this can compare normalized values in case capitalization, etc. doesn't matter
-      if (oldValue == newValue) {
-        return;
-      }
+    // IDEA: this can compare normalized values in case capitalization, etc. doesn't matter
+    if (oldValue == newValue) {
+      return;
+    }
 
-      // Note: 2 ways to be "smart" about updates.
-      // 1 (chosen): only call the items that need updating
-      // 2 (more robust): call everyone, and each one knows how to return early if nothing to do.
-      console.log([`attributeChangedCallback: ${newValue}`, this])
-      this.defineImage();
-      this.defineLabel();
-      this.defineTextInput();
-      this.defineShowLabel();
+    if (attribute != 'is_staged') {
+      let oldAttribute = `old_${attribute}`; 
+      if (this.getAttributeNames().includes(oldAttribute)) {
+        // ignore this intermediate 'oldValue', and keep the one that was last true when the attributes were commited.
+        // This looses some information, but if there are only going to be two attribtues:
+        //   - the real/actual/current
+        //   - the old
+        //  , then it's better for the old to represent what is on-screen as a result of the most recent commit.
+      } else {
+        console.log(['setting attrijbute', oldAttribute, oldValue, this]);
+        this.setAttribute(oldAttribute, oldValue);
+        this.setAttribute('is_staged', '');
+      }
+      // That's it.  No actual work will be done by setting an attribute.
+      return;
+    }
+
+    // Now the attribute == 'is_staged'
+    if (newValue != null) { // null is the indication that it was removed
+      // it just became staged, so nothing to do
+      return;
+    }
+
+    // OK. This is the real deal.  attribute == 'is_staged' and it has been removed.  I.E. a commitAttributes() happened.
+    this.removeOldAttributes();
+    this.commitedAttributeChangedCallback();
+  }
+
+  // A developer can choose to call this, or directly remove the is_staged attribute.
+  commitAttributes() {
+    this.removeAttribute('is_staged', null);
+  }
+
+  removeOldAttributes() {
+    let attributeNames = this.getAttributeNames();
+    for (let attribute of attributeNames) {
+      if (!attribute.match(/^old_/)) {
+        continue;
+      }
+      console.log(['removing attrijbute', attribute, this.getAttribute(attribute), this]);
+      this.getAttribute(attribute);
+      this.removeAttribute(attribute);
+    }
+  }
+
+  // This should real like a traditional attributeChangedCallback, but it knows all the attributes are valid and ready.
+  commitedAttributeChangedCallback() {
+    this.backupAttributesForId();
+
+    // The front
+    this.defineImage();
+    this.defineLabel();
+
+    // The back
+    this.defineFileButton();
+    this.defineTextInput();
+    this.defineShowLabel();
+  }
+
+  backupAttributesForId() {
+    // If this has an id, that is a signal to remember all the attributes for that id.
+    let id = this.getAttribute('id');
+    if (id) {  // JS boolean casting
+      let attributeNames = this.getAttributeNames();
+      for (let attribute of attributeNames) {
+        if (attribute.match(/^old_/)) {
+          continue;
+        }
+        set(`${id}.${attribute}`, this.getAttribute(attribute));
+      }
+    }
+  }
+
+  // If this has an id, then the attributes are only fallback values if we don't have any in storage
+  restoreAttributesForId() {
+    let defaultAttributeValues = {
+      'endpoint': 'unknown_endpoint',
+      'role': 'unknown_role',
+      'show_label': false,
+    }
+    let attributeNames = this.getAttributeNames();
+    for (let defaultAttribute in defaultAttributeValues) {
+      if (attributeNames.includes('id')) {
+        let value = get(`${this.attr('id')}.${defaultAttribute}`);
+        if (value != undefined) {
+          this.setAttribute(defaultAttribute, value);
+          continue;
+        }
+      }
+      if (!attributeNames.includes(defaultAttribute)) {
+        this.setAttribute(defaultAttribute, defaultAttributeValues[defaultAttribute]);
+      }
     }
   }
 
   // Should be in parent calss
   attr = function(attribute) {
-    return this.getAttribute(attribute);
+    return this.getAttribute(attribute) || undefined;
   }
 
   // TODO: Maybe use oldValue and reference counting to delete image storage
@@ -653,11 +744,6 @@ class Endpoint extends HTMLElement {
     fileButtonEl.classList.add('button');
     fileButtonEl.innerHTML = 'Choose an Image';  
   }
-
-  defineFileInput = function() {
-    let fileInputEl = this.prepareWard('file_input', 'input', this.$('.back'));
-    fileInputEl.setAttribute('type', 'file');
-  }
   
   defineTextInput = function() {
     let textInputEl = this.prepareWard('text_input', 'div', this.$('.back'));
@@ -688,9 +774,12 @@ class Endpoint extends HTMLElement {
 
     // Always call super first in constructor
     super();
+  }
+
+  connectedCallback() {
 
     // HACK to stop multiple constructor calls
-    this.addEventListener('click', selectOrChangeEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
+    this.addEventListener('click', changeEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
     this.addEventListener('contextmenu', flipCard);
     this.addEventListener('change', updateEndpointSrc);
 
@@ -698,35 +787,17 @@ class Endpoint extends HTMLElement {
       return;
     }
 
-   ////// TODO : **** use hierarchical selectors instead of prepended class names.
-
     // Build up the basic scaffolding of this Element
-    const cardEl = document.createElement('div');
-    this.appendChild(cardEl);
-    cardEl.classList.add('card');
-
-    const frontEl = document.createElement('div');
-    cardEl.appendChild(frontEl);
+    const cardEl = this.prepareWard('card', 'div', this);
+    const frontEl = this.prepareWard('front', 'div', cardEl);
     frontEl.classList.add('card_face');
-    frontEl.classList.add('front');
-
-    const backEl = document.createElement('div');
-    cardEl.appendChild(backEl);
+    const backEl = this.prepareWard('back', 'div', cardEl);
     backEl.classList.add('card_face');
-    backEl.classList.add('back');
+    const fileInputEl = this.prepareWard('file_input', 'input', backEl);
+    fileInputEl.setAttribute('type', 'file');
 
-    console.log(`Endpoint.constructor() ${this.attr('endpoint')}`)
-
-    // Populate the front
-    // Some work to do: At the moment, this will create and insert, and update per attributes
-    this.defineImage();
-    this.defineLabel();
-
-    // Populate the back
-    this.defineFileButton();
-    this.defineFileInput();
-    this.defineTextInput();
-    this.defineShowLabel();
+    this.restoreAttributesForId();
+    this.commitAttributes();
   }
 }
 
@@ -852,7 +923,7 @@ function getSortedEndpoints() {
   let endpoints_csv = window.localStorage.getItem("endpoints_csv");
   if (endpoints_csv) { // != null
     let endpoints_array = csv2array(endpoints_csv);
-    let email_re = getSetting("email_re");
+    let email_re = get("email_re");
     endpoints = getEndpointsForEmail(endpoints_array, email_re);
   }
 
@@ -1145,7 +1216,7 @@ function BuildPage() {
 function LoadSettings(ttl_s = 6*60*60) {
 
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF", ttl_s);
-  updateLocalStorageFromUrl("endpoints_csv", getSetting("published_endpoints_url"), ttl_s);
+  updateLocalStorageFromUrl("endpoints_csv", get("published_endpoints_url"), ttl_s);
   // TODO: Add a button in settings to refresh exchange rate and published endpoints.
 
   // TODO: Add the currency based on the locale timestamp and/or location.
@@ -1153,14 +1224,18 @@ function LoadSettings(ttl_s = 6*60*60) {
 
 function ApplySettings() {
   // Applying the settings at startup.  This is why a refresh is needed when settings change.
-  document.$("#static_header").classList.add(getSetting("keypad_location"));
-  document.body.style.backgroundColor = getSetting("background_color");
+  document.$("#static_header").classList.add(get('keypad_location'));
+  document.body.style.backgroundColor = get('background_color');
+  document.$("#username").setAttribute('endpoint', get('username.endpoint'));
+  // TODO: always "show" the label, but sometimes it's empty.
+  document.$("#username").setAttribute('show_label', 'true');
 }
 
 function AddEventListeners() {
   window.onscroll = noScroll;
   for (let element of document.$$('.y-scroller')) {
     element.addEventListener('scroll', ready);
+    element.addEventListener('click', selectEndpoint);
   }
 
   let input_elements = document.$$('input')

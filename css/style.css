@@ -123,6 +123,17 @@ body {
     border-radius: 3dvw;
   }
   
+sd-endpoint[role="username"] {
+  width: 50dvw;
+  height: 10dvw;
+}
+
+#username {
+  position: absolute;
+  left: 25dvw;
+  top: 1dvw;
+}
+
   #source_frame {
     left: 2.5dvw;
     bottom: 76.5dvw;

@@ -28,8 +28,8 @@ const defaults =
   "always_present_endpoints": "bank, credit_card, cash, person, store",
   "email_re": ".*",
   "keypad_location": "right",
-//  "background_image_shortname": "pinkdior",
-  "background_color": "#FFBBBB"
+  "background_color": "#FFBBBB",
+  "username": "Pick any Username",
 }
 
 function fillSettings() {
