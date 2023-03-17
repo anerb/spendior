@@ -77,6 +77,7 @@ function buildSendUrl() {
   body.currency = document.$("#currency").value;
   body.destination = getScrollerValue("destination");
   body.description = "DESCRIPTION";
+  body.username = document.$('#username').getAttribute('endpoint');
   
   let queryParameters = [];
   for (let key in body) {
@@ -93,6 +94,10 @@ function buildSendUrl() {
 }
 
 function ready() {
+  return;
+}
+
+function updateCurrencyConversion() {
 
   let currency = document.$("#currency").value;
   let amount = document.$("#amount").value;
@@ -1131,17 +1136,18 @@ function keyclick(e) {
 function keypadChanged(e) {
   let value = e.target.value;
   document.$('#amount').stringValue = value;
-  ready();
+  updateCurrencyConversion();
 }
 
+/*
 function currencykeyclick(e) {
   let currency_key_elements = document.$$('.currency_key')
   for (let currency_key_element of currency_key_elements) {
     currency_key_element.classList.remove('selected');
   }
   e.target.classList.add('selected');
-  ready();
 }
+*/
 
 function keydown(e) {
   document.getElementById('console-log').innerHTML += `${e.key}<br>`;
@@ -1243,13 +1249,15 @@ function AddEventListeners() {
     input_element.addEventListener('input', ready);
   }
 
+  /*
   let currency_key_elements = document.$$('.currency_key')
   for (let currency_key_element of currency_key_elements) {
     currency_key_element.addEventListener('click', currencykeyclick);
   }
+  */
 
-  let keypad = document.$('sd-keypad');
-  keypad.addEventListener('change', keypadChanged);
+  document.$('sd-keypad').addEventListener('change', keypadChanged);
+  document.$('#currency').addEventListener('change', updateCurrencyConversion);
 
   const state = document.visibilityState;
 
