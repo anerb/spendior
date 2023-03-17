@@ -148,9 +148,12 @@ body {
 
   sd-endpoint {
     font-family: 'Playfair Display', serif;
-    font-weight: 600;
-    -webkit-text-stroke: 1px;
-    -webkit-text-fill-color: white;
+    font-weight: 700;
+    -webkit-text-stroke: 0.15dvw white;
+    -webkit-text-fill-color: black;
+    line-height: 0.8;
+    text-align: center;
+    font-size: 8dvw;
   }
   
   sd-endpoint
@@ -165,7 +168,10 @@ body {
 
   sd-endpoint
   .label {
-    display: none;
+    position: absolute;
+    bottom: 2dvw;
+    left: 5%;
+    width: 90%;
   }
 
   sd-endpoint

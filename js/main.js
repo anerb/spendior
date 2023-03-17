@@ -142,13 +142,18 @@ function selectOrChangeEndpoint(e) {
     showPrompt(e);
     return;
   }
-  let card = e.target.closest('.card');
+  let endpointEl = e.target.closest('sd-endpoint');
+  let flippedEls = endpointEl.$$('.flipped');
+  if (flippedEls.length > 0) {
+    // HACKY way to find out if the card is flipped, so don't scroll.
+    return;
+  }
   let initial_bottom = e.target.getBoundingClientRect().bottom;
-  let parentElement = e.target.closest('.y-scroller');
-  let parent_bottom = parentElement.getBoundingClientRect().bottom;
+  let parentEl = e.target.closest('.y-scroller');
+  let parent_bottom = parentEl.getBoundingClientRect().bottom;
   let scroll_needed = initial_bottom - parent_bottom;
-  let initial_scroll = parentElement.scrollTop;
-  parentElement.scrollTo({ top: initial_scroll + scroll_needed, behavior: 'smooth' });
+  let initial_scroll = parentEl.scrollTop;
+  parentEl.scrollTo({ top: initial_scroll + scroll_needed, behavior: 'smooth' });
   ready();
 }
 
@@ -617,10 +622,12 @@ class Endpoint extends HTMLElement {
       }
     }
     if (chosenSrc == undefined) {
-      let chosenSrc = `../images/lineart/no_image.png`;
+      chosenSrc = `../images/lineart/no_image.png`;
       // This will trigger another attributeChangedCallback.  I'm not yet sure how to avoid loops.
-      this.setAttribute('show_lable', 'true');
+      this.setAttribute('show_label', 'true');
     }
+
+    console.log([endpoint, chosenSrc]);
 
     imgEl.setAttribute('src', chosenSrc);
     imgEl.setAttribute('alt', endpoint);
@@ -657,7 +664,8 @@ class Endpoint extends HTMLElement {
   }
 
   defineShowLabel = function() {
-    let showLabelEl = this.prepareWard('show_label', 'checkbok', this.$('back'));
+    let showLabelEl = this.prepareWard('show_label', 'input', this.$('.back'));
+    showLabelEl.setAttribute('type', 'checkbox');
     showLabelEl.checked = this.attr('show_label') == 'true';  // TODO: Case insensitive
   }
 
@@ -712,13 +720,11 @@ class Endpoint extends HTMLElement {
     this.defineImage();
     this.defineLabel();
 
-
     // Populate the back
     this.defineFileButton();
     this.defineFileInput();
     this.defineTextInput();
     this.defineShowLabel();
- 
   }
 }
 
