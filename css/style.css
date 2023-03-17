@@ -235,7 +235,7 @@ body {
   sd-endpoint
   .button {
     text-align: center;
-    font-size: 5dvw;
+    font-size: 4dvw;
     width: calc(100% - 4dvw - 5px);
     height:  6dvw;
     border-radius: 3dvw;

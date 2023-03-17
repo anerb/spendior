@@ -1,5 +1,13 @@
 'use strict';
 
+// COPY-PASTE. HACKY
+
+Element.prototype.$ = HTMLElement.prototype.querySelector;
+Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
+Document.prototype.$ = Document.prototype.querySelector;
+Document.prototype.$$ = Document.prototype.querySelectorAll;
+
+
 // copy-paste 
 // TODO: make a common.js work
 function snake_case2PascalCase(snake_case, delimiter = "") {
@@ -104,6 +112,16 @@ function BuildPage() {
   }
 }
 
+function resetStorage() {
+  window.localStorage.clear();
+  // After clearing, write back what is already in the settings screen.
+  updateSettings();
+}
+
+function AddEventListeners() {
+  document.$('reset_storage').addEventListener('click', 'resetStorage');
+}
+
 window.onload = function() {
   WebComponents();
   BuildPage();
@@ -111,4 +129,5 @@ window.onload = function() {
   // The first time the app is opened, this is neede to fill in with
   // the default values.
   updateSettings();
+  AddEventListeners();
 }
