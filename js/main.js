@@ -44,7 +44,7 @@ function getScrollerValue(id) {
   let id_selector = "#" + id;
   let scroller = document.$(id_selector);
   let parent_bottom = source.getBoundingClientRect().bottom;
-  let source_endpoints = document.$$(id_selector + " sd-endpoint");
+  let source_endpoints = document.$$(`${id_selector} sd-endpoint`);
   let min_diff = 999999999;  // ARBITRARY
   let value = undefined;
   for (let c of source_endpoints) {
@@ -52,7 +52,7 @@ function getScrollerValue(id) {
     let diff = Math.abs(parent_bottom - child_bottom);
     if (diff < min_diff && diff < 100) {  // ARBITRARY
       min_diff = diff;
-      value = c.getAttribute("endpoint");
+      value = c.attr('endpoint');
     }
   }
   return value;
@@ -77,7 +77,7 @@ function buildSendUrl() {
   body.currency = document.$("#currency").value;
   body.destination = getScrollerValue("destination");
   body.description = "DESCRIPTION";
-  body.username = document.$('#username').getAttribute('endpoint');
+  body.username = document.$('#username').attr('endpoint');
   
   let queryParameters = [];
   for (let key in body) {
@@ -189,10 +189,9 @@ function updateEndpointSrc(e) {
   if (e.target !== expectedTargetEl) {
     return;
   }
-  let sdEndpoint = e.target.closest('sd-endpoint');
-  let endpoint = sdEndpoint.getAttribute('endpoint');
-  let card = sdEndpoint.$('.card');
-  let img = sdEndpoint.$("img");  //  TODO:change to a class
+  let endpoint = endpointEl.attr('endpoint');
+  let card = endpointEl.$('.card');
+  let img = endpointEl.$("img");  //  TODO:change to a class
   const reader = new FileReader();
 
   let file = e.target.files[0];
@@ -565,9 +564,15 @@ class Keypad extends HTMLElement {
 *********/
 
 function endpointNamePrompt(e) {
-  let role = e.target.getAttribute('role');
-  let endpoint = e.target.getAttribute('endpoint');
+  let role = e.target.attr('role');
+  let endpoint = e.target.attr('endpoint');
+  if (navigator.virtualKeyboard) {  // Can't rely on this since Firefox/Safari don't have it.
+    navigator.virtualKeyboard.show();
+  }
   let name = window.prompt(`Choose a name for this ${role}:`, endpoint);
+  if (navigator.virtualKeyboard) {
+    navigator.virtualKeyboard.hide();
+  }
   if (name) {
     e.target.setAttribute('endpoint', name);
   }
@@ -578,7 +583,7 @@ function endpointNamePrompt(e) {
 class Endpoint extends HTMLElement {
 
   static get observedAttributes() {
-    return ['endpoint', 'role', 'id', 'show_label', 'is_staged'];
+    return ['endpoint', 'role', 'id', 'is_label_shown', 'is_staged'];
   }
   attributeChangedCallback(attribute, oldValue, newValue) {
     // IDEA: this can compare normalized values in case capitalization, etc. doesn't matter
@@ -664,7 +669,7 @@ class Endpoint extends HTMLElement {
     let defaultAttributeValues = {
       'endpoint': 'unknown_endpoint',
       'role': 'unknown_role',
-      'show_label': false,
+      'is_label_shown': false,
     }
     let attributeNames = this.getAttributeNames();
     for (let defaultAttribute in defaultAttributeValues) {
@@ -681,9 +686,37 @@ class Endpoint extends HTMLElement {
     }
   }
 
-  // Should be in parent calss
+  // TODO: Should be in parent class
+  /*
+   * Returns a string, boolean, or undefined
+   * for is_* attributes, a boolean is returned.
+   */
   attr = function(attribute) {
-    return this.getAttribute(attribute) || undefined;
+    let value = this.getAttribute(attribute) || undefined;
+
+    if (!attribute.match(/^is_/)) {
+      return value;
+    }
+
+    // Treat it as boolean
+
+    // Even for is_* attributes, we want to return undefined to indicate it's not there.
+    if (value === undefined) {
+      return value;
+    }
+    
+    // handle as string
+    if (typeof value == typeof '') {
+      value = value.toLowerCase().trim();
+      let falseyStrings = ['undefined', 'null', '', 'false', 'f', 'no', 'n', '0'];
+      if (falseyStrings.includes(value)) {
+        return false;
+      }
+      return true;
+    }
+
+    // handle as anything else
+    return !!value
   }
 
   // TODO: Maybe use oldValue and reference counting to delete image storage
@@ -722,7 +755,7 @@ class Endpoint extends HTMLElement {
     if (chosenSrc == undefined) {
       chosenSrc = `../images/lineart/no_image.png`;
       // This will trigger another attributeChangedCallback.  I'm not yet sure how to avoid loops.
-      this.setAttribute('show_label', 'true');
+      this.setAttribute('is_label_shown', 'true');
     }
 
     console.log([endpoint, chosenSrc]);
@@ -734,7 +767,7 @@ class Endpoint extends HTMLElement {
 
   defineLabel = function() {
     const labelEl = this.prepareWard('label', 'div', this.$('.front'));
-    if (!this.attr('show_label')) {
+    if (!this.attr('is_label_shown')) {
       labelEl.classList.add('display_none');
     } else {
       labelEl.classList.remove('display_none');
@@ -757,9 +790,9 @@ class Endpoint extends HTMLElement {
   }
 
   defineShowLabel = function() {
-    let showLabelEl = this.prepareWard('show_label', 'input', this.$('.back'));
+    let showLabelEl = this.prepareWard('is_label_shown', 'input', this.$('.back'));
     showLabelEl.setAttribute('type', 'checkbox');
-    showLabelEl.checked = this.attr('show_label') == 'true';  // TODO: Case insensitive
+    showLabelEl.checked = this.attr('is_label_shown') == 'true';  // TODO: Case insensitive
   }
 
   // TODO: figure out the name for this pattern of "retreive or create".
@@ -802,6 +835,10 @@ class Endpoint extends HTMLElement {
     fileInputEl.setAttribute('type', 'file');
 
     this.restoreAttributesForId();
+    this.commitAttributes();
+    // This is needed because defineImage is abusing the use of is_label_shown by setting it.
+    // It's an antipattern for the define* functions to set attributes.
+    // The correct way is to use a canvas to give the image a "no_image with label" rather than trying to reuse the label for another purpose.
     this.commitAttributes();
   }
 }
@@ -937,20 +974,19 @@ function getSortedEndpoints() {
   return ñendpoints;
 }
 
-// TODO create element and use appendChild instead of HTML manipulation.
-
-function appendEndpointFiller(parent, role) {
-  let html = `<sd-endpoint class="slot filler" endpoint="filler" role="source"></sd-endpoint>`;
-  parent.innerHTML += html;
-}
-
 function appendEndpoint(parent, endpoint, role) {
   // TODO: check against a less permissive regexp
   if (endpoint == "") {
     return;
   }
-  let html = `<sd-endpoint class="slot" endpoint="${endpoint}" role="source"></sd-endpoint>`;
-  parent.innerHTML += html;
+  let endpointEl = document.createElement('sd-endpoint');
+  endpointEl.setAttribute('endpoint', endpoint);
+  endpointEl.setAttribute('role', role);
+  parent.appendChild(endpointEl);
+}
+
+function appendEndpointFiller(parent, role) {
+  appendEndpoint(parent, 'filler', role);
 }
 
 /*
@@ -997,36 +1033,6 @@ function modifySortedEndpoints(endpoints) {
   let ñdestinations = augmentSortedEndpoints(endpoints.destinations, alwaysEndpoints, !IS_SOURCE);
   let ñendpoints = {sources: ñsources, destinations: ñdestinations};
   return ñendpoints;
-}
-
-function tbody2imageMapping(tbody) {
-  let images = tbody.$$("img");
-  let image_mapping = {};
-  for (let image of images) {
-    image_mapping[image.title] = image.src;
-  }
-  return image_mapping;
-}
-
-// ignore rowspan
-// handle colspan
-// HACK: assumes rectangular table
-function tbody2array(tbody) {
-  let arr = [];
-  let trs = tbody.$$("tr");
-  for (let tr of trs) {
-    let row = [];
-    let tds = tr.$$("td");
-    for (let td of tds) {
-      let value = td.innerHTML;
-      let colspan = td.getAttribute('colspan') || 1;
-      for (let i = 0; i < colspan; i++) {
-        row.push(value);
-      }
-    }
-    arr.push(row);
-  }
-  return arr;
 }
 
 // FRAGILE: Based on the specific way Google Sheets published to the web.
@@ -1234,7 +1240,7 @@ function ApplySettings() {
   document.body.style.backgroundColor = get('background_color');
   document.$("#username").setAttribute('endpoint', get('username.endpoint'));
   // TODO: always "show" the label, but sometimes it's empty.
-  document.$("#username").setAttribute('show_label', 'true');
+  document.$("#username").setAttribute('is_label_shown', 'true');
 }
 
 function AddEventListeners() {

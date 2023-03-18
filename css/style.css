@@ -99,7 +99,8 @@ body {
     scroll-snap-type: y mandatory;
   }
   
-  .slot {
+  .y-scroller
+  sd-endpoint {
     user-select: none;
     position: relative;
     scroll-snap-align: center;
@@ -311,7 +312,7 @@ form {
   display: inline;
 }
 
-.filler {
+sd-endpoint[endpoint="filler"] {
   opacity: 0.0;
 }
 
