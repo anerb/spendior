@@ -30,6 +30,10 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
   return PascalCaseTokens.join(delimiter);
 }
 
+function goToSettings() {
+  window.open('./settings.html');
+}
+
 /*
  * Compares two endpoints, removing space, dash, underscore.
  * Does case-insensitive comparison.
@@ -1238,9 +1242,7 @@ function ApplySettings() {
   // Applying the settings at startup.  This is why a refresh is needed when settings change.
   document.$("#static_header").classList.add(get('keypad_location'));
   document.body.style.backgroundColor = get('background_color');
-  document.$("#username").setAttribute('endpoint', get('username.endpoint'));
-  // TODO: always "show" the label, but sometimes it's empty.
-  document.$("#username").setAttribute('is_label_shown', 'true');
+  document.$("#username").innerHTML = get('username') || "pick a username";
 }
 
 function AddEventListeners() {
@@ -1255,12 +1257,11 @@ function AddEventListeners() {
     input_element.addEventListener('input', ready);
   }
 
-  /*
-  let currency_key_elements = document.$$('.currency_key')
-  for (let currency_key_element of currency_key_elements) {
-    currency_key_element.addEventListener('click', currencykeyclick);
+  document.$('#gear').addEventListener('click', goToSettings);
+
+  if (get('username') == undefined) {
+    document.$('#username').addEventListener('click', goToSettings);
   }
-  */
 
   document.$('sd-keypad').addEventListener('change', keypadChanged);
   document.$('#currency').addEventListener('change', updateCurrencyConversion);

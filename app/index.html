@@ -17,7 +17,7 @@
 </head>
 <body class="fullscreen">
   <div id="gear" class="gear"><a href="./settings.html">⚙</a></div>
-  <sd-endpoint id="username" endpoint="username" role="username"></sd-endpoint>
+  <div id="username" class="username">Pick a username</div>
   <div id="static_header" class="static_header" >
     <div class="static_header top_only" ></div>
     <div id="source_frame" class="frame"></div>
@@ -30,7 +30,7 @@
       <span id="amount" class="amount" class="amount_clear">0.00</span>  
       -->
       <sd-price-display id="amount"></sd-price-display>
-      <select id="currency" name="currency" onchange="ready()">
+      <select id="currency" name="currency">
         <option value="CHF" selected>🇨🇭Fr.</option>
         <option value="USD">🇺🇸$</option>
         <option value="EUR">🇪🇺€</option>
