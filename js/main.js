@@ -34,6 +34,22 @@ function goToSettings() {
   window.open('./settings.html');
 }
 
+function generateTextImageDataUrl(text) {
+  let canvas = document.createElement('canvas');
+  let ctx = canvas.getContext('2d');
+  ctx.font = "48px serif";
+  let textWidth = ctx.measureText(text).width;
+  canvas.height = 48;
+  canvas.width = textWidth;
+
+  ctx = canvas.getContext('2d');
+  ctx.font = "48px serif";
+  ctx.fillText(text, 0, 48);
+  let dataURL = canvas.toDataURL();
+  return dataURL;
+}
+
+
 /*
  * Compares two endpoints, removing space, dash, underscore.
  * Does case-insensitive comparison.
@@ -144,6 +160,7 @@ function showPrompt(e) {
   }
   // This should trigger the right changes on attribute update.
   endpointEl.setAttribute('endpoint', newValue);
+  endpointEl.commitAttributes();
 
   // since taking this action is a final setting mod, flip back
   endpointEl.$('.card').classList.remove('flipped');
@@ -757,9 +774,7 @@ class Endpoint extends HTMLElement {
       }
     }
     if (chosenSrc == undefined) {
-      chosenSrc = `../images/lineart/no_image.png`;
-      // This will trigger another attributeChangedCallback.  I'm not yet sure how to avoid loops.
-      this.setAttribute('is_label_shown', 'true');
+      chosenSrc = generateTextImageDataUrl(endpoint);
     }
 
     console.log([endpoint, chosenSrc]);
