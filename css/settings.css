@@ -1,3 +1,9 @@
+#settings {
+  position: absolute;
+  top: 10dvw;
+  left: 0dvw;
+}
+
 .settings {
   background: white;
   font-size: 4dvw;
@@ -18,12 +24,23 @@
   position: absolute;
 }
 
+#reset_storage {
+  position:absolute;
+  left: 1dvw;
+  top: 1dvw
+}
+
+#done {
+  position: absolute;
+  left: 44dvw;
+  top: 1dvw;
+}
 
 /* TODO: COPY-PASTEd, so find a way to share. */
 .button {
   text-align: center;
   font-size: 4dvw;
-  width: calc(100% - 4dvw - 5px);
+  width: 40dvw;
   height:  6dvw;
   border-radius: 3dvw;
   border:  2px solid black;

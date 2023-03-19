@@ -22,6 +22,7 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
 // Using a global object, but others shouldn't use it.
 const defaults = 
 {
+  "username": "Pick any Username",
   "server_url": "https://script.google.com/macros/s/AKfycbyJkMt-FRy2Xo8kXyqzl024XejKBAMW0AJhvHgHBlgRLwUp3RbdJIFn9fgivYhvEraO/exec",
   "sheet_name": "data",
   "published_endpoints_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRMs9eegLp0nXmdSbFMKKVREhYVt6O0jBKPauV5bIvMLMIJkj65XjwkXi1WxvyqCk8DWiWBJB8Fi7_/pub?gid=1056089378&single=true&output=csv",
@@ -29,7 +30,6 @@ const defaults =
   "email_re": ".*",
   "keypad_location": "right",
   "background_color": "#FFBBBB",
-  "username": "Pick any Username",
 }
 
 function fillSettings() {
@@ -119,8 +119,13 @@ function resetStorage() {
   updateSettings();
 }
 
+function done() {
+  window.location.assign('./index.html');
+}
+
 function AddEventListeners() {
   document.$('#reset_storage').addEventListener('click', resetStorage);
+  document.$('#done').addEventListener('click', done);
 }
 
 window.onload = function() {

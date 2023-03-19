@@ -10,11 +10,13 @@
 
 
 html {
-  height: 50dvh;
+/*  height: 100dvh;*/
+  overscroll-behavior: contain;
 }
 
 body {
-    font-size:12dvw;
+/*    font-size:12dvw;*/
+    overscroll-behavior: contain;
   }
   
   .fullscreen {
@@ -135,6 +137,7 @@ body {
   position: absolute;
   left: -46dvw;
   top: 16dvw;
+  z-index: 999;
 }
 
   #source_frame {
@@ -326,8 +329,8 @@ sd-endpoint[endpoint="filler"] {
 
 #sendnow {
   position: absolute;
-  top: 26dvw;
-  right: 1dvw;
+  top: 25dvw;
+  right: 3dvw;
 }
 
 a {
@@ -339,7 +342,7 @@ a {
   position: absolute;
   left: -39dvw;
   width: 88dvw;
-  top: 77dvw;
+  top: 70dvw;
   font-size: 7dvw;
   transform: rotateZ(-90deg);
 }
@@ -354,6 +357,7 @@ a {
   position: absolute;
   top: 1dvw;
   left: 1dvw;
+  z-index: 9999;
 }
 
 /* A Hack where I reuse the human values of left and right directly from the input */
