@@ -127,16 +127,18 @@ body {
   }
   
 .username {
-  width: 102dvw;
+  width: 90dvw;
   height: 10dvw;
   transform: rotateZ(-90deg);
+  transform-origin: right;
   font-size: 7dvw;
+  text-align: end;
 }
 
 #username {
   position: absolute;
-  left: -46dvw;
-  top: 16dvw;
+  left: -85dvw;
+  top: 7dvw;
   z-index: 999;
 }
 

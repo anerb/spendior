@@ -38,13 +38,13 @@ function generateTextImageDataUrl(text) {
   let canvas = document.createElement('canvas');
   let ctx = canvas.getContext('2d');
   ctx.font = "48px serif";
-  let textWidth = ctx.measureText(text).width;
+  let textMeasure = ctx.measureText(text);
+  canvas.width = textMeasure.actualBoundingBoxRight - textMeasure.actualBoundingBoxLeft;
   canvas.height = 48;
-  canvas.width = textWidth;
 
   ctx = canvas.getContext('2d');
   ctx.font = "48px serif";
-  ctx.fillText(text, 0, 48);
+  ctx.fillText(text, -textMeasure.actualBoundingBoxLeft, textMeasure.actualBoundingBoxAscent);
   let dataURL = canvas.toDataURL();
   return dataURL;
 }
@@ -168,18 +168,18 @@ function showPrompt(e) {
 
 // SUPER HACKY: need to better handle the different possible targets for click events.
 function selectEndpoint(e) {
-  let endpointEl = e.target.closest('sd-endpoint');
-  let flippedEls = endpointEl.$$('.flipped');
-  if (flippedEls.length > 0) {
-    // HACKY way to find out if the card is flipped, so don't scroll.
+  let cardFaceEl = e.target.closest('.card_face');
+  if (!cardFaceEl.classList.contains('front')) {
+    // We really only want to handle clicks on the front.
     return;
   }
+  let endpointEl = e.target.closest('sd-endpoint');
   let initial_bottom = e.target.getBoundingClientRect().bottom;
-  let parentEl = e.target.closest('.y-scroller');
-  let parent_bottom = parentEl.getBoundingClientRect().bottom;
-  let scroll_needed = initial_bottom - parent_bottom;
-  let initial_scroll = parentEl.scrollTop;
-  parentEl.scrollTo({ top: initial_scroll + scroll_needed, behavior: 'smooth' });
+  let scrollerEl = e.target.closest('.y-scroller');
+  let scroller_bottom = scrollerEl.getBoundingClientRect().bottom;
+  let scroll_needed = initial_bottom - scroller_bottom;
+  let initial_scroll = scrollerEl.scrollTop;
+  scrollerEl.scrollTo({ top: initial_scroll + scroll_needed, behavior: 'smooth' });
   ready();
 }
 
@@ -198,10 +198,12 @@ function scrollEndpointsToBottom() {
   destination.scrollTo({top: destination.scrollHeight, behavior: 'smooth' });
 }
 
+/* DELETE?
 function chooseImageFile(e) {
   e.preventDefault();
   e.target.parentElement.$("input").click();
 }
+*/
 
 function updateEndpointSrc(e) {
   let endpointEl = e.target.closest('sd-endpoint');
@@ -752,6 +754,7 @@ class Endpoint extends HTMLElement {
       other_source: `other_source`,
       person: `person`,
       store: `store`,
+      filler: `FILLER`,
     };
 
     let endpoint = this.attr('endpoint');
