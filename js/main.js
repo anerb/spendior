@@ -1,5 +1,6 @@
 'use strict';
 
+const version=2023;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -606,7 +607,7 @@ function endpointNamePrompt(e) {
 class Endpoint extends HTMLElement {
 
   static get observedAttributes() {
-    return ['endpoint', 'role', 'id', 'is_label_shown', 'is_staged'];
+    return ['endpoint', 'role', 'id', 'is_staged'];
   }
   attributeChangedCallback(attribute, oldValue, newValue) {
     // IDEA: this can compare normalized values in case capitalization, etc. doesn't matter
@@ -665,12 +666,10 @@ class Endpoint extends HTMLElement {
 
     // The front
     this.defineImage();
-    this.defineLabel();
 
     // The back
     this.defineFileButton();
     this.defineTextInput();
-    this.defineShowLabel();
   }
 
   backupAttributesForId() {
@@ -692,7 +691,6 @@ class Endpoint extends HTMLElement {
     let defaultAttributeValues = {
       'endpoint': 'unknown_endpoint',
       'role': 'unknown_role',
-      'is_label_shown': false,
     }
     let attributeNames = this.getAttributeNames();
     for (let defaultAttribute in defaultAttributeValues) {
@@ -787,34 +785,19 @@ class Endpoint extends HTMLElement {
     imgEl.setAttribute('title', this.attr('title'))
   }
 
-  defineLabel = function() {
-    const labelEl = this.prepareWard('label', 'div', this.$('.front'));
-    if (!this.attr('is_label_shown')) {
-      labelEl.classList.add('display_none');
-    } else {
-      labelEl.classList.remove('display_none');
-    }
-
-    let title = snake_case2PascalCase(this.attr('endpoint'));
-    labelEl.innerHTML = title;
-  }
-
   defineFileButton = function() {
     let fileButtonEl = this.prepareWard('file_button', 'div', this.$('.back'));
     fileButtonEl.classList.add('button');
     fileButtonEl.innerHTML = 'Choose an Image';  
+
+    let fileInputEl = this.prepareWard('file_input', 'input', fileButtonEl);
+    fileInputEl.setAttribute('type', 'file');
   }
   
   defineTextInput = function() {
     let textInputEl = this.prepareWard('text_input', 'div', this.$('.back'));
     textInputEl.classList.add('button');
     textInputEl.innerHTML = this.attr('endpoint');
-  }
-
-  defineShowLabel = function() {
-    let showLabelEl = this.prepareWard('is_label_shown', 'input', this.$('.back'));
-    showLabelEl.setAttribute('type', 'checkbox');
-    showLabelEl.checked = this.attr('is_label_shown') == 'true';  // TODO: Case insensitive
   }
 
   // TODO: figure out the name for this pattern of "retreive or create".
@@ -853,14 +836,8 @@ class Endpoint extends HTMLElement {
     frontEl.classList.add('card_face');
     const backEl = this.prepareWard('back', 'div', cardEl);
     backEl.classList.add('card_face');
-    const fileInputEl = this.prepareWard('file_input', 'input', backEl);
-    fileInputEl.setAttribute('type', 'file');
 
     this.restoreAttributesForId();
-    this.commitAttributes();
-    // This is needed because defineImage is abusing the use of is_label_shown by setting it.
-    // It's an antipattern for the define* functions to set attributes.
-    // The correct way is to use a canvas to give the image a "no_image with label" rather than trying to reuse the label for another purpose.
     this.commitAttributes();
   }
 }
@@ -881,7 +858,6 @@ function increment(obj, key, amount) {
   }
   obj[key] += amount;
 }
-
 
 /*
  * An Inventory is an object with sortable keys and sortable values
@@ -919,7 +895,6 @@ function cleanupInventory(inventory) {
     }
   }
 }
-
 
 //New convention, name objects with ĩ to indicate they are an Inventory.
 

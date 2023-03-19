@@ -185,14 +185,6 @@ body {
   }
 
   sd-endpoint
-  .label {
-    position: absolute;
-    bottom: 2dvw;
-    left: 5%;
-    width: 90%;
-  }
-
-  sd-endpoint
   .text_input
   {
     position: absolute;
@@ -212,13 +204,6 @@ body {
     font-size: 3dvw;
   }
 
-  sd-endpoint
-  .show_label {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  
   sd-endpoint
   .card {
     position: absolute;
