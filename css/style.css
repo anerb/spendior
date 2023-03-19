@@ -99,7 +99,6 @@ body {
     height: calc(24dvw * 5);  /*has to be odd for some reason*/
     flex-flow: column nowrap;
     scroll-snap-type: y mandatory;
-    overscroll-behavior: default;
   }
   
   .y-scroller
