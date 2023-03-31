@@ -155,7 +155,14 @@ function updateDestination() {
 // TODO: encapsulate this in the Endpoint class and name it better.
 function showPrompt(e) {
   let endpointEl = e.target.closest("sd-endpoint");
+  // if (navigator.virtualKeyboard) {  // Can't rely on this since Firefox/Safari don't have it.    
+  //   navigator.virtualKeyboard.show();
+  // }
   let newValue = window.prompt('Choose an endpoint:', endpointEl.attr('endpoint'));
+  // if (navigator.virtualKeyboard) {  // Can't rely on this since Firefox/Safari don't have it.    
+  //   navigator.virtualKeyboard.hide();
+  // }
+
   if (!newValue) {  // all manner of degenerate endpoint values.
     return;
   }
@@ -199,12 +206,6 @@ function scrollEndpointsToBottom() {
   destination.scrollTo({top: destination.scrollHeight, behavior: 'smooth' });
 }
 
-/* DELETE?
-function chooseImageFile(e) {
-  e.preventDefault();
-  e.target.parentElement.$("input").click();
-}
-*/
 
 function updateEndpointSrc(e) {
   let endpointEl = e.target.closest('sd-endpoint');
@@ -587,65 +588,98 @@ class Keypad extends HTMLElement {
    7 8 9 
 *********/
 
-function endpointNamePrompt(e) {
-  let role = e.target.attr('role');
-  let endpoint = e.target.attr('endpoint');
-  if (navigator.virtualKeyboard) {  // Can't rely on this since Firefox/Safari don't have it.
-    navigator.virtualKeyboard.show();
-  }
-  let name = window.prompt(`Choose a name for this ${role}:`, endpoint);
-  if (navigator.virtualKeyboard) {
-    navigator.virtualKeyboard.hide();
-  }
-  if (name) {
-    e.target.setAttribute('endpoint', name);
-  }
-}
+  // TODO: figure out the name for this pattern of "retreive or create".
 
-
-// TODO: Maybe I can get rid of img_src and only store the b64 on img.src.
-class Endpoint extends HTMLElement {
-
+class StagedAttributes extends HTMLElement {
   static get observedAttributes() {
-    return ['endpoint', 'role', 'id', 'is_staged'];
+    return ['is_staged', 'id'];
   }
+
+  // The constructor is called before the Element is attached to the DOM
+  constructor() {
+    // Always call super first in constructor
+    super();
+  }
+
+  addAllListeners() {}
+
+  connectedCallback() {
+    if (!this.isConnected) {
+      return;
+    }
+    this.addAllListeners();
+ 
+    // HACK to stop multiple constructor calls
+    if (this.children.length > 0) {
+      return;
+    }
+
+    this.restoreAttributesForId();
+    this.commitAttributes();
+  }
+
+  prepareWard = function(wardName, tag, parentEl) {
+    let wardEl = this.$(`.${wardName}`) || undefined;
+    if (wardEl === undefined) {
+      console.log(`prepareWard creating ${tag}`);
+      wardEl = document.createElement(tag);
+      wardEl.setAttribute('class', wardName);    
+      parentEl.appendChild(wardEl);
+    }
+    return wardEl;
+  }
+  
+  /*
+   * I'm taking over this to introduce the idea of staged attributes and committing.
+   */
   attributeChangedCallback(attribute, oldValue, newValue) {
     // IDEA: this can compare normalized values in case capitalization, etc. doesn't matter
     if (oldValue == newValue) {
       return;
     }
 
-    if (attribute != 'is_staged') {
-      let oldAttribute = `old_${attribute}`; 
-      if (this.getAttributeNames().includes(oldAttribute)) {
-        // ignore this intermediate 'oldValue', and keep the one that was last true when the attributes were commited.
-        // This looses some information, but if there are only going to be two attribtues:
-        //   - the real/actual/current
-        //   - the old
-        //  , then it's better for the old to represent what is on-screen as a result of the most recent commit.
-      } else {
-        console.log(['setting attrijbute', oldAttribute, oldValue, this]);
-        this.setAttribute(oldAttribute, oldValue);
-        this.setAttribute('is_staged', '');
-      }
-      // That's it.  No actual work will be done by setting an attribute.
+    // if is_staged was removed (meaning that a commit occured)
+    if ((attribute == 'is_staged') && (newValue == null)) {
+      // OK. This is the real deal.  attribute == 'is_staged' and it has been removed.  I.E. a commitAttributes() happened.
+      this.removeOldAttributes();
+      this.committedAttributesChangedCallback();
       return;
     }
 
-    // Now the attribute == 'is_staged'
-    if (newValue != null) { // null is the indication that it was removed
-      // it just became staged, so nothing to do
+    if (attribute == 'is_staged') {
+      return; // ignore the introduction of the is_staged attribute.
+    }
+
+    if (attribute.match(/^old_.*$/)) {
+      console.error(`Should not happen because old_ attributes are not registered (${attribute}).`)
       return;
     }
 
-    // OK. This is the real deal.  attribute == 'is_staged' and it has been removed.  I.E. a commitAttributes() happened.
-    this.removeOldAttributes();
-    this.commitedAttributeChangedCallback();
+    let oldAttribute = `old_${attribute}`; 
+    if (this.getAttributeNames().includes(oldAttribute)) {
+      // ignore this intermediate 'oldValue', and keep the one that was last true when the attributes were commited.
+      // This looses some information, but if there are only going to be two attribtues:
+      //   - the real/actual/current
+      //   - the old
+      //  , then it's better for the old to represent what is on-screen as a result of the most recent commit.
+    } else {
+      console.log(['setting attribute', oldAttribute, oldValue, this]);
+      this.setAttribute(oldAttribute, oldValue);
+      this.setAttribute('is_staged', '');
+    }
+    // That's it.  No actual work will be done by setting an attribute.
+    return;
   }
 
   // A developer can choose to call this, or directly remove the is_staged attribute.
   commitAttributes() {
-    this.removeAttribute('is_staged', null);
+    if (!this.isConnected) {
+      // When the element is connected, that also trigges a commitAttributes(),
+      // so this call to commitAttributes() will be attempted again at the right time.
+      return;
+    }
+    // This triggers the actual updates to the element based on the attributes.
+    this.removeAttribute('is_staged');
   }
 
   removeOldAttributes() {
@@ -658,60 +692,17 @@ class Endpoint extends HTMLElement {
       this.getAttribute(attribute);
       this.removeAttribute(attribute);
     }
-  }
+  }  
 
-  // This should real like a traditional attributeChangedCallback, but it knows all the attributes are valid and ready.
-  commitedAttributeChangedCallback() {
+  committedAttributesChangedCallback() {
     this.backupAttributesForId();
-
-    // The front
-    this.defineImage();
-
-    // The back
-    this.defineFileButton();
-    this.defineTextInput();
   }
 
-  backupAttributesForId() {
-    // If this has an id, that is a signal to remember all the attributes for that id.
-    let id = this.getAttribute('id');
-    if (id) {  // JS boolean casting
-      let attributeNames = this.getAttributeNames();
-      for (let attribute of attributeNames) {
-        if (attribute.match(/^old_/)) {
-          continue;
-        }
-        set(`${id}.${attribute}`, this.getAttribute(attribute));
-      }
-    }
-  }
-
-  // If this has an id, then the attributes are only fallback values if we don't have any in storage
-  restoreAttributesForId() {
-    let defaultAttributeValues = {
-      'endpoint': 'unknown_endpoint',
-      'role': 'unknown_role',
-    }
-    let attributeNames = this.getAttributeNames();
-    for (let defaultAttribute in defaultAttributeValues) {
-      if (attributeNames.includes('id')) {
-        let value = get(`${this.attr('id')}.${defaultAttribute}`);
-        if (value != undefined) {
-          this.setAttribute(defaultAttribute, value);
-          continue;
-        }
-      }
-      if (!attributeNames.includes(defaultAttribute)) {
-        this.setAttribute(defaultAttribute, defaultAttributeValues[defaultAttribute]);
-      }
-    }
-  }
-
-  // TODO: Should be in parent class
   /*
    * Returns a string, boolean, or undefined
    * for is_* attributes, a boolean is returned.
    */
+  // TODO: figure out what the value is when attribute is present but not set to anything.
   attr = function(attribute) {
     let value = this.getAttribute(attribute) || undefined;
 
@@ -740,6 +731,113 @@ class Endpoint extends HTMLElement {
     return !!value
   }
 
+  // Returns all the attributes that aren't part of the stage/commit cycle.
+  // I wonder if I should actually return the old values since those are what is active.
+  // If so, I need to be careful to still return the regular attributes for those that don't participate in staging (e.g. class)
+  // Also, maybe they should be now_attributes not old_attributes.
+  getAttributes() {
+    let attributes = {};
+    let attributeNames = this.getAttributeNames();
+    for (let attribute of attributeNames) {
+      if (attribute.match(/^old_/)) {
+        continue;
+      }
+      if (attribute == 'is_staged') {
+        continue;
+      }
+      attributes[attribute] = this.attr(attribute);
+    }
+    return attributes;
+  }
+
+  backupAttributesForId() {
+    // If this has an id, that is a signal to remember all the attributes for that id.
+    let id = this.attr('id');
+    if (id != undefined) {
+      let attributes = this.getAttributes();
+      set(`${id}.attributes`, attributes);
+    }
+  }
+
+  // If this has an id, then the attributes are only fallback values if we don't have any in storage
+  restoreAttributesForId() {
+    if (!this.hasAttribute('id')) {
+      return;
+    }
+    let attributes = this.defaultAttributes();
+    let storedAttributes = get(`${this.getAttribute('id')}.attributes`);
+    if (storedAttributes != undefined) {
+      attributes = {
+        ...this.defaultAttributes(),
+        ...storedAttributes,
+      }
+    }
+
+    for (let attribute in attributes) {
+      this.setAttribute(attribute, attributes[attribute]);
+    }
+    this.commitAttributes();
+  }
+
+  defaultAttributes() {
+    return {
+      'is_staged': false,
+      'id' : undefined,
+    }
+  }
+
+}  // class StagedAttributes
+
+class EndpointSettings extends HTMLElement {
+
+}
+
+
+// TODO: Maybe I can get rid of img_src and only store the b64 on img.src.
+class Endpoint extends StagedAttributes {
+  constructor() {
+    // Always call super first in constructor
+    super();
+  }
+  defaultAttributes() {
+    let superDefaultAttributes = super.defaultAttributes();
+    let defaults = {
+      ...superDefaultAttributes,
+      'endpoint': 'unknown_endpoint',
+      'role': 'unknown_role',
+    }
+    return defaults;
+  }
+
+  static get observedAttributes() {
+    return [...StagedAttributes.observedAttributes, 'endpoint', 'role'];
+  }
+
+  // This should real like a traditional attributeChangedCallback, but it knows all the attributes are valid and ready.
+  committedAttributesChangedCallback() {
+    super.committedAttributesChangedCallback();
+
+    // The scaffolding
+    this.defineScaffolding()
+
+    // The front
+    this.defineImage();
+
+    // The back
+    this.defineFileButton();
+    this.defineTextInput();
+  }
+
+  addAllListeners() {
+    // TODO: decide if I want to prevent.default for all "internal" events.
+    // Q: Does shadow dom/light dom do this?
+    this.addEventListener('click', changeEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
+    this.addEventListener('contextmenu', flipCard);
+    this.addEventListener('change', updateEndpointSrc);
+  }
+
+  // The defineX functions have to be idempotent.
+  // Basing them on prepareWard helps that effort.
   // TODO: Maybe use oldValue and reference counting to delete image storage
   defineImage = function() {
     // TODO: make knownImages more dynamic, and a function of "theme" (when eventually there is a theme).
@@ -800,47 +898,15 @@ class Endpoint extends HTMLElement {
     textInputEl.innerHTML = this.attr('endpoint');
   }
 
-  // TODO: figure out the name for this pattern of "retreive or create".
-  prepareWard = function(wardName, tag, parentEl) {
-    let wardEl = this.$(`.${wardName}`) || undefined;
-    if (wardEl === undefined) {
-      console.log(`prepareWard creating ${tag}`);
-      wardEl = document.createElement(tag);
-      wardEl.setAttribute('class', wardName);    
-      parentEl.appendChild(wardEl);
-    }
-    return wardEl;
-  }
-
-  // The constructor is called before the Element is attached to the DOM
-  constructor() {
-
-    // Always call super first in constructor
-    super();
-  }
-
-  connectedCallback() {
-
-    // HACK to stop multiple constructor calls
-    this.addEventListener('click', changeEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
-    this.addEventListener('contextmenu', flipCard);
-    this.addEventListener('change', updateEndpointSrc);
-
-    if (this.children.length > 0) {
-      return;
-    }
-
+  defineScaffolding() {
     // Build up the basic scaffolding of this Element
     const cardEl = this.prepareWard('card', 'div', this);
     const frontEl = this.prepareWard('front', 'div', cardEl);
     frontEl.classList.add('card_face');
     const backEl = this.prepareWard('back', 'div', cardEl);
     backEl.classList.add('card_face');
-
-    this.restoreAttributesForId();
-    this.commitAttributes();
   }
-}
+} // class Endpoint
 
 function csv2array(csv) {
   let lines = csv.split("\n");
@@ -979,6 +1045,7 @@ function appendEndpoint(parent, endpoint, role) {
   let endpointEl = document.createElement('sd-endpoint');
   endpointEl.setAttribute('endpoint', endpoint);
   endpointEl.setAttribute('role', role);
+  endpointEl.commitAttributes();
   parent.appendChild(endpointEl);
 }
 
@@ -1073,11 +1140,12 @@ function memoFetch(key) {
  */
 function populateScroller(scroller, endpoints, role) {
   for (let f in [1, 2, 3, 4]) {
-    appendEndpointFiller(scroller, role);
+//    appendEndpointFiller(scroller, role);
   }
 
   for (let endpoint of endpoints) {
     appendEndpoint(scroller, endpoint, role);
+    break; ///////////////
   }
 }
 
@@ -1088,7 +1156,7 @@ function generateEndpoints() {
     endpoints.sources,
     'source'
   );
-
+  return; //////////////////////////
   populateScroller(
     document.$("#destination"),
     endpoints.destinations,
@@ -1211,6 +1279,8 @@ function PWA() {
 }
 
 function WebComponents() {
+  console.log("WebComponents");
+  customElements.define("sd-staged-attributes", StagedAttributes);
   customElements.define("sd-endpoint", Endpoint);
   customElements.define("sd-keypad", Keypad);
   customElements.define("sd-price-display", PriceDisplay);
