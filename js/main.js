@@ -87,6 +87,31 @@ function formatDate(date) {
   return formattedDate;
 }
 
+
+function getLocation() {
+
+  function success(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    set('location', JSON.stringify([latitude, longitude]));
+  }
+
+  function error() {
+    console.log("Unable to retrieve your location");
+  }
+
+  const options = {
+    enableHighAccuracy: true,
+    maximumAge: 10000,
+    timeout: 27000,
+  };
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(success, error, options);
+  }
+}
+
+// TODO: Make home_currency a setting
 function buildSendUrl() {
   let body = {};
   let today = new Date();
@@ -96,9 +121,10 @@ function buildSendUrl() {
   body.source = getScrollerValue("source");
   body.amount = document.$("#amount").value;
   body.currency = document.$("#currency").value;
+  body.converted = document.$('#converter').innerHTML.replace(/[^0-9.]/g, '');
   body.destination = getScrollerValue("destination");
-  body.description = "DESCRIPTION";
-  body.username = document.$('#username').attr('endpoint');
+  body.username = get('username');
+  body.location = get('location');
   
   let queryParameters = [];
   for (let key in body) {
@@ -114,10 +140,6 @@ function buildSendUrl() {
   return href;
 }
 
-function ready() {
-  return;
-}
-
 function updateCurrencyConversion() {
 
   let currency = document.$("#currency").value;
@@ -125,20 +147,28 @@ function updateCurrencyConversion() {
 
   // Update exchange rate
   let converter = document.$("#converter");
+
+  // Visibility is orthogonal to generating the value.
   if (currency == "CHF" || currency == "OTH") {
     converter.classList.add("display_none");
+  } else {
+    converter.classList.remove("display_none");
   }
-  if (currency != "CHF") {
-    let chf = window.localStorage.getItem('CHF');
-    if (chf) {
-      chf = JSON.parse(chf);
-      let rate = chf.conversion_rates[currency];
-      let chf_value = amount / rate;
-      chf_value = Math.round(chf_value * 100) / 100;
-      converter.innerHTML = "= " + chf_value + " CHF";
-      converter.classList.remove("display_none");
+
+  let rate = 1.0;
+  if (currency != 'CHF') {
+    let rates = get('CHF');
+    if (rates) {
+      rates = JSON.parse(rates);
+      rate = rates.conversion_rates[currency];
+    } else {
+      rate = 0.0;
     }
   }
+  let home_value = amount / rate;
+  home_value = Math.round(home_value * 100) / 100;
+  let home_formatted = home_value;  // TODO: Turn this into a PriceDisplay (or just use one).
+  converter.innerHTML = "= " + home_formatted + " CHF";
 }
 
 function updateSource() {
@@ -188,7 +218,6 @@ function selectEndpoint(e) {
   let scroll_needed = initial_bottom - scroller_bottom;
   let initial_scroll = scrollerEl.scrollTop;
   scrollerEl.scrollTo({ top: initial_scroll + scroll_needed, behavior: 'smooth' });
-  ready();
 }
 
 function changeEndpoint(e) {
@@ -206,6 +235,13 @@ function scrollEndpointsToBottom() {
   destination.scrollTo({top: destination.scrollHeight, behavior: 'smooth' });
 }
 
+function setImgAltTextClass(e) {
+  let imageEl = e.target;
+  if (!imageEl.tag == 'img') {
+    return;
+  }
+  imageEl.classList.add('showing_alt_text');
+}
 
 function updateEndpointSrc(e) {
   let endpointEl = e.target.closest('sd-endpoint');
@@ -228,9 +264,9 @@ function updateEndpointSrc(e) {
       // TODO: scale down image using https://imagekit.io/blog/how-to-resize-image-in-javascript/
       // convert image file to base64 string
       let key = `source:${endpoint}`;
-      window.localStorage.setItem(key, dataUrl);
+      set(key, dataUrl);
       key = `destination:${endpoint}`;
-      window.localStorage.setItem(key, dataUrl);
+      set(key, dataUrl);
       img.src = dataUrl;
       card.classList.remove('flipped');
     },
@@ -834,6 +870,7 @@ class Endpoint extends StagedAttributes {
     this.addEventListener('click', changeEndpoint);  // I think eventlisteners are removed when the element is taken out of the dom (before being reinserted right away again);
     this.addEventListener('contextmenu', flipCard);
     this.addEventListener('change', updateEndpointSrc);
+    this.addEventListener('error', setImgAltTextClass);
   }
 
   // The defineX functions have to be idempotent.
@@ -862,7 +899,7 @@ class Endpoint extends StagedAttributes {
     // Temporarily setting each one means that would would have to be undone.
     let chosenSrc = undefined;
     if (chosenSrc == undefined) {
-      let img_src = window.localStorage.getItem(endpoint) || undefined;
+      let img_src = get(endpoint);
       if (img_src != undefined) {
         chosenSrc = img_src;
       }
@@ -1025,8 +1062,8 @@ function getEndpointsForEmail(arr, email_re) {
 function getSortedEndpoints() {
   let endpoints = {sources: [], destinations: []};
 
-  let endpoints_csv = window.localStorage.getItem("endpoints_csv");
-  if (endpoints_csv) { // != null
+  let endpoints_csv = get("endpoints_csv");
+  if (endpoints_csv != undefined) {
     let endpoints_array = csv2array(endpoints_csv);
     let email_re = get("email_re");
     endpoints = getEndpointsForEmail(endpoints_array, email_re);
@@ -1090,7 +1127,7 @@ function augmentSortedEndpoints(endpoints, alwaysEndpoints, isSource) {
 function modifySortedEndpoints(endpoints) {
   let IS_SOURCE = true;
 
-  let alwaysPresentEndpoints = window.localStorage.getItem('always_present_endpoints') || '';
+  let alwaysPresentEndpoints = get('always_present_endpoints') || '';
   let alwaysEndpoints = alwaysPresentEndpoints.trim().split(/\s*,\s*/);
 
   let ñsources = augmentSortedEndpoints(endpoints.sources, alwaysEndpoints, IS_SOURCE);
@@ -1128,8 +1165,8 @@ function getSheetNames(desired_body) {
 
 
 function memoFetch(key) {
-  let value = window.localStorage.getItem(key);
-  if (!value) {
+  let value = get(key);
+  if (value != undefined) {
     value = "";
   }
   return value;
@@ -1140,12 +1177,11 @@ function memoFetch(key) {
  */
 function populateScroller(scroller, endpoints, role) {
   for (let f in [1, 2, 3, 4]) {
-//    appendEndpointFiller(scroller, role);
+    appendEndpointFiller(scroller, role);
   }
 
   for (let endpoint of endpoints) {
     appendEndpoint(scroller, endpoint, role);
-    break; ///////////////
   }
 }
 
@@ -1156,7 +1192,6 @@ function generateEndpoints() {
     endpoints.sources,
     'source'
   );
-  return; //////////////////////////
   populateScroller(
     document.$("#destination"),
     endpoints.destinations,
@@ -1200,7 +1235,6 @@ function keyclick(e) {
     }
     amount.innerHTML += click_value;
   }
-  ready();
 }
 */
 
@@ -1252,12 +1286,18 @@ function httpsGet(url, func, noCORS) {
 }
 
 function updateLocalStorageFromUrl(key, url, ttl_s) {
-  let item = window.localStorage.getItem(key);
-  if (!!item && ttl_s > 0) {  // DEVELOPMENT: use ttl_s as a boolean for now.
+  let item = get(key);
+  let key_s = `${key}_s`;
+  let item_s = get(key_s) || 0;
+  var now = new Date();
+  var now_s = Math.round(now.getTime() / 1000);
+  var age_s = now_s - item_s;
+  if (!!item && (ttl_s > age_s)) {
     return;
   }
   httpsGet(url, (data_text) => {
-    window.localStorage.setItem(key, data_text);
+    set(key, data_text);
+    set(key_s, now_s);
   });
 }
 
@@ -1292,7 +1332,7 @@ function BuildPage() {
 }
 
 // Default to updating after a minimum of 6 hours.
-function LoadSettings(ttl_s = 6*60*60) {
+function LoadSettings(ttl_s = 6) {
 
   updateLocalStorageFromUrl("CHF", "https://v6.exchangerate-api.com/v6/9f6f6bfda75673484596f7ab/latest/CHF", ttl_s);
   updateLocalStorageFromUrl("endpoints_csv", get("published_endpoints_url"), ttl_s);
@@ -1311,14 +1351,10 @@ function ApplySettings() {
 function AddEventListeners() {
   window.onscroll = noScroll;
   for (let element of document.$$('.y-scroller')) {
-    element.addEventListener('scroll', ready);
     element.addEventListener('click', selectEndpoint);
   }
 
   let input_elements = document.$$('input')
-  for (let input_element of input_elements) {
-    input_element.addEventListener('input', ready);
-  }
 
   document.$('#gear').addEventListener('click', goToSettings);
 
@@ -1328,14 +1364,6 @@ function AddEventListeners() {
 
   document.$('sd-keypad').addEventListener('change', keypadChanged);
   document.$('#currency').addEventListener('change', updateCurrencyConversion);
-
-  const state = document.visibilityState;
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState == 'visible') {
-      StartingPlaces();
-    }
-  });
 }
 
 function sendIt() {
@@ -1349,9 +1377,9 @@ function sendIt() {
 // This puts all the scrolling/focus/orientation/animations in place to start.
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
+  getLocation();
   scrollEndpointsToBottom();
   document.$("#keypad").clear();
-  ready();
 }
 
 window.onload = () => {
