@@ -877,8 +877,8 @@ class Endpoint extends StagedAttributes {
   // Basing them on prepareWard helps that effort.
   // TODO: Maybe use oldValue and reference counting to delete image storage
   defineImage = function() {
-    // TODO: make knownImages more dynamic, and a function of "theme" (when eventually there is a theme).
-    let knownImages = {
+    // TODO: make lineartImages more dynamic, and a function of "theme" (when eventually there is a theme).
+    let lineartImages = {
       bank: `bank`,
       cash: `cash`,
       credit_card: `credit_card`,
@@ -889,6 +889,47 @@ class Endpoint extends StagedAttributes {
       store: `store`,
       filler: `FILLER`,
     };
+
+    let knownImages = {
+      atm: 'atm',
+      ayelet_twint: 'ayelet_twint',
+      bofa_mc: 'bofa_mc',
+      bofa_visa: 'bofa_visa',
+      box: 'box',
+      cash: 'cash',
+      cash_box: 'cash_box',
+      cembra_mc: 'cembra_mc',
+      certo_mastercard: 'certo_mastercard',
+      chase: 'chase',
+      chf: 'chf',
+      coop: 'coop',
+      coop_at_home: 'coop_at_home',
+      credit_suisse_mastercard_debit: 'credit_suisse_mastercard_debit',
+      credit_suisse_mc_debit: 'credit_suisse_mc_debit',
+      credi_suisse_twint: 'credit_suisse_twint',
+      cs_twint: 'cs_twint',
+      editte_twint: 'editte_twint',
+      eur: 'eur',
+      first_ent: 'first_ent',
+      firstent_visa_debit: 'firstent_visa_debit',
+      gbp: 'gbp',
+      gift_card: 'gift_card',
+      kkiosk: 'kkiosk',
+      lidl: 'lidl',
+      migros: 'migros',
+      migros_gift_card: 'migros_gift_card',
+      no_image: 'no_image',
+      other: 'other',
+      paypal: 'paypal',
+      person: 'person',
+      starbucks: 'starbucks',
+      store: 'store',
+      tchibo: 'tchibo',
+      twint: 'twint',
+      ubs_twint: 'ubs_twint',
+      ubs_visa_debit: 'ubs_visa_debit',
+      usd: 'usd',
+    }
 
     let endpoint = this.attr('endpoint');
     console.log(`defineImage calling prepareWard: ${endpoint} , ${this.attr('role')}`);
@@ -905,8 +946,13 @@ class Endpoint extends StagedAttributes {
       }
     }
     if (chosenSrc == undefined) {
+      if (endpoint in lineartImages) {
+        chosenSrc = `../images/lineart/${lineartImages[endpoint]}.png`;
+      }
+    }
+    if (chosenSrc == undefined) {
       if (endpoint in knownImages) {
-        chosenSrc = `../images/lineart/${knownImages[endpoint]}.png`;
+        chosenSrc = `../images/${knownImages[endpoint]}.png`;
       }
     }
     if (chosenSrc == undefined) {
