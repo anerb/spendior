@@ -30,6 +30,7 @@ const defaults =
   "email_re": ".*",
   "keypad_location": "right",
   "background_color": "#FFBBBB",
+  "local_directory": "click to select",
 }
 
 function fillSettings() {
@@ -53,6 +54,33 @@ function updateSetting(key) {
 function onUpdateSetting(e) {
   updateSetting(e.target.id);
 }
+
+async function writeAFile(directory_handle) {
+  let dh1 = await directory_handle;
+  let fh = await dh1.getFileHandle('somefile.txt');
+  let data = await fh.getFile();
+  window.localStorage.setItem('dh', dh1);
+  let d2 = window.localStorage.getItem('dh');
+  let fh2 = await d2.getFileHandle('somefile.txt');
+  let data2 = await fh2.getFile();
+  //write as many files as needed:
+  let file_handle = await directory_handle.getFileHandle('filename1', { create: true });
+  const writable = await file_handle.createWritable();
+  await writable.write('some content');
+  await writable.close();  
+}
+
+function pickLocalDirectory() {
+  let dh1 = window.showDirectoryPicker({mode: "readwrite"});
+  window.setTimeout(() => writeAFile(dh1), 2000);
+}
+
+function onClickSetting(e) {
+  if (e.target.id == 'local_directory') {
+    pickLocalDirectory();
+  }
+}
+
 function showSettings() {
   document.querySelector("#settings").classList.remove("display_none");
 }
@@ -66,6 +94,9 @@ class Setting extends HTMLElement {
     let inputs = this.querySelectorAll("input");
     for (let input of inputs) {
       input.addEventListener('input', onUpdateSetting);
+    }
+    for (let input of inputs) {
+      input.addEventListener('click', onClickSetting);
     }
   }
   constructor() {
