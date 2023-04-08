@@ -698,7 +698,6 @@ class StagedAttributes extends HTMLElement {
       //   - the old
       //  , then it's better for the old to represent what is on-screen as a result of the most recent commit.
     } else {
-      console.log(['setting attribute', oldAttribute, oldValue, this]);
       this.setAttribute(oldAttribute, oldValue);
       this.setAttribute('is_staged', '');
     }
@@ -723,7 +722,6 @@ class StagedAttributes extends HTMLElement {
       if (!attribute.match(/^old_/)) {
         continue;
       }
-      console.log(['removing attrijbute', attribute, this.getAttribute(attribute), this]);
       this.getAttribute(attribute);
       this.removeAttribute(attribute);
     }
@@ -1421,6 +1419,7 @@ function sendIt() {
 
 function showNotification() {
   Notification.requestPermission().then((result) => {
+    console.log(result);
     if (result === "granted") {
       randomNotification();
     }
