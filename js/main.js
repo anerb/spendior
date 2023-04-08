@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230408184051;
+const version=20230408185448;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -32,7 +32,7 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
 }
 
 function goToSettings() {
-  window.open('./settings.html');
+  window.location.assign('./settings.html?version=20230408185448');
 }
 
 function generateTextImageDataUrl(text) {
@@ -1311,6 +1311,7 @@ function httpsGet(url, func, noCORS) {
   if (!url || !(url.match('^https://.*') || url.match('^[.]{1,2}/.*'))) {
     return;
   }
+  console.log(['prefetch', url]);
   fetch(url, {mode: noCORS ? 'no-cors' : 'cors'})
     .then((response) => {
       if (!response.ok) {

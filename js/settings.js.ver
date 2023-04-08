@@ -128,7 +128,7 @@ function resetStorage() {
 }
 
 function done() {
-  window.location.assign('./index.html?version=20230408185448');
+  window.location.assign('./index.html?version=20230408101010');
 }
 
 function AddEventListeners() {

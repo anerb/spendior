@@ -19,6 +19,6 @@
   ],
   "name": "Spendior for collecting spending data",
   "short_name": "Spendior",
-  "start_url": "./app/index.html?version=20230408183510",
+  "start_url": "./app/index.html?version=20230408184051",
   "scope": "https://anerb.github.io/spendior/"
 }

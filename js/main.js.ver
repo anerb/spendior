@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230408183547;
+const version=20230408184051;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -32,7 +32,7 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
 }
 
 function goToSettings() {
-  window.open('./settings.html');
+  window.location.assign('./settings.html?version=20230408101010');
 }
 
 function generateTextImageDataUrl(text) {
