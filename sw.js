@@ -66,7 +66,7 @@ self.addEventListener("fetch", (e) => {
       if (r && false) {
         return r;
       }
-      console.log(['actual fetch', url]);
+      console.log(['actual fetch', e.request.url]);
       const response = await fetch(e.request);
 //      showNotification(`fetch(${e.request})`, JSON.stringify(response));
       const cache = await caches.open(cacheName);
