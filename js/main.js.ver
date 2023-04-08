@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230408184051;
+const version=20230408185448;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -32,7 +32,7 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
 }
 
 function goToSettings() {
-  window.location.assign('./settings.html?version=20230408101010');
+  window.location.assign(`./settings.html?version=${version}`);
 }
 
 function generateTextImageDataUrl(text) {
@@ -125,6 +125,7 @@ function buildSendUrl() {
   body.destination = getScrollerValue("destination");
   body.username = get('username');
   body.location = get('location');
+  body.version = version;
   
   let queryParameters = [];
   for (let key in body) {
@@ -1311,9 +1312,10 @@ function httpsGet(url, func, noCORS) {
   if (!url || !(url.match('^https://.*') || url.match('^[.]{1,2}/.*'))) {
     return;
   }
+  console.log(['prefetch', url]);
   fetch(url, {mode: noCORS ? 'no-cors' : 'cors'})
     .then((response) => {
-      if (!response.ok) {
+      if (!noCORS && !response.ok) {
         throw new Error(`Fetch response not OK for ${url}`);
       }
       return response.text();  // A promise that provides the response as text.
@@ -1424,7 +1426,7 @@ function showNotification(title, body) {
 }
 
 function randomNotification(title, body) {
-  const notifImg = 'images/eur.png';
+  const notifImg = '../images/eur.png';
   const options = {
     body: body,
     icon: notifImg,

@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230408185448;
+const version=20230408193118;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1315,7 +1315,7 @@ function httpsGet(url, func, noCORS) {
   console.log(['prefetch', url]);
   fetch(url, {mode: noCORS ? 'no-cors' : 'cors'})
     .then((response) => {
-      if (!response.ok) {
+      if (!noCORS && !response.ok) {
         throw new Error(`Fetch response not OK for ${url}`);
       }
       return response.text();  // A promise that provides the response as text.
@@ -1411,7 +1411,7 @@ function AddEventListeners() {
 function sendIt() {
   let noCORS = true;
   let sendUrl = buildSendUrl();
-  httpsGet(sendUrl, (x) => {}, !noCORS);
+  httpsGet(sendUrl, (x) => {}, noCORS);
   StartingPlaces();
 }
 
@@ -1426,7 +1426,7 @@ function showNotification(title, body) {
 }
 
 function randomNotification(title, body) {
-  const notifImg = 'images/eur.png';
+  const notifImg = '../images/eur.png';
   const options = {
     body: body,
     icon: notifImg,
