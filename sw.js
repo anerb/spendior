@@ -47,7 +47,7 @@ self.addEventListener("fetch", (e) => {
         return r;
       }
       const response = await fetch(e.request);
-      showNotification("log(fetch)", JSON.stringify(response));
+      showNotification(`fetch(${e.request})`, JSON.stringify(response));
       const cache = await caches.open(cacheName);
       cache.put(e.request, response.clone());
       return response;
