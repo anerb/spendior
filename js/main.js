@@ -1439,7 +1439,7 @@ function randomNotification(title, body) {
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
   getLocation();
-  showNotification();
+  showNotification('first time', 'some body text');
   scrollEndpointsToBottom();
   document.$("#keypad").clear();
 }
