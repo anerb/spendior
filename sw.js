@@ -63,11 +63,11 @@ self.addEventListener("fetch", (e) => {
     (async () => {
       const r = await caches.match(e.request);
       console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
-      if (r) {
+      if (r || false) {
         return r;
       }
       const response = await fetch(e.request);
-      showNotification(`fetch(${e.request})`, JSON.stringify(response));
+//      showNotification(`fetch(${e.request})`, JSON.stringify(response));
       const cache = await caches.open(cacheName);
       cache.put(e.request, response.clone());
       return response;
