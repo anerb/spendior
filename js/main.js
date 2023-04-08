@@ -1411,7 +1411,7 @@ function AddEventListeners() {
 function sendIt() {
   let noCORS = true;
   let sendUrl = buildSendUrl();
-  httpsGet(sendUrl, (x) => {}, noCORS);
+  httpsGet(sendUrl, (x) => {}, !noCORS);
   StartingPlaces();
 }
 
