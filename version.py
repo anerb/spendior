@@ -16,6 +16,8 @@ for file in files:
     try:
         if re.match('(^[.][^/]|[/][.]).+', file):
             continue # hidden path
+        if re.match('.*[.]ver$', file):
+            continue # a backup
         isMatch = False
         with open(file) as f:
             lines = f.readlines()
