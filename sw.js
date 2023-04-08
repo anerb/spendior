@@ -15,6 +15,26 @@ const appShellFiles = [
   "./sw.js",
 ];
 
+
+function showNotification(title, body) {
+  Notification.requestPermission().then((result) => {
+    console.log(result);
+    if (result === "granted") {
+      randomNotification(title, body);
+    }
+  });
+}
+
+function randomNotification(title, body) {
+  const notifImg = 'images/eur.png';
+  const options = {
+    body: body,
+    icon: notifImg,
+  };
+  new Notification(title, options);
+}
+
+
 /* Start the service worker and cache all of the app's content */
 self.addEventListener('install',
   (e) => {
