@@ -32,7 +32,7 @@ function snake_case2PascalCase(snake_case, delimiter = "") {
 }
 
 function goToSettings() {
-  window.location.assign('./settings.html?version=20230408185448');
+  window.location.assign(`./settings.html?version=${version}`);
 }
 
 function generateTextImageDataUrl(text) {
@@ -125,6 +125,7 @@ function buildSendUrl() {
   body.destination = getScrollerValue("destination");
   body.username = get('username');
   body.location = get('location');
+  body.version = version;
   
   let queryParameters = [];
   for (let key in body) {

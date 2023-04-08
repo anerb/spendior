@@ -1,6 +1,7 @@
 'use strict';
 
 // COPY-PASTE. HACKY
+const version=20230408185448;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -128,7 +129,7 @@ function resetStorage() {
 }
 
 function done() {
-  window.location.assign('./index.html?version=20230408185448');
+  window.location.assign(`./index.html?version=${version}`);
 }
 
 function AddEventListeners() {
