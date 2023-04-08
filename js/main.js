@@ -657,7 +657,6 @@ class StagedAttributes extends HTMLElement {
   prepareWard = function(wardName, tag, parentEl) {
     let wardEl = this.$(`.${wardName}`) || undefined;
     if (wardEl === undefined) {
-      console.log(`prepareWard creating ${tag}`);
       wardEl = document.createElement(tag);
       wardEl.setAttribute('class', wardName);    
       parentEl.appendChild(wardEl);
@@ -1425,7 +1424,7 @@ function showNotification() {
     if (result === "granted") {
       randomNotification();
     }
-  }
+  });
 }
 
 function randomNotification() {
