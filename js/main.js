@@ -1417,25 +1417,22 @@ function sendIt() {
 }
 
 
-function showNotification() {
+function showNotification(title, body) {
   Notification.requestPermission().then((result) => {
     console.log(result);
     if (result === "granted") {
-      randomNotification();
+      randomNotification(title, body);
     }
   });
 }
 
-function randomNotification() {
-  const randomItem = 42;
-  const notifTitle = "Mostly Harmless";
-  const notifBody = "Earth entry in the encyclopedia";
+function randomNotification(title, body) {
   const notifImg = 'images/eur.png';
   const options = {
-    body: notifBody,
+    body: body,
     icon: notifImg,
   };
-  new Notification(notifTitle, options);
+  new Notification(title, options);
 }
 
 // HACKY: Find a better name.
