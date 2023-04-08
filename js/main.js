@@ -1419,11 +1419,33 @@ function sendIt() {
   StartingPlaces();
 }
 
+
+function showNotification() {
+  Notification.requestPermission().then((result) => {
+    if (result === "granted") {
+      randomNotification();
+    }
+  }
+}
+
+function randomNotification() {
+  const randomItem = 42;
+  const notifTitle = "Mostly Harmless";
+  const notifBody = "Earth entry in the encyclopedia";
+  const notifImg = 'images/eur.png';
+  const options = {
+    body: notifBody,
+    icon: notifImg,
+  };
+  new Notification(notifTitle, options);
+}
+
 // HACKY: Find a better name.
 // This puts all the scrolling/focus/orientation/animations in place to start.
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
   getLocation();
+  showNotification();
   scrollEndpointsToBottom();
   document.$("#keypad").clear();
 }
