@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230409065204;
+const version=20230409070937;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -177,7 +177,7 @@ function updateCurrencyConversion() {
   }
   let home_value = amount / rate;
   home_value = Math.round(home_value * 100) / 100;
-  let home_formatted = home_value;  // TODO: Turn this into a PriceDisplay (or just use one).
+  let home_formatted = addCommasToDecimal(home_value);
   converter.innerHTML = "= " + home_formatted + " CHF";
 }
 
@@ -294,38 +294,38 @@ function flipCard(e) {
   e.target.closest('sd-endpoint').$('.card').classList.toggle('flipped');
 }
 
-class PriceDisplay extends HTMLElement {
+// TODO: Use locales and toLocaleString (including finding the char for decimal 'point')
 
-  // takes a string, returns a string
-  addCommas = function(whole) {
-    let rwhole = whole.split('').reverse().join('');
-    let ñwhole = "";
-    // Iterate in reverse;
+ // takes a string, returns a string
+ function addCommas(whole) {
+  let rwhole = whole.split('').reverse().join('');
+  let ñwhole = "";
+  // Iterate in reverse;
 
-    for (let d in rwhole) {
-      if (d % 3 == 0 && d > 0) {
-        ñwhole = ',' + ñwhole;  // prepend
-      }
-      ñwhole = rwhole[d] + ñwhole;  // prepend
+  for (let d in rwhole) {
+    if (d % 3 == 0 && d > 0) {
+      ñwhole = ',' + ñwhole;  // prepend
     }
-    // due to prepending, there is no need to reverse.
-    return ñwhole;
+    ñwhole = rwhole[d] + ñwhole;  // prepend
   }
+  // due to prepending, there is no need to reverse.
+  return ñwhole;
+}
 
+// takes number, returns string
+function addCommasToDecimal(decimal) {
+  let parts = String(decimal).split('.');
+  parts[0] = addCommas(parts[0]);
+  if (parts.length >= 1) {
+    return parts.join('.');
+  }
+  return parts[0];
+}
+
+class PriceDisplay extends HTMLElement {
+ 
   distributeValue = function() {
     let parts = this.value_.split('.');
-/*
-    if (parts.length == 1) {
-      // There is not dot;
-      this.dot.classList.add('pending');
-      this.dimes.classList.add('pending');
-      this.pennies.classList.add('pending');
-    } else {
-      this.dot.classList.remove('pending');
-      this.dimes.classList.add('pending');
-      this.pennies.classList.add('pending');
-    }
-*/
     if (parts[0].length == 0) {
       this.dollars.classList.add('pending');
       this.dot.classList.add('pending');
@@ -335,7 +335,7 @@ class PriceDisplay extends HTMLElement {
     } else {
       this.dollars.classList.remove('pending');
     }
-    let withCommas = this.addCommas(parts[0]);
+    let withCommas = addCommas(parts[0]);
     this.dollars.innerHTML = withCommas;
 
     if (parts.length == 1) {
