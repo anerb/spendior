@@ -37,9 +37,17 @@ function randomNotification(title, body) {
 
 /* Start the service worker and cache all of the app's content */
 self.addEventListener('install',
-  (e) => {
+  async (e) => {
     console.log("[Service Worker] Install");
-
+    if (navigator.storage && navigator.storage.persist) {
+      navigator.storage.persist().then((persistent) => {
+        if (persistent) {
+          console.log("Storage will not be cleared except by explicit user action");
+        } else {
+          console.log("Storage may be cleared by the UA under storage pressure.");
+        }
+      });
+    }
   }
 );
 
@@ -58,20 +66,27 @@ self.addEventListener("activate", (e) => {
   );
 });
 
+// TODO: refine this with a non-fragile signal from the sending side.
+function isDataTransmission(url) {
+  return url.indexOf('/exec') >= 0);
+}
+
+async function onFetchRequest(e) {
+  if (isDataTransmission(e.request.url)) {
+    const queryParameters = e.request.url.substring(e.request.url.indexOf('?') + 1);
+    const response = await fetch(e.request);
+    showNotification('sent', queryParameters);
+    return response;
+  }
+  const r = await caches.match(e.request);
+  console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
+  console.log(['actual fetch', e.request.url]);
+  const response = await fetch(e.request);
+  const cache = await caches.open(cacheName);
+  cache.put(e.request, response.clone());
+  return response;
+}
+
 self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    (async () => {
-      const r = await caches.match(e.request);
-      console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
-      if (r && false) {
-        return r;
-      }
-      console.log(['actual fetch', e.request.url]);
-      const response = await fetch(e.request);
-//      showNotification(`fetch(${e.request})`, JSON.stringify(response));
-      const cache = await caches.open(cacheName);
-      cache.put(e.request, response.clone());
-      return response;
-    })()
-  );
-});
+  e.respondWith(onFetchRequest(e));
+}
