@@ -147,15 +147,15 @@ body {
     height: 10dvw;
     transform: rotateZ(-90deg);
     transform-origin: right;
-    font-size: 5dvw;
+    font-size: 4dvw;
     color: white;
     text-align: end;
   }
   
   #version {
     position: absolute;
-    right: -85dvw;
-    top: 7dvw;
+    right: 5dvw;
+    top: 2dvw;
     z-index: 999;
   }
     

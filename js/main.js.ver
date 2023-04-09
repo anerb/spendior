@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230408193118;
+const version=20230409054655;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -111,27 +111,36 @@ function getLocation() {
   }
 }
 
-// TODO: Make home_currency a setting
-function buildSendUrl() {
-  let body = {};
+function captureRecord() {
+  let record = {};
+  let record_id = get('record_id');
   let today = new Date();
-  body.sheet_name = get("sheet_name");
-  body.date_first = formatDate(today);
-  body.date_final = formatDate(today);
-  body.source = getScrollerValue("source");
-  body.amount = document.$("#amount").value;
-  body.currency = document.$("#currency").value;
-  body.converted = document.$('#converter').innerHTML.replace(/[^0-9.]/g, '');
-  body.destination = getScrollerValue("destination");
-  body.username = get('username');
-  body.location = get('location');
-  body.version = version;
+  record.sheet_name = get("sheet_name");
+  record.date_first = formatDate(today);
+  record.date_final = formatDate(today);
+  record.source = getScrollerValue("source");
+  record.amount = document.$("#amount").value;
+  record.currency = document.$("#currency").value;
+  record.converted = document.$('#converter').innerHTML.replace(/[^0-9.]/g, '');
+  record.destination = getScrollerValue("destination");
+  record.username = get('username');
+  record.location = get('location');
+  record.version = version;
+  return record;
+}
+
+function upsertRecord(record) {
+  
+}
+
+// TODO: Make home_currency a setting
+function buildSendUrl(record) {
   
   let queryParameters = [];
-  for (let key in body) {
+  for (let key in record) {
     let ẽkey = encodeURIComponent(key);
-    let ẽvalue = encodeURIComponent(body[key]);
-    let queryParameter = `${key}=${body[key]}`;
+    let ẽvalue = encodeURIComponent(record[key]);
+    let queryParameter = `${key}=${record[key]}`;
     queryParameters.push(queryParameter);
   }
 
@@ -1410,7 +1419,9 @@ function AddEventListeners() {
 
 function sendIt() {
   let noCORS = true;
-  let sendUrl = buildSendUrl();
+  let record = captureRecord();
+  upsertRecord(record);
+  let sendUrl = buildSendUrl(record);
   httpsGet(sendUrl, (x) => {}, noCORS);
   StartingPlaces();
 }

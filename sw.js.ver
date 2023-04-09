@@ -1,4 +1,4 @@
-var version=20230408193118;
+var version=20230409054655;
 var cacheName = `version=${version}`;
 
 const appShellFiles = [
@@ -88,5 +88,6 @@ async function onFetchRequest(e) {
 }
 
 self.addEventListener("fetch", (e) => {
-  e.respondWith(onFetchRequest(e));
+  e.respondWith(onFetchRequest(e))
 }
+);
