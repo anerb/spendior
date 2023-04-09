@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230408185448;
+const version=20230408193118;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1439,7 +1439,7 @@ function randomNotification(title, body) {
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
   getLocation();
-  showNotification();
+  showNotification('first time', 'some body text');
   scrollEndpointsToBottom();
   document.$("#keypad").clear();
 }
