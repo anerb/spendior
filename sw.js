@@ -68,7 +68,7 @@ self.addEventListener("activate", (e) => {
 
 // TODO: refine this with a non-fragile signal from the sending side.
 function isDataTransmission(url) {
-  return url.indexOf('/exec') >= 0);
+  return url.indexOf('/exec') >= 0;
 }
 
 async function onFetchRequest(e) {
