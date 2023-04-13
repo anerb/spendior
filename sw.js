@@ -17,12 +17,10 @@ const appShellFiles = [
 
 
 function showNotification(title, body) {
-  Notification.requestPermission().then((result) => {
-    console.log(result);
-    if (result === "granted") {
-      randomNotification(title, body);
-    }
-  });
+  if (Notification.permission != "granted") {
+    return;
+  }
+  randomNotification(title, body);
 }
 
 function randomNotification(title, body) {
