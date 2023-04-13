@@ -1,21 +1,6 @@
 var version=20230410071021;
 var cacheName = `version=${version}`;
 
-const appShellFiles = [
-  "./app/debug.html",
-  "./app/index.html",
-  "./app/settings.html",
-  "./css/settings.css",
-  "./css/style.css",
-  "./js/common.js",
-  "./js/debug.js",
-  "./js/main.js",
-  "./js/settings.js",
-  "./manifest.json",
-  "./sw.js",
-];
-
-
 function showNotification(title, body) {
   if (Notification.permission != "granted") {
     return;
@@ -31,6 +16,20 @@ function randomNotification(title, body) {
   };
   new Notification(title, options);
 }
+
+const appShellFiles = [
+  "./app/debug.html",
+  "./app/index.html",
+  "./app/settings.html",
+  "./css/settings.css",
+  "./css/style.css",
+  "./js/common.js",
+  "./js/debug.js",
+  "./js/main.js",
+  "./js/settings.js",
+  "./manifest.json",
+  "./sw.js",
+];
 
 
 /* Start the service worker and cache all of the app's content */
@@ -72,7 +71,11 @@ function isDataTransmission(url) {
 async function onFetchRequest(e) {
   if (isDataTransmission(e.request.url)) {
     const queryParameters = e.request.url.substring(e.request.url.indexOf('?') + 1);
-    const response = await fetch(e.request);
+    try {
+      const response = await fetch(e.request);
+    } catch (e) {
+      showNotification('error', e.message);
+    }
     showNotification('sent', queryParameters);
     return response;
   }
