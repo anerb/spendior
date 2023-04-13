@@ -1,4 +1,4 @@
-var version=20230410071021;
+var version=20230413103506;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -9,7 +9,7 @@ function showNotification(title, body) {
 }
 
 function randomNotification(title, body) {
-  const notifImg = 'images/eur.png';
+  const notifImg = '../images/eur.png';
   const options = {
     body: body,
     icon: notifImg,
@@ -72,9 +72,10 @@ async function onFetchRequest(e) {
   if (isDataTransmission(e.request.url)) {
     const queryParameters = e.request.url.substring(e.request.url.indexOf('?') + 1);
     try {
-      const response = await fetch(e.request);
+      const response = await fetch(e.request, {mode: 'no-cors'});
     } catch (e) {
       showNotification('error', e.message);
+      response.sd = "nope";
     }
     showNotification('sent', queryParameters);
     return response;

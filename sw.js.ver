@@ -1,5 +1,21 @@
-var version=20230410070108;
+var version=20230410071021;
 var cacheName = `version=${version}`;
+
+function showNotification(title, body) {
+  if (Notification.permission != "granted") {
+    return;
+  }
+  randomNotification(title, body);
+}
+
+function randomNotification(title, body) {
+  const notifImg = '../images/eur.png';
+  const options = {
+    body: body,
+    icon: notifImg,
+  };
+  new Notification(title, options);
+}
 
 const appShellFiles = [
   "./app/debug.html",
@@ -14,25 +30,6 @@ const appShellFiles = [
   "./manifest.json",
   "./sw.js",
 ];
-
-
-function showNotification(title, body) {
-  Notification.requestPermission().then((result) => {
-    console.log(result);
-    if (result === "granted") {
-      randomNotification(title, body);
-    }
-  });
-}
-
-function randomNotification(title, body) {
-  const notifImg = 'images/eur.png';
-  const options = {
-    body: body,
-    icon: notifImg,
-  };
-  new Notification(title, options);
-}
 
 
 /* Start the service worker and cache all of the app's content */
@@ -74,7 +71,12 @@ function isDataTransmission(url) {
 async function onFetchRequest(e) {
   if (isDataTransmission(e.request.url)) {
     const queryParameters = e.request.url.substring(e.request.url.indexOf('?') + 1);
-    const response = await fetch(e.request);
+    try {
+      const response = await fetch(e.request, {mode: 'no-cors'});
+    } catch (e) {
+      showNotification('error', e.message);
+      response.sd = "nope";
+    }
     showNotification('sent', queryParameters);
     return response;
   }
