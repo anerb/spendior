@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230413103506;
+const version=20230413104304;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1443,7 +1443,7 @@ function randomNotification(title, body) {
     body: body,
     icon: notifImg,
   };
-  new Notification(title, options);
+  ServiceWorkerRegistration.showNotification(title, options)
 }
 
 // HACKY: Find a better name.

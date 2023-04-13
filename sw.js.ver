@@ -1,4 +1,4 @@
-var version=20230410071021;
+var version=20230413103506;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -14,7 +14,7 @@ function randomNotification(title, body) {
     body: body,
     icon: notifImg,
   };
-  new Notification(title, options);
+  self.registration.showNotification(title, options)
 }
 
 const appShellFiles = [
