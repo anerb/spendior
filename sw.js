@@ -1,4 +1,4 @@
-var version=20230414073218;
+var version=20230414091611;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -71,8 +71,9 @@ function isDataTransmission(url) {
 async function onFetchRequest(e) {
   if (isDataTransmission(e.request.url)) {
     const queryParameters = e.request.url.substring(e.request.url.indexOf('?') + 1);
+    let response = {sd: "start"};
     try {
-      const response = await fetch(e.request, {mode: 'no-cors'});
+      response = await fetch(e.request, {mode: 'no-cors'});
       response.sd = "noprob";
     } catch (e) {
       showNotification('error', e.message);

@@ -1,7 +1,7 @@
 'use strict';
 
 // COPY-PASTE. HACKY
-const version=20230414071236;
+const version=20230414073218;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
