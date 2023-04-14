@@ -1,4 +1,4 @@
-var version=20230414091611;
+var version=20230414195837;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -77,7 +77,10 @@ async function onFetchRequest(e) {
       response.sd = "noprob";
     } catch (e) {
       showNotification('error', e.message);
-      response.sd = "nope";
+      const bodyText = "some body text";
+      const myOptions = { status: 200, statusText: "SuperSmashingGreat!" };
+      const myResponse = new Response(bodyText, myOptions);
+      return myResponse;
     } finally {
       showNotification('sent', queryParameters);
       return response;
