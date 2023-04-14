@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230414062357;
+const version=20230414062836;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1437,17 +1437,8 @@ function showNotification(title, body) {
             icon: '../images/eur.png',
 //            vibrate: [200, 100, 200, 100, 200, 100, 200],
 //            tag: "vibration-sample",
-          });
         });
-      }
-    });
-  }
-
-
-  Notification.requestPermission().then((result) => {
-    console.log(result);
-    if (result === "granted") {
-      randomNotification(title, body);
+      });
     }
   });
 }
