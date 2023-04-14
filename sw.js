@@ -1,4 +1,4 @@
-var version=20230414071236;
+var version=20230414073218;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -73,12 +73,14 @@ async function onFetchRequest(e) {
     const queryParameters = e.request.url.substring(e.request.url.indexOf('?') + 1);
     try {
       const response = await fetch(e.request, {mode: 'no-cors'});
+      response.sd = "noprob";
     } catch (e) {
       showNotification('error', e.message);
       response.sd = "nope";
+    } finally {
+      showNotification('sent', queryParameters);
+      return response;
     }
-    showNotification('sent', queryParameters);
-    return response;
   }
   const r = await caches.match(e.request);
   console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
