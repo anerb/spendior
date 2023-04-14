@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230413121729;
+const version=20230414062357;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1429,6 +1429,21 @@ function sendIt() {
 
 
 function showNotification(title, body) {
+  Notification.requestPermission((result) => {
+    if (result === "granted") {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(title, {
+            body: body,
+            icon: '../images/eur.png',
+//            vibrate: [200, 100, 200, 100, 200, 100, 200],
+//            tag: "vibration-sample",
+          });
+        });
+      }
+    });
+  }
+
+
   Notification.requestPermission().then((result) => {
     console.log(result);
     if (result === "granted") {
@@ -1443,7 +1458,7 @@ function randomNotification(title, body) {
     body: body,
     icon: notifImg,
   };
-  ServiceWorkerRegistration.showNotification(title, options)
+
 }
 
 // HACKY: Find a better name.
