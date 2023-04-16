@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230414195837;
+const version=20230416055235;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1333,7 +1333,6 @@ function httpsGet(url, func, noCORS) {
     .then(func)
     .catch((error) => {
       console.error("ERROR calling httpsGet: ", error);
-      throw error;
     });
 }
 
