@@ -1,4 +1,4 @@
-var version=20230416055235;
+var version=20230416105900;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -21,12 +21,15 @@ const appShellFiles = [
   "./app/debug.html",
   "./app/index.html",
   "./app/settings.html",
+  "./app/offline.html",
   "./css/settings.css",
   "./css/style.css",
+  "./css/offline.css",
   "./js/common.js",
   "./js/debug.js",
   "./js/main.js",
   "./js/settings.js",
+  "./js/offline.js",
   "./manifest.json",
   "./sw.js",
 ];
@@ -68,24 +71,35 @@ function isDataTransmission(url) {
   return url.indexOf('/exec') >= 0;
 }
 
-async function onFetchRequest(e) {
-  if (isDataTransmission(e.request.url)) {
-    const queryParameters = e.request.url.substring(e.request.url.indexOf('?') + 1);
-    let response = {sd: "start"};
-    try {
-      response = await fetch(e.request, {mode: 'no-cors'});
-      response.sd = "noprob";
-    } catch (e) {
-      showNotification('error', e.message);
-      const bodyText = "some body text";
-      const myOptions = { status: 200, statusText: "SuperSmashingGreat!" };
-      const myResponse = new Response(bodyText, myOptions);
-      return myResponse;
-    } finally {
-      showNotification('sent', queryParameters);
-      return response;
-    }
+async function onFetchRequest(event) {
+  if (isDataTransmission(event.request.url)) {
+    event.respondWith((async () => {
+      try {
+        const cache = await caches.open(cacheName);
+        const cachedResponse = await cache.match("./app/offline.html");
+        return cachedResponse;
+      }
+    })());
   }
+
+
+
+  //   const queryParameters = e.request.url.substring(e.request.url.indexOf('?') + 1);
+  //   let response = {sd: "start"};
+  //   try {
+  //     response = await fetch(e.request, {mode: 'no-cors'});
+  //     response.sd = "noprob";
+  //   } catch (e) {
+  //     showNotification('error', e.message);
+  //     const bodyText = "some body text";
+  //     const myOptions = { status: 200, statusText: "SuperSmashingGreat!" };
+  //     const myResponse = new Response(bodyText, myOptions);
+  //     return myResponse;
+  //   } finally {
+  //     showNotification('sent', queryParameters);
+  //     return response;
+  //   }
+  // }
   const r = await caches.match(e.request);
   console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
   console.log(['actual fetch', e.request.url]);

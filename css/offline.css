@@ -1,0 +1,7 @@
+.fullscreen {
+    display: block;
+    height: 50dvh;
+    margin: 0;
+    padding: 0;
+    width: 100dvw;
+  }
