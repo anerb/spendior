@@ -76,8 +76,8 @@ async function doActivate() {
   await cache.put(request, response);
 }
 
-function onActivate(e) {
-  e.waitUntil(doActivate());
+function onActivate(event) {
+  event.waitUntil(doActivate());
 }
 
 // TODO: refine this with a non-fragile signal from the sending side.
@@ -111,7 +111,7 @@ async function cachedFetch(event) {
   const request = event.request;
   let response = undefined;
   try {
-    console.log(['cachedFetch', e.request.url]);
+    console.log(['cachedFetch', request.url]);
     response = await cache.match(request);
     if (response === undefined) {
       console.log(['cachedFetch', 'cache lookup is undefined']);
@@ -126,8 +126,8 @@ async function cachedFetch(event) {
 
   let liveResponse = undefined;
   try {
-    console.log(['cachedFetch', 'live', e.request.url]);
-    liveResponse = await fetch(e.request);
+    console.log(['cachedFetch', 'live', request.url]);
+    liveResponse = await fetch(request);
   } catch (error) {
     console.log(['cachedFetch', 'doing live', error, liveResponse]);
     // Reset liveResponse if an error occured, so we don't store it.
@@ -135,7 +135,7 @@ async function cachedFetch(event) {
   }
 
   if (liveResponse !== undefined) {
-    await cache.put(e.request, liveResponse.clone());
+    await cache.put(request, liveResponse.clone());
     return liveResponse;
   } else {
     response = defaultResponse();
