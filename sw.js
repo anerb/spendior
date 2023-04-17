@@ -143,7 +143,7 @@ async function cachedFetch(event) {
   }
 }
 
-async function onFetch(event) {
+async function doFetch(event) {
   let response = undefined;
   if (isDataTransmission(event.request.url)) {
     response = await fetchOffline();
