@@ -1,4 +1,4 @@
-var version=20230416105900;
+var version=20230417075637;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -143,7 +143,7 @@ async function cachedFetch(event) {
   }
 }
 
-async function onFetch(event) {
+async function doFetch(event) {
   let response = undefined;
   if (isDataTransmission(event.request.url)) {
     response = await fetchOffline();
