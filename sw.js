@@ -1,4 +1,4 @@
-var version=20230416105900;
+var version=20230417075637;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -51,65 +51,112 @@ self.addEventListener('install',
   }
 );
 
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(
-        keyList.map((key) => {
-          if (key === cacheName) {
-            return;
-          }
-          return caches.delete(key);
-        })
-      );
-    })
-  );
-});
+const OFFLINE_URL = "./app/offline.html";
+
+// Clear all but the current cache. Current cache is keyed off `cacheName`.
+async function clearCaches() {
+  const keys = await caches.keys();
+  for (const key of keys) {
+    if (key === cacheName) {
+       return;
+    }
+    await caches.delete(key);
+  }
+}
+
+async function doActivate() {
+  console.log(['activate', cacheName]);
+  await clearCaches();
+  const cache = await caches.open(cacheName);
+  // Setting {cache: 'reload'} in the new request will ensure that the response
+  // isn't fulfilled from the HTTP cache; i.e., it will be from the network.
+  const request = new Request(OFFLINE_URL, {cache: 'reload'});
+  const response = await fetch(request);
+  // Consume response. No need for response.clone().
+  await cache.put(request, response);
+}
+
+function onActivate(e) {
+  e.waitUntil(doActivate());
+}
 
 // TODO: refine this with a non-fragile signal from the sending side.
 function isDataTransmission(url) {
   return url.indexOf('/exec') >= 0;
 }
 
-async function onFetchRequest(event) {
-  if (isDataTransmission(event.request.url)) {
-    event.respondWith((async () => {
-      try {
-        const cache = await caches.open(cacheName);
-        const cachedResponse = await cache.match("./app/offline.html");
-        return cachedResponse;
-      }
-    })());
+
+function fetchDefault() {
+  const bodyText = "some body text";
+  const myOptions = { status: 200, statusText: "SuperSmashingGreat!" };
+  const myResponse = new Response(bodyText, myOptions);
+  return myResponse;
+}
+
+async function fetchOffline() {
+  const defaultResponse = fetchDefault();
+  let offlineResponse = defaultResponse;
+  try {
+    const cache = await caches.open(cacheName);
+    offlineResponse = await cache.match("./app/offline.html");
+  } catch (error) {
+    console.log(['fetchOffline', 'error', error]);
+  } finally {
+    return offlineResponse;
+  }
+}
+
+async function cachedFetch(event) {
+  const cache = await caches.open(cacheName);
+  const request = event.request;
+  let response = undefined;
+  try {
+    console.log(['cachedFetch', e.request.url]);
+    response = await cache.match(request);
+    if (response === undefined) {
+      console.log(['cachedFetch', 'cache lookup is undefined']);
+    }
+  } catch (error) {
+    console.log(['cachedFetch', 'could not get cached response', error]);
   }
 
+  if (response !== undefined) {
+    return response;
+  }
 
+  let liveResponse = undefined;
+  try {
+    console.log(['cachedFetch', 'live', e.request.url]);
+    liveResponse = await fetch(e.request);
+  } catch (error) {
+    console.log(['cachedFetch', 'doing live', error, liveResponse]);
+    // Reset liveResponse if an error occured, so we don't store it.
+    liveResponse = undefined;
+  }
 
-  //   const queryParameters = e.request.url.substring(e.request.url.indexOf('?') + 1);
-  //   let response = {sd: "start"};
-  //   try {
-  //     response = await fetch(e.request, {mode: 'no-cors'});
-  //     response.sd = "noprob";
-  //   } catch (e) {
-  //     showNotification('error', e.message);
-  //     const bodyText = "some body text";
-  //     const myOptions = { status: 200, statusText: "SuperSmashingGreat!" };
-  //     const myResponse = new Response(bodyText, myOptions);
-  //     return myResponse;
-  //   } finally {
-  //     showNotification('sent', queryParameters);
-  //     return response;
-  //   }
-  // }
-  const r = await caches.match(e.request);
-  console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
-  console.log(['actual fetch', e.request.url]);
-  const response = await fetch(e.request);
-  const cache = await caches.open(cacheName);
-  cache.put(e.request, response.clone());
+  if (liveResponse !== undefined) {
+    await cache.put(e.request, liveResponse.clone());
+    return liveResponse;
+  } else {
+    response = defaultResponse();
+    return response;
+  }
+}
+
+async function onFetch(event) {
+  let response = undefined;
+  if (isDataTransmission(event.request.url)) {
+    response = await fetchOffline();
+  } else {
+    response = await cachedFetch();
+  }
   return response;
 }
 
-self.addEventListener("fetch", (e) => {
-  e.respondWith(onFetchRequest(e))
+function onFetch(event) {
+  event.respondWith(doFetch(event));
 }
-);
+
+
+self.addEventListener("activate", onActivate);
+self.addEventListener("fetch", onFetch);
