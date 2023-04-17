@@ -126,22 +126,39 @@ body {
     border-radius: 3dvw;
   }
   
-.username {
-  width: 90dvw;
-  height: 10dvw;
-  transform: rotateZ(-90deg);
-  transform-origin: right;
-  font-size: 7dvw;
-  text-align: end;
-}
-
-#username {
-  position: absolute;
-  left: -85dvw;
-  top: 7dvw;
-  z-index: 999;
-}
-
+  .username {
+    width: 90dvw;
+    height: 10dvw;
+    transform: rotateZ(-90deg);
+    transform-origin: right;
+    font-size: 7dvw;
+    text-align: end;
+  }
+  
+  #username {
+    position: absolute;
+    left: -85dvw;
+    top: 7dvw;
+    z-index: 999;
+  }
+  
+  .version {
+    width: 90dvw;
+    height: 10dvw;
+    transform: rotateZ(-90deg);
+    transform-origin: right;
+    font-size: 4dvw;
+    color: white;
+    text-align: end;
+  }
+  
+  #version {
+    position: absolute;
+    right: 5dvw;
+    top: 2dvw;
+    z-index: 999;
+  }
+    
   #source_frame {
     left: 2.5dvw;
     bottom: 76.5dvw;
