@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230418053453;
+const version=20230418053558;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1419,10 +1419,11 @@ function AddEventListeners() {
 
 function sendIt() {
   let noCORS = true;
+            noCORS = false;
   let record = captureRecord();
   upsertRecord(record);
   let sendUrl = buildSendUrl(record);
-  httpsGet(sendUrl, (x) => {}, noCORS);
+  httpsGet(sendUrl, (x) => {console.log(['sendIt', x])}, noCORS);
   StartingPlaces();
 }
 
