@@ -1,4 +1,4 @@
-var version=20230418103917;
+var version=20230418104610;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -97,11 +97,11 @@ async function fetchOffline() {
   const defaultResponse = fetchDefault();
   let offlineResponse = defaultResponse;
   try {
-    // const cache = await caches.open(cacheName);
-    // offlineResponse = await cache.match("./app/offline.html");    
-    let options = { status: 200, statusText: "SuperSmashingGreat!" };
-    let builtResponse = new Response("built it myself");
-    offlineResponse = builtResponse;
+    const cache = await caches.open(cacheName);
+    offlineResponse = await cache.match("./app/offline.html");    
+    // let options = { status: 200, statusText: "SuperSmashingGreat!" };
+    // let builtResponse = new Response("built it myself");
+    // offlineResponse = builtResponse;
   } catch (error) {
     console.log(['fetchOffline', 'error', error]);
   } finally {
