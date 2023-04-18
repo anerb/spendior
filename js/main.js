@@ -1,6 +1,6 @@
 'use strict';
 
-const version=20230418104610;
+const version=20230418142742;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;

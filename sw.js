@@ -1,4 +1,4 @@
-var version=20230418104610;
+var version=20230418142742;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -93,17 +93,22 @@ function fetchDefault() {
   return myResponse;
 }
 
-async function fetchOffline() {
+async function fetchOffline(url) {
   const defaultResponse = fetchDefault();
   let offlineResponse = defaultResponse;
   try {
-    const cache = await caches.open(cacheName);
-    offlineResponse = await cache.match("./app/offline.html");    
-    // let options = { status: 200, statusText: "SuperSmashingGreat!" };
-    // let builtResponse = new Response("built it myself");
-    // offlineResponse = builtResponse;
+    let serverResponse = await fetch(url, {mode: 'no-cors'});
+    console.log(['fetchOffline', 'normal', JSON.stringify(serverResponse)]);
+    // const cache = await caches.open(cacheName);
+    // offlineResponse = await cache.match("./app/offline.html");    
+    let options = { status: 200, statusText: "IsOK" };
+    let builtResponse = new Response("data:OK");
+    offlineResponse = builtResponse;
   } catch (error) {
     console.log(['fetchOffline', 'error', error]);
+    let errorOptions = { status: 200, statusText: "IsNotOK" };
+    let errorResponse = new Response("data:NotOK");
+    offlineResponse = errorResponse;
   } finally {
     return offlineResponse;
   }
@@ -148,8 +153,9 @@ async function cachedFetch(event) {
 
 async function doFetch(event) {
   let response = undefined;
-  if (isDataTransmission(event.request.url)) {
-    response = await fetchOffline();
+  let request = event.request;
+  if (isDataTransmission(request.url)) {
+    response = await fetchOffline(request.url);
   } else {
     response = await cachedFetch(event);
   }
