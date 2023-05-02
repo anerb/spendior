@@ -1,6 +1,8 @@
+// importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js')
+
 'use strict';
 
-const version=20230418142742;
+const version=20230502225644;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -113,9 +115,9 @@ function getLocation() {
 
 function captureRecord() {
   let record = {};
-  let record_id = get('record_id');
   let today = new Date();
-  record.sheet_name = get("sheet_name");
+  record.server_id = get('record_id');
+  record.server_sheetname = get("sheet_name");
   record.date_first = formatDate(today);
   record.date_final = formatDate(today);
   record.source = getScrollerValue("source");
@@ -129,9 +131,6 @@ function captureRecord() {
   return record;
 }
 
-function upsertRecord(record) {
-  
-}
 
 // TODO: Make home_currency a setting
 function buildSendUrl(record) {
@@ -1313,7 +1312,7 @@ function noScroll() {
 }
 
 /*
- * Tries to fetch from url anc call func(restult.text).
+ * Tries to fetch from url and call func(restult.text).
  * An error in fetching or in calling func() will cause a throw.
  */
 function httpsGet(url, func, noCORS) {
@@ -1353,8 +1352,34 @@ function updateLocalStorageFromUrl(key, url, ttl_s) {
 }
 
 function PWA() {
+  // Create Database with records table
+  const db = new Dexie("Spendior");
+  db.version(1).stores({
+    records: "[server_id+server_revision],state,record_json",
+  });
+
+  db.open().then(
+      function() {
+        return db.records
+          .toArray();    
+      }
+    ).then(
+      function(records) {
+        console.log("a record");
+        for (let record of records) {
+         console.log(record);
+        }
+      }
+    ).catch (
+      function(e) {
+        console.log (e);
+      }
+    );
+  
+  let ii = 42;
+
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("../sw.js", {scope: 'https://anerb.github.io/spendior/'});
+    navigator.serviceWorker.register("../sw.js", {scope: 'http://localhost:3000'});
   }
   /*
   if ('serviceWorker' in navigator) {
@@ -1417,15 +1442,88 @@ function AddEventListeners() {
   document.$('#currency').addEventListener('change', updateCurrencyConversion);
 }
 
+function addItClient(db, record) {
+  let decimal = Math.random();
+  console.log("adding", decimal);
+  db.open().then(function(){
+    return db.friends.add({name: "Foo" + record.amount, age: 42 + decimal});
+    
+  }).catch (Dexie.MissingAPIError, function (e) {
+    console.log ("Couldn't find indexedDB API");
+  }).catch ('SecurityError', function(e) {
+    console.log ("SeurityError - This browser doesn't like fiddling with indexedDB.");
+    console.log ("If using Safari, this is because jsfiddle runs its samples within an iframe");
+    console.log ("Go run some samples instead at: https://github.com/dfahlander/Dexie.js/wiki/Samples");
+  }).catch (function (e) {
+    console.log (e);
+  });
+}
+
+
 function sendIt() {
-  let noCORS = true;
-            noCORS = false;
+  let server_id = get("current_server_id");
+  let server_revision = get("current_server_revision");
+  let state = get("current_state");
   let record = captureRecord();
-  upsertRecord(record);
-  let sendUrl = buildSendUrl(record);
-  httpsGet(sendUrl, (x) => {console.log(['sendIt', x])}, noCORS);
+  let record_json = JSON.stringify(record);
+
+  state = "pending";
+  server_id = "asdfs";
+  server_revision = Math.floor(Math.random() * 100);
+
+  const db = new Dexie("Spendior");
+
+  db.version(1).stores({
+    records: "[server_id+server_revision],state,record_json",
+  });
+
+
+  db.open().then(function(){
+    return db.records.add({ server_id, server_revision, state, record_json });
+  }).then(
+    function () { console.log('added'); }
+  ).catch (function (e) {
+    console.log (e);
+  });
+}
+
+function sendIt_old() {
+
+  var db = new Dexie("MyFriendDB");
+  db.version(1).stores({
+	  friends: '++id,name,age'
+  });
+
+  let record = captureRecord();
+
+  addItClient(db, record);
+
+  let url = get("server_url");
+  let postOptions = {
+    redirect: "follow",
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify(record),
+    headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+    }
+  };
+  fetch(
+    url,
+    postOptions
+  ).then(
+    response => {
+      console.log(["success:", response]);
+    }
+  ).catch(
+    err => {
+      console.log(["Error:", err]);
+    }
+  )
   StartingPlaces();
 }
+
+
 
 
 function showNotification(title, body) {
@@ -1452,11 +1550,26 @@ function randomNotification(title, body) {
 
 }
 
+/*
+ * Generates a random id out of 2^64 possible ids.
+ * Uses the characters from plus-codes so the id will not form unpleasant words by accident.
+ */
+function createRandomId() {
+  // There are 20 plus-code characters, so each one takes about 4.321 bits to encode.
+  let plusCodeChars = '23456789CFGHJMPQRVWX';
+  let id = '';
+  for (let c = 0; c < Math.floor(64/4.321); c++) {
+    id += plusCodeChars[Math.floor(20*Math.random())];
+  }
+  return id;
+}
+
 // HACKY: Find a better name.
 // This puts all the scrolling/focus/orientation/animations in place to start.
 // TODO: StartingPlaces() should probably be combined with PostSend().
 function StartingPlaces() {
   getLocation();
+  set('record_id', createRandomId());
   showNotification('first time', 'some body text');
   scrollEndpointsToBottom();
   document.$("#keypad").clear();

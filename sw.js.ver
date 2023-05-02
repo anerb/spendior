@@ -1,4 +1,6 @@
-var version=20230418104610;
+// importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js')
+
+var version=20230502224706;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -169,3 +171,176 @@ function onFetch(event) {
 
 self.addEventListener("activate", onActivate);
 self.addEventListener("fetch", onFetch);
+
+function queryIt(db) {
+  db.open().then(function(){
+  
+    return db.friends
+      .where('age')
+      .between(40,65)
+      .toArray();
+  
+  }).then(function(friends){
+  
+    console.log("Found friends: " + JSON.stringify(friends, null, 2));
+    
+  }).catch (Dexie.MissingAPIError, function (e) {
+    console.log ("Couldn't find indexedDB API");
+  }).catch ('SecurityError', function(e) {
+    console.log ("SeurityError - This browser doesn't like fiddling with indexedDB.");
+    console.log ("If using Safari, this is because jsfiddle runs its samples within an iframe");
+    console.log ("Go run some samples instead at: https://github.com/dfahlander/Dexie.js/wiki/Samples");
+  }).catch (function (e) {
+    console.log (e);
+  });
+}
+
+function deleteIt(db) {
+  db.open().then(function(){
+    return db.delete(); // So you can experiment again and again...
+  }).catch (Dexie.MissingAPIError, function (e) {
+    console.log ("Couldn't find indexedDB API");
+  }).catch ('SecurityError', function(e) {
+    console.log ("SeurityError - This browser doesn't like fiddling with indexedDB.");
+    console.log ("If using Safari, this is because jsfiddle runs its samples within an iframe");
+    console.log ("Go run some samples instead at: https://github.com/dfahlander/Dexie.js/wiki/Samples");
+  }).catch (function (e) {
+    console.log (e);
+  });
+}
+
+
+function addIt(db) {
+  let decimal = Math.random();
+  console.log("adding", decimal);
+  db.open().then(function(){
+    return db.friends.add({name: "Foo" + decimal, age: 42 + decimal});
+    
+  }).catch (Dexie.MissingAPIError, function (e) {
+    console.log ("Couldn't find indexedDB API");
+  }).catch ('SecurityError', function(e) {
+    console.log ("SeurityError - This browser doesn't like fiddling with indexedDB.");
+    console.log ("If using Safari, this is because jsfiddle runs its samples within an iframe");
+    console.log ("Go run some samples instead at: https://github.com/dfahlander/Dexie.js/wiki/Samples");
+  }).catch (function (e) {
+    console.log (e);
+  });
+}
+
+function getTransfersTable() {
+  let db = new Dexie("SpendiorDB");
+  let transfersTable = db.table("transfers");
+  return transfersTable;
+}
+
+function sendRecordsAndConfirm() {
+  return;
+  let transfersTable = getTransfersTable();
+  var db = new Dexie("MyFriendDB");
+  db.version(1).stores({
+	  friends: '++id,name,age'
+  });
+  console.log ("Using Dexie v" + Dexie.semVer);
+
+  queryIt(db);
+
+  if (counter % 2 == 0) {
+    addIt(db);
+  }
+
+  if (counter > 0) {
+    setTimeout(logFromDB, 3000);
+  }
+}
+
+function sendRecord(record) {
+  let postOptions = {
+    redirect: "follow",
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify(record),
+    headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+    }
+  };
+
+  fetch(
+    url,
+    postOptions
+  ).then(
+    response => {
+      console.log(["success:", response]);
+    }
+  ).catch(
+    err => {
+      console.log(["Error:", err]);
+    }
+  )
+}
+
+
+// Copy-pasted from main.js
+// TODO: Use real csv parser.
+function csv2records(csv) {
+  let lines = csv.split("\n");
+  let records = [];
+  let headings = undefined;
+  for (let line of lines) {
+    let row = line.split(",");  // This is where the hard stuff with quoting happens
+    if (headings == undefined) {
+      headings = row;
+      continue;
+    }
+    let record = {};
+    for (let c = 0; c < headings.length; c++) {
+      let heading = headings[c];
+      let value = row[c];
+      record[heading] = value;
+    }
+    records.push(record);
+  }
+  return records;
+}
+
+/*
+ * Returns an array of [{server_id, server_revision}];
+ */
+function readServerRevisions() {
+  // TODO: Get url from settings
+  let published_revisions_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv9KV2ijq4iif2r2KYfFqeKfkCdzNpld_bIWwqS6q3S5ToP_Z3KfTTceD2wnVprqaI9mDat_qWdk7T/pub?gid=1498590524&single=true&output=csv";
+  fetch(url)
+    .then((response) => {
+      return response.text();  // A promise that provides the response as text.
+    })
+    .then((text) => {return csv2records(text);})
+    .catch((error) => {
+      console.error("ERROR calling httpsGet: ", error);
+    });
+}
+
+const CYCLE_TIME = 1*10*1000;
+
+async function updateRecords() {
+  const db = new Dexie("Spendior");
+  const published_values = readServerRevisions();
+  const pendingRecords = await db.records.where("state").equals("pending").toArray();
+  for (const record of pendingRecords) {
+    const match = published_values.find(
+      (item) =>
+        item.server_id === record.server_id &&
+        item.server_revision === record.server_revision
+    );
+    if (match) {
+      console.log("updating", record);
+      await db.records.update(record.id, { state: "confirmed" });
+    } else {
+      console.log("sending", record);
+      sendAgain(record);
+    }
+  }
+  if (records.length > 0) {
+    setTimeout(updateRecords, CYCLE_TIME);
+  }
+}
+
+// wait on this. setTimeout(updateRecords, CYCLE_TIME);
