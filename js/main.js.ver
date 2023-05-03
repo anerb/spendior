@@ -2,7 +2,7 @@
 
 'use strict';
 
-const version=20230502224706;
+const version=20230503085416;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1379,7 +1379,16 @@ function PWA() {
   let ii = 42;
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("../sw.js", {scope: 'http://localhost:3000'});
+    navigator.serviceWorker.register(
+      "../sw.js?version=20230503085416",
+       {scope: 'http://localhost:3000'}
+    )
+    navigator.serviceWorker.ready.then(
+      reg => {
+        // Send a message to the service worker
+        reg.active.postMessage("message from a tab");
+      }
+    );
   }
   /*
   if ('serviceWorker' in navigator) {
@@ -1463,6 +1472,7 @@ function addItClient(db, record) {
 function sendIt() {
   let server_id = get("current_server_id");
   let server_revision = get("current_server_revision");
+  let server_sheetname = "data";
   let state = get("current_state");
   let record = captureRecord();
   let record_json = JSON.stringify(record);

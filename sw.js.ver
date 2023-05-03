@@ -1,6 +1,6 @@
-// importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js')
+importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js')
 
-var version=20230502224706;
+var version=20230503085416;
 var cacheName = `version=${version}`;
 
 function showNotification(title, body) {
@@ -253,7 +253,7 @@ function sendRecordsAndConfirm() {
   }
 }
 
-function sendRecord(record) {
+async function sendRecord(record, server_url) {
   let postOptions = {
     redirect: "follow",
     method: 'POST',
@@ -264,25 +264,18 @@ function sendRecord(record) {
     }
   };
 
-  fetch(
-    url,
-    postOptions
-  ).then(
-    response => {
-      console.log(["success:", response]);
-    }
-  ).catch(
-    err => {
-      console.log(["Error:", err]);
-    }
-  )
+  try {
+    let response = await fetch(server_url, postOptions);
+  } catch (error) {
+    console.log("Error when blind-sending record", error);
+  }
 }
 
 
 // Copy-pasted from main.js
 // TODO: Use real csv parser.
 function csv2records(csv) {
-  let lines = csv.split("\n");
+  let lines = csv.split(/[\r\n]+/);  // Inching towards fill csv library.
   let records = [];
   let headings = undefined;
   for (let line of lines) {
@@ -305,42 +298,73 @@ function csv2records(csv) {
 /*
  * Returns an array of [{server_id, server_revision}];
  */
-function readServerRevisions() {
-  // TODO: Get url from settings
-  let published_revisions_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv9KV2ijq4iif2r2KYfFqeKfkCdzNpld_bIWwqS6q3S5ToP_Z3KfTTceD2wnVprqaI9mDat_qWdk7T/pub?gid=1498590524&single=true&output=csv";
-  fetch(url)
-    .then((response) => {
-      return response.text();  // A promise that provides the response as text.
-    })
-    .then((text) => {return csv2records(text);})
-    .catch((error) => {
-      console.error("ERROR calling httpsGet: ", error);
-    });
+async function readServerRevisions() {
+  try {
+    // TODO: Get url from settings
+    let published_revisions_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv9KV2ijq4iif2r2KYfFqeKfkCdzNpld_bIWwqS6q3S5ToP_Z3KfTTceD2wnVprqaI9mDat_qWdk7T/pub?gid=1498590524&single=true&output=csv";
+    // Fetch text from the URL
+    const response = await fetch(published_revisions_url);
+    const text = await response.text();
+
+    // Process the text with the text2records function
+    const records = csv2records(text);
+    return records;
+  } catch (error) {
+    console.error("ERROR calling httpsGet: ", error);
+  }
+  return undefined;
 }
 
 const CYCLE_TIME = 1*10*1000;
 
+
+
 async function updateRecords() {
   const db = new Dexie("Spendior");
-  const published_values = readServerRevisions();
+
+  db.version(1).stores({
+    records: "[server_id+server_revision],state,record_json",
+  });
+
+  const published_values = await readServerRevisions();
   const pendingRecords = await db.records.where("state").equals("pending").toArray();
+
+  // TODO: Use the current settings to send the data.
+  let server_sheetname = "data";
+  let server_url = "https://script.google.com/macros/s/AKfycbwnznH0VMWsxDUlCuqqQTUrePDaw5d4TuYNhA2FP_t5mgsK_rCGcRxS1jEmG806r9ch-A/exec";
+
+  if (published_values == undefined || pendingRecords == undefined) {
+    setTimeout(updateRecords, CYCLE_TIME);
+    return;
+  }
   for (const record of pendingRecords) {
+    // TODO: Figure out int vs string for server_revision!
     const match = published_values.find(
       (item) =>
-        item.server_id === record.server_id &&
-        item.server_revision === record.server_revision
-    );
+        String(item.server_id) == String(record.server_id) &&
+        String(item.server_revision) == String(record.server_revision)
+      );
     if (match) {
       console.log("updating", record);
-      await db.records.update(record.id, { state: "confirmed" });
+      db.records.update([record.server_id, record.server_revision], { state: "confirmed" });  // nowait
     } else {
-      console.log("sending", record);
-      sendAgain(record);
+      let serverRecord = JSON.parse(record.record_json);
+      serverRecord.server_id = record.server_id;
+      serverRecord.server_revision = record.server_revision;
+      serverRecord.server_sheetname = server_sheetname;
+      console.log("sending", serverRecord);
+      sendRecord(serverRecord, server_url);  // nowait
     }
   }
-  if (records.length > 0) {
+  if (pendingRecords.length > 0) {
     setTimeout(updateRecords, CYCLE_TIME);
   }
 }
 
-// wait on this. setTimeout(updateRecords, CYCLE_TIME);
+setTimeout(updateRecords, CYCLE_TIME);
+
+// sw.js
+self.addEventListener('message', event => {
+  console.log('Received message from main.js:', event.data);
+  setTimeout(updateRecords, CYCLE_TIME);
+});
