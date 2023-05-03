@@ -1,7 +1,21 @@
 importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js')
 
-var version=20230503085416;
+var version=20230503190538;
 var cacheName = `version=${version}`;
+var pendingTimeout = undefined;
+
+function setUpdateRecordsTimeout() {
+  const CYCLE_TIME = 1*10*1000;
+  if (pendingTimeout === undefined) {
+    pendingTimeout = setTimeout(
+      function() {
+        pendingTimeout = undefined;
+        updateRecords();
+      }
+      , CYCLE_TIME
+    );
+  }
+}
 
 function showNotification(title, body) {
   if (Notification.permission != "granted") {
@@ -315,9 +329,6 @@ async function readServerRevisions() {
   return undefined;
 }
 
-const CYCLE_TIME = 1*10*1000;
-
-
 
 async function updateRecords() {
   const db = new Dexie("Spendior");
@@ -332,9 +343,10 @@ async function updateRecords() {
   // TODO: Use the current settings to send the data.
   let server_sheetname = "data";
   let server_url = "https://script.google.com/macros/s/AKfycbwnznH0VMWsxDUlCuqqQTUrePDaw5d4TuYNhA2FP_t5mgsK_rCGcRxS1jEmG806r9ch-A/exec";
+  server_url = "https://script.google.com/macros/s/AKfycbz91df1OcMQbRRECHDJM7QfU2RXAt9imo5IdzGgqMA0CDrEGDhpZHvkn1e9qYJ94cI_uw/exec";
 
   if (published_values == undefined || pendingRecords == undefined) {
-    setTimeout(updateRecords, CYCLE_TIME);
+    setUpdateRecordsTimeout();
     return;
   }
   for (const record of pendingRecords) {
@@ -357,14 +369,12 @@ async function updateRecords() {
     }
   }
   if (pendingRecords.length > 0) {
-    setTimeout(updateRecords, CYCLE_TIME);
+    setUpdateRecordsTimeout();
   }
 }
 
-setTimeout(updateRecords, CYCLE_TIME);
 
-// sw.js
 self.addEventListener('message', event => {
   console.log('Received message from main.js:', event.data);
-  setTimeout(updateRecords, CYCLE_TIME);
+  setUpdateRecordsTimeout();
 });

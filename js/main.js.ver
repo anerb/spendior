@@ -2,7 +2,7 @@
 
 'use strict';
 
-const version=20230503085416;
+const version=20230503190538;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1375,32 +1375,13 @@ function PWA() {
         console.log (e);
       }
     );
-  
-  let ii = 42;
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(
-      "../sw.js?version=20230503085416",
+      "../sw.js?version=20230503190538",
        {scope: 'http://localhost:3000'}
     )
-    navigator.serviceWorker.ready.then(
-      reg => {
-        // Send a message to the service worker
-        reg.active.postMessage("message from a tab");
-      }
-    );
   }
-  /*
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', {scope: './spendior/', type: 'classic', updateViaCache: 'none'}).then((registration) => {
-      console.log('Service worker registration succeeded:', registration);
-    },  (error) => {
-      console.error(`Service worker registration failed: ${error}`);
-    });
-  } else {
-    console.error('Service workers are not supported.');
-  }
-  */
 }
 
 function WebComponents() {
@@ -1468,11 +1449,14 @@ function addItClient(db, record) {
   });
 }
 
+async function wakeUpServiceWorker() {
+  let reg = await navigator.serviceWorker.ready;
+  reg.active.postMessage("Wake up.");
+}
 
 function sendIt() {
   let server_id = get("current_server_id");
   let server_revision = get("current_server_revision");
-  let server_sheetname = "data";
   let state = get("current_state");
   let record = captureRecord();
   let record_json = JSON.stringify(record);

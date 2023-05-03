@@ -2,7 +2,7 @@
 
 'use strict';
 
-const version=20230503084237;
+const version=20230503192041;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -1375,32 +1375,13 @@ function PWA() {
         console.log (e);
       }
     );
-  
-  let ii = 42;
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(
-      "../sw.js?version=20230503084237",
+      "../sw.js?version=20230503192041",
        {scope: 'http://localhost:3000'}
     )
-    navigator.serviceWorker.ready.then(
-      reg => {
-        // Send a message to the service worker
-        reg.active.postMessage("message from a tab");
-      }
-    );
   }
-  /*
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', {scope: './spendior/', type: 'classic', updateViaCache: 'none'}).then((registration) => {
-      console.log('Service worker registration succeeded:', registration);
-    },  (error) => {
-      console.error(`Service worker registration failed: ${error}`);
-    });
-  } else {
-    console.error('Service workers are not supported.');
-  }
-  */
 }
 
 function WebComponents() {
@@ -1468,6 +1449,10 @@ function addItClient(db, record) {
   });
 }
 
+async function wakeUpServiceWorker() {
+  let reg = await navigator.serviceWorker.ready;
+  reg.active.postMessage("Wake up.");
+}
 
 function sendIt() {
   let server_id = get("current_server_id");
@@ -1476,9 +1461,6 @@ function sendIt() {
   let record = captureRecord();
   let record_json = JSON.stringify(record);
 
-  state = "pending";
-  server_id = "asdfs";
-  server_revision = Math.floor(Math.random() * 100);
 
   const db = new Dexie("Spendior");
 
@@ -1486,11 +1468,14 @@ function sendIt() {
     records: "[server_id+server_revision],state,record_json",
   });
 
+  state = "pending";
+  server_id = "asdfs";
+  server_revision = Math.floor(Math.random() * 100);
 
   db.open().then(function(){
     return db.records.add({ server_id, server_revision, state, record_json });
   }).then(
-    function () { console.log('added'); }
+    wakeUpServiceWorker
   ).catch (function (e) {
     console.log (e);
   });
