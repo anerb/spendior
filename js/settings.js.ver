@@ -1,7 +1,9 @@
+// importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js')
+
 'use strict';
 
 // COPY-PASTE. HACKY
-const version=20230503190538;
+const version=20230503220608;
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
 Element.prototype.$$ = HTMLElement.prototype.querySelectorAll;
@@ -26,6 +28,7 @@ const defaults =
   "username": "Pick any Username",
   "server_url": "",
   "sheet_name": "data",
+  "published_revisions_url": "",
   "published_endpoints_url": "",
   "always_present_endpoints": "bank, credit_card, cash, person, store",
   "email_re": ".*",
@@ -47,8 +50,16 @@ function updateSettings() {
   }
 }
 
-function updateSetting(key) {
+async function updateSetting(key) {
   let input = document.querySelector(`#${key}`);
+  const db = new Dexie("Spendior");
+
+  db.version(1).stores({
+    records: "[server_id+server_revision],state,record_json",
+    settings: "[key],value",
+  });
+
+  db.settings.put({key: key, value: input.value});
   window.localStorage.setItem(key, input.value);
 }
 

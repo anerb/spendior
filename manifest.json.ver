@@ -19,6 +19,6 @@
   ],
   "name": "Spendior for collecting spending data",
   "short_name": "Spendior",
-  "start_url": "./app/index.html?version=20230503190538",
+  "start_url": "./app/index.html?version=20230503220608",
   "scope": "http://localhost:3000"
 }

@@ -1,18 +1,23 @@
 importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js')
 
-var version=20230503190538;
+const db = new Dexie("Spendior");
+
+var version=20230503220608;
 var cacheName = `version=${version}`;
 var pendingTimeout = undefined;
 
-function setUpdateRecordsTimeout() {
+function setUpdateRecordsTimeout(milliseconds) {
   const CYCLE_TIME = 1*10*1000;
+  if (milliseconds === undefined) {
+    milliseconds = CYCLE_TIME;
+  }
   if (pendingTimeout === undefined) {
     pendingTimeout = setTimeout(
       function() {
         pendingTimeout = undefined;
         updateRecords();
       }
-      , CYCLE_TIME
+      , milliseconds
     );
   }
 }
@@ -186,86 +191,6 @@ function onFetch(event) {
 self.addEventListener("activate", onActivate);
 self.addEventListener("fetch", onFetch);
 
-function queryIt(db) {
-  db.open().then(function(){
-  
-    return db.friends
-      .where('age')
-      .between(40,65)
-      .toArray();
-  
-  }).then(function(friends){
-  
-    console.log("Found friends: " + JSON.stringify(friends, null, 2));
-    
-  }).catch (Dexie.MissingAPIError, function (e) {
-    console.log ("Couldn't find indexedDB API");
-  }).catch ('SecurityError', function(e) {
-    console.log ("SeurityError - This browser doesn't like fiddling with indexedDB.");
-    console.log ("If using Safari, this is because jsfiddle runs its samples within an iframe");
-    console.log ("Go run some samples instead at: https://github.com/dfahlander/Dexie.js/wiki/Samples");
-  }).catch (function (e) {
-    console.log (e);
-  });
-}
-
-function deleteIt(db) {
-  db.open().then(function(){
-    return db.delete(); // So you can experiment again and again...
-  }).catch (Dexie.MissingAPIError, function (e) {
-    console.log ("Couldn't find indexedDB API");
-  }).catch ('SecurityError', function(e) {
-    console.log ("SeurityError - This browser doesn't like fiddling with indexedDB.");
-    console.log ("If using Safari, this is because jsfiddle runs its samples within an iframe");
-    console.log ("Go run some samples instead at: https://github.com/dfahlander/Dexie.js/wiki/Samples");
-  }).catch (function (e) {
-    console.log (e);
-  });
-}
-
-
-function addIt(db) {
-  let decimal = Math.random();
-  console.log("adding", decimal);
-  db.open().then(function(){
-    return db.friends.add({name: "Foo" + decimal, age: 42 + decimal});
-    
-  }).catch (Dexie.MissingAPIError, function (e) {
-    console.log ("Couldn't find indexedDB API");
-  }).catch ('SecurityError', function(e) {
-    console.log ("SeurityError - This browser doesn't like fiddling with indexedDB.");
-    console.log ("If using Safari, this is because jsfiddle runs its samples within an iframe");
-    console.log ("Go run some samples instead at: https://github.com/dfahlander/Dexie.js/wiki/Samples");
-  }).catch (function (e) {
-    console.log (e);
-  });
-}
-
-function getTransfersTable() {
-  let db = new Dexie("SpendiorDB");
-  let transfersTable = db.table("transfers");
-  return transfersTable;
-}
-
-function sendRecordsAndConfirm() {
-  return;
-  let transfersTable = getTransfersTable();
-  var db = new Dexie("MyFriendDB");
-  db.version(1).stores({
-	  friends: '++id,name,age'
-  });
-  console.log ("Using Dexie v" + Dexie.semVer);
-
-  queryIt(db);
-
-  if (counter % 2 == 0) {
-    addIt(db);
-  }
-
-  if (counter > 0) {
-    setTimeout(logFromDB, 3000);
-  }
-}
 
 async function sendRecord(record, server_url) {
   let postOptions = {
@@ -310,12 +235,21 @@ function csv2records(csv) {
 }
 
 /*
+ * Read from the settings table in indexeddb
+ */
+async function getSetting(key) {
+  const setting = await db.settings.get([key]);
+  console.log("setting", key, setting);
+  const value = setting.value;
+  return value;
+}
+
+/*
  * Returns an array of [{server_id, server_revision}];
  */
 async function readServerRevisions() {
   try {
-    // TODO: Get url from settings
-    let published_revisions_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv9KV2ijq4iif2r2KYfFqeKfkCdzNpld_bIWwqS6q3S5ToP_Z3KfTTceD2wnVprqaI9mDat_qWdk7T/pub?gid=1498590524&single=true&output=csv";
+    let published_revisions_url = await getSetting("published_revisions_url"); //"https://docs.google.com/spreadsheets/d/e/2PACX-1vTv9KV2ijq4iif2r2KYfFqeKfkCdzNpld_bIWwqS6q3S5ToP_Z3KfTTceD2wnVprqaI9mDat_qWdk7T/pub?gid=1498590524&single=true&output=csv";
     // Fetch text from the URL
     const response = await fetch(published_revisions_url);
     const text = await response.text();
@@ -331,19 +265,12 @@ async function readServerRevisions() {
 
 
 async function updateRecords() {
-  const db = new Dexie("Spendior");
-
-  db.version(1).stores({
-    records: "[server_id+server_revision],state,record_json",
-  });
-
   const published_values = await readServerRevisions();
-  const pendingRecords = await db.records.where("state").equals("pending").toArray();
+  const pendingRecords = await db.records.where("state").equals("PENDING").toArray();
 
   // TODO: Use the current settings to send the data.
-  let server_sheetname = "data";
-  let server_url = "https://script.google.com/macros/s/AKfycbwnznH0VMWsxDUlCuqqQTUrePDaw5d4TuYNhA2FP_t5mgsK_rCGcRxS1jEmG806r9ch-A/exec";
-  server_url = "https://script.google.com/macros/s/AKfycbz91df1OcMQbRRECHDJM7QfU2RXAt9imo5IdzGgqMA0CDrEGDhpZHvkn1e9qYJ94cI_uw/exec";
+  let server_sheetname = getSetting("sheet_name");
+  let server_url = getSetting("server_url");
 
   if (published_values == undefined || pendingRecords == undefined) {
     setUpdateRecordsTimeout();
@@ -358,7 +285,7 @@ async function updateRecords() {
       );
     if (match) {
       console.log("updating", record);
-      db.records.update([record.server_id, record.server_revision], { state: "confirmed" });  // nowait
+      db.records.update([record.server_id, record.server_revision], { state: "CONFIRMED" });  // nowait
     } else {
       let serverRecord = JSON.parse(record.record_json);
       serverRecord.server_id = record.server_id;
@@ -376,5 +303,16 @@ async function updateRecords() {
 
 self.addEventListener('message', event => {
   console.log('Received message from main.js:', event.data);
-  setUpdateRecordsTimeout();
+  setUpdateRecordsTimeout(300);
 });
+
+// Copied from main.js
+function InitialzeDB() {
+  console.log('InizializeDB in sw.js', db);
+  db.version(1).stores({
+    records: "[server_id+server_revision],state,record_json",
+    settings: "[key],value",
+  });
+}
+
+InitialzeDB();
