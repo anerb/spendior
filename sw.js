@@ -2,7 +2,7 @@ importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js')
 
 const db = new Dexie("Spendior");
 
-var version=20230503222509;
+var version=20230504073403;
 var cacheName = `version=${version}`;
 var pendingTimeout = undefined;
 
@@ -26,10 +26,10 @@ function showNotification(title, body) {
   if (Notification.permission != "granted") {
     return;
   }
-  randomNotification(title, body);
+  doNotification(title, body);
 }
 
-function randomNotification(title, body) {
+function doNotification(title, body) {
   const notifImg = '../images/eur.png';
   const options = {
     body: body,
@@ -286,6 +286,8 @@ async function updateRecords() {
     if (match) {
       console.log("updating", record);
       db.records.update([record.server_id, record.server_revision], { state: "CONFIRMED" });  // nowait
+      let notificationSummary = `{record.source} > {record.amount}{record.curreny} > {record.destination}`;
+      showNotification('Recorded', notificationSummary);
     } else {
       let serverRecord = JSON.parse(record.record_json);
       serverRecord.server_id = record.server_id;

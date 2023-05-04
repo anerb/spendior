@@ -2,7 +2,7 @@
 
 'use strict';
 
-const version=20230503222509;
+const version=20230504073403;
 const db = new Dexie("Spendior");
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
@@ -1355,8 +1355,9 @@ function updateLocalStorageFromUrl(key, url, ttl_s) {
 function PWA() {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(
-      "../sw.js?version=20230503222509",
-       {scope: 'http://localhost:3000'}
+      "../sw.js?version=20230504073403",
+       // {scope: 'http://localhost:3000'}
+       {scope: 'https://anerb.github.io/spendior'}
     )
   }
 }
@@ -1425,10 +1426,12 @@ function sendIt() {
   db.records.put(
     {server_id, server_revision, state, record_json}
   ).then(
-    wakeUpServiceWorker
+      wakeUpServiceWorker
   ).catch (function (e) {
     console.log ("Error putting record in db", e);
   });
+
+  StartingPlaces();
 }
 
 function showNotification(title, body) {
@@ -1477,7 +1480,6 @@ function StartingPlaces() {
   set('server_id', createRandomId());
   set('server_revision', 0);
   set('status', 'READY');
-//  showNotification('first time', 'some body text');
   scrollEndpointsToBottom();
   document.$("#keypad").clear();
 }
