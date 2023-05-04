@@ -2,7 +2,7 @@ importScripts('https://unpkg.com/dexie@3.2.3/dist/dexie.js')
 
 const db = new Dexie("Spendior");
 
-var version=20230504073403;
+var version=20230504075847;
 var cacheName = `version=${version}`;
 var pendingTimeout = undefined;
 

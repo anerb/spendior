@@ -2,7 +2,7 @@
 
 'use strict';
 
-const version=20230504073403;
+const version=20230504081258;
 const db = new Dexie("Spendior");
 
 Element.prototype.$ = HTMLElement.prototype.querySelector;
@@ -1355,7 +1355,7 @@ function updateLocalStorageFromUrl(key, url, ttl_s) {
 function PWA() {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(
-      "../sw.js?version=20230504073403",
+      "../sw.js?version=20230504081258",
        // {scope: 'http://localhost:3000'}
        {scope: 'https://anerb.github.io/spendior/'}
     )
