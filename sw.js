@@ -286,8 +286,8 @@ async function updateRecords() {
     if (match) {
       console.log("updating", record);
       db.records.update([record.server_id, record.server_revision], { state: "CONFIRMED" });  // nowait
-      let notificationSummary = `{record.source} > {record.amount}{record.curreny} > {record.destination}`;
-      showNotification('Recorded', notificationSummary);
+      let notificationSummary = `${record.source} 【 ${record.amount}{record.curreny} ⮞ ${record.destination}`;
+      showNotification('Spendior', notificationSummary);
     } else {
       let serverRecord = JSON.parse(record.record_json);
       serverRecord.server_id = record.server_id;
