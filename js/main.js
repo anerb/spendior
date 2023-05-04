@@ -1357,7 +1357,7 @@ function PWA() {
     navigator.serviceWorker.register(
       "../sw.js?version=20230504073403",
        // {scope: 'http://localhost:3000'}
-       {scope: 'https://anerb.github.io/spendior'}
+       {scope: 'https://anerb.github.io/spendior/'}
     )
   }
 }
